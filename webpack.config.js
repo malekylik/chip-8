@@ -55,7 +55,7 @@ module.exports = function(env, argv) {
     options.mode = 'production';
   } else if (mode === 'development') {
     options.mode = 'development';
-    options.devtool = 'eval';
+    options.devtool = 'eval-source-map';
   }
 
   return options;

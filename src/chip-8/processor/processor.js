@@ -1,4 +1,12 @@
-import { REGISTERS_COUNT, CARRY_FLAG_CLEAR, CARRY_FLAG_SET } from './const';
+import {
+  REGISTERS_COUNT,
+  PROGRAM_COUNTER_BYTES,
+  PROGRAM_COUNTER,
+  PROGRAM_START_ADDRESS,
+  CARRY_FLAG_CLEAR,
+  CARRY_FLAG_SET
+} from './const';
+import { getRegisterVX, getRegisterV0 } from './methods';
 import {
   getPostfixValue,
   getPrefixValue,
@@ -8,15 +16,34 @@ import {
   getLeftRegisterNumber ,
   getRightRegisterNumber
 } from './opcode/opcode';
+import {
+  CLR,
+  RET,
+  JP,
+  CALL,
+  SE,
+  SNE,
+  LD,
+  ADD,
+  OR,
+  AND,
+  XOR,
+  SUB,
+  SHR,
+  SHL,
+  RND,
+} from './commands';
 
 export function creatProcessor() {
-  const registerBytes =  new ArrayBuffer(REGISTERS_COUNT);
-  const programCounterBytes = new ArrayBuffer(2);
-
-  return {
-    registers: new Uint8Array(registerBytes),
-    programCounter: new Uint16Array(programCounterBytes)
+  const registerBytes =  new ArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES);
+  const proccesor = {
+    registers: new Uint8Array(registerBytes).subarray(0, REGISTERS_COUNT),
+    programCounter: new Uint16Array(registerBytes).subarray(PROGRAM_COUNTER)
   };
+
+  JP(proccesor, PROGRAM_START_ADDRESS);
+
+  return proccesor;
 }
 
 export function executeOpcode(proccesor, opcode) {
@@ -27,289 +54,74 @@ export function executeOpcode(proccesor, opcode) {
       const leastByte = getLeastByte(opcode);
 
       switch(leastByte) {
-        case 0xE0: break; // TODO: display
-        case 0xEE: break // TODO: stack
+        case 0xE0: CLR(); break; // TODO: display
+        case 0xEE: RET(); break // TODO: stack
       }
 
       break;
     }
 
-    case 0x1: {
-      const address = getValueWithourPrefix(opcode);
-      setProgramCounter(proccesor, address);
+    case 0x1: JP(proccesor, getValueWithourPrefix(opcode)); break;
 
-      break;
-    }
+    case 0x2: CALL(); break; // TODO: stack
 
-    case 0x2: break; // TODO: stack
-    case 0x3: {
-      if (getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) === getValueFromOpcode(opcode)) {
-        incrimentProgramCounterBy2(proccesor);
-      }
+    case 0x3: SE(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 
-      break;
-    }
+    case 0x4: SNE(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 
-    case 0x4: {
-      if (getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) !== getValueFromOpcode(opcode)) {
-        incrimentProgramCounterBy2(proccesor);
-      }
+    case 0x5: SE(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
 
-      break;
-    }
+    case 0x6: LD(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 
-    case 0x5: {
-      if (getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) === getRegisterVX(proccsor, getRightRegisterNumber(opcode))) {
-        incrimentProgramCounterBy2(proccesor);
-      }
-
-      break;
-    }
-
-    case 0x6: setRegisterVX(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
-
-    case 0x7: incrimentRegisterVXBy(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
+    case 0x7: ADD(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 
     case 0x8: {
       const postFix = getPostfixValue(opcode);
 
       switch (postFix) {
-        case 0x0: movRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
+        case 0x0: LD(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
 
-        case 0x1: orTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
+        case 0x1: OR(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
 
-        case 0x2: andTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
+        case 0x2: AND(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
 
-        case 0x3: xorTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
+        case 0x3: XOR(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
 
-        case 0x4: {
-          const carryFlag = sumTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)) > 0xFF ?
-            CARRY_FLAG_SET : CARRY_FLAG_CLEAR;
-          setRegisterVF(proccesor, carryFlag);
+        case 0x4:
+          setRegisterVF(
+            proccesor,
+            ADD(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))) > 0xFF ?
+            CARRY_FLAG_SET : CARRY_FLAG_CLEAR
+          ); break;
 
-          break;
-        }
+        case 0x5:
+            setRegisterVF(
+              proccesor,
+              SUB(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))) > 0x0 ?
+              CARRY_FLAG_SET : CARRY_FLAG_CLEAR
+            ); break;
 
-        case 0x5: {
-          const carryFlag =
-            getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) > getRegisterVX(proccesor, getRightRegisterNumber(opcode)) ?
-            CARRY_FLAG_SET : CARRY_FLAG_CLEAR;
+        case 0x6: SHR(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
 
-          subTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode));
+        case 0x7:
+            setRegisterVF(
+              proccesor,
+              SUBN(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))) > 0x0 ?
+              CARRY_FLAG_SET : CARRY_FLAG_CLEAR
+            ); break;
 
-          setRegisterVF(proccesor, carryFlag);
-
-          break;
-        }
-
-        case 0x6: {
-          setRegisterVF(proccesor, getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) & 0x1);
-          shiftRihgtTwoRegister(proccesor, getLeftRegisterNumber(opcode));
-
-          break;
-        }
-
-        case 0x7: {
-          const carryFlag =
-            getRegisterVX(proccesor, getRightRegisterNumber(opcode)) > getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) ?
-            CARRY_FLAG_SET : CARRY_FLAG_CLEAR;
-
-            subnTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode));
-
-          setRegisterVF(proccesor, carryFlag);
-
-          break;
-        }
-
-        case 0xE: {
-          setRegisterVF(proccesor, getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) & 0x80);
-          shiftLeftTwoRegister(proccesor, getLeftRegisterNumber(opcode));
-
-          break;
-        }
+        case 0xE: SHL(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
       }
 
       break;
     }
+
+    case 0x9: SNE(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode)));
+
+    case 0xA: JP(proccesor, getValueWithourPrefix(opcode));
+
+    case 0xB: JP(proccesor, getValueWithourPrefix(opcode) + getRegisterV0(proccesor));
+
+    case 0xC: RND(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode))
   }
 }
-
-export function movRegisters(proccesor, registerTo, registerFrom) {
-  return setRegisterVX(proccesor, registerTo, getRegisterVX(proccesor, registerFrom));
-}
-
-export function orTwoRegisters(proccesor, registerX, registerY) {
-  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) | getRegisterVX(proccesor, registerY));
-}
-
-export function andTwoRegisters(proccesor, registerX, registerY) {
-  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) & getRegisterVX(proccesor, registerY));
-}
-
-export function xorTwoRegisters(proccesor, registerX, registerY) {
-  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) ^ getRegisterVX(proccesor, registerY));
-}
-
-export function sumTwoRegisters(proccesor, registerX, registerY) {
-  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) + getRegisterVX(proccesor, registerY));
-}
-
-export function subTwoRegisters(proccesor, registerX, registerY) {
-  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) - getRegisterVX(proccesor, registerY));
-}
-
-export function subnTwoRegisters(proccesor, registerX, registerY) {
-  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerY) - getRegisterVX(proccesor, registerX));
-}
-
-export function shiftRihgtTwoRegister(proccesor, registerX) {
-  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) >>> 1);
-}
-
-export function shiftLeftTwoRegister(proccesor, registerX) {
-  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) << 1);
-}
-
-export function incrimentProgramCounterBy2(proccesor) {
-  return incrimentRegisterVXBy(proccesor, getProgramCounter(proccesor), 2);
-}
-
-export function incrimentRegisterVXBy(proccesor, register, value) {
-  return setRegisterVX(proccesor, register, getRegisterVX(proccesor, register) + value);
-}
-
-export function getProgramCounter(proccesor) {
-  return proccesor.programCounter[0];
-}
-
-export function setProgramCounter(proccesor, value) {
-  return proccesor.programCounter[0] = value;
-}
-
-export function getRegisterV0(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.V0];
-};
-
-export function setRegisterV0(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.V0] = value;
-};
-
-export function getRegisterV1(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.V1];
-};
-
-export function setRegisterV1(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.V1] = value;
-};
-
-export function getRegisterV2(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.V2];
-};
-
-export function setRegisterV2(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.V2] = value;
-};
-
-export function getRegisterV3(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.V3];
-};
-
-export function setRegisterV3(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.V3] = value;
-};
-
-export function getRegisterV4(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.V4];
-};
-
-export function setRegisterV4(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.V4] = value;
-};
-
-export function getRegisterV5(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.V5];
-};
-
-export function setRegisterV5(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.V5] = value;
-};
-
-export function getRegisterV6(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.V6];
-};
-
-export function setRegisterV6(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.V6] = value;
-};
-
-export function getRegisterV7(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.V7];
-};
-
-export function setRegisterV7(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.V7] = value;
-};
-
-export function getRegisterV8(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.V8];
-};
-
-export function setRegisterV8(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.V8] = value;
-};
-
-export function getRegisterV9(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.V9];
-};
-
-export function setRegisterV9(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.V9] = value;
-};
-
-export function getRegisterVA(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.VA];
-};
-
-export function setRegisterVA(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.VA] = value;
-};
-
-export function getRegisterVB(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.VB];
-};
-
-export function setRegisterVB(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.VB] = value;
-};
-
-export function getRegisterVC(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.VC];
-};
-
-export function setRegisterVC(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.VC] = value;
-};
-
-export function getRegisterVE(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.VE];
-};
-
-export function setRegisterVE(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.VE] = value;
-};
-
-export function getRegisterVF(proccesor) {
-  return proccesor.registers[REGISTERS_MAP.VF];
-};
-
-export function setRegisterVF(proccesor, value) {
-  return proccesor.registers[REGISTERS_MAP.VF] = value;
-};
-
-export function getRegisterVX(proccesor, register) {
-  return proccesor.registers[register];
-};
-
-export function setRegisterVX(proccesor, register, value) {
-  return proccesor.registers[register] = value;
-};

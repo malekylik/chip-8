@@ -59,7 +59,7 @@ export function executeOpcode(proccesor, opcode) {
     }
 
     case 0x5: {
-      if (getLeftRegisterNumber(opcode) === getRightRegisterNumber(opcode)) {
+      if (getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) === getRegisterVX(proccsor, getRightRegisterNumber(opcode))) {
         incrimentProgramCounterBy2(proccesor);
       }
 
@@ -91,16 +91,39 @@ export function executeOpcode(proccesor, opcode) {
         }
 
         case 0x5: {
-          const isXGreaterY = getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) > getRegisterVX(proccesor, getRightRegisterNumber(opcode));
-          const carryFlag = isXGreaterY ? CARRY_FLAG_SET : CARRY_FLAG_CLEAR;
+          const carryFlag =
+            getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) > getRegisterVX(proccesor, getRightRegisterNumber(opcode)) ?
+            CARRY_FLAG_SET : CARRY_FLAG_CLEAR;
 
-          if (carryFlag) {
-            subTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode));
-          } else {
-            subTwoRegisters(proccesor, getRightRegisterNumber(opcode), getLeftRegisterNumber(opcode));
-          }
+          subTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode));
 
           setRegisterVF(proccesor, carryFlag);
+
+          break;
+        }
+
+        case 0x6: {
+          setRegisterVF(proccesor, getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) & 0x1);
+          shiftRihgtTwoRegister(proccesor, getLeftRegisterNumber(opcode));
+
+          break;
+        }
+
+        case 0x7: {
+          const carryFlag =
+            getRegisterVX(proccesor, getRightRegisterNumber(opcode)) > getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) ?
+            CARRY_FLAG_SET : CARRY_FLAG_CLEAR;
+
+            subnTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode));
+
+          setRegisterVF(proccesor, carryFlag);
+
+          break;
+        }
+
+        case 0xE: {
+          setRegisterVF(proccesor, getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) & 0x80);
+          shiftLeftTwoRegister(proccesor, getLeftRegisterNumber(opcode));
 
           break;
         }
@@ -133,6 +156,18 @@ export function sumTwoRegisters(proccesor, registerX, registerY) {
 
 export function subTwoRegisters(proccesor, registerX, registerY) {
   return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) - getRegisterVX(proccesor, registerY));
+}
+
+export function subnTwoRegisters(proccesor, registerX, registerY) {
+  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerY) - getRegisterVX(proccesor, registerX));
+}
+
+export function shiftRihgtTwoRegister(proccesor, registerX) {
+  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) >>> 1);
+}
+
+export function shiftLeftTwoRegister(proccesor, registerX) {
+  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) << 1);
 }
 
 export function incrimentProgramCounterBy2(proccesor) {

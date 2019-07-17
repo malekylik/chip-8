@@ -36,7 +36,7 @@ export function executeOpcode(proccesor, opcode) {
 }
 
 function setProgramCounter(proccesor, value) {
-  return proccesor.programCounter = value;
+  return proccesor.programCounter[0] = value;
 }
 
 export function getRegisterV0(proccesor) {

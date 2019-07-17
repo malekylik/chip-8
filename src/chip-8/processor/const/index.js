@@ -1,5 +1,8 @@
 export const REGISTERS_COUNT = 16;
 
+export const CARRY_FLAG_CLEAR = 0;
+export const CARRY_FLAG_SET = 1;
+
 export const REGISTERS_MAP = {
   V0: 0,
   V1: 1,

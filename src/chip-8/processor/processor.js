@@ -1,4 +1,4 @@
-import { REGISTERS_COUNT } from './const';
+import { REGISTERS_COUNT, CARRY_FLAG_CLEAR, CARRY_FLAG_SET } from './const';
 import {
   getPostfixValue,
   getPrefixValue,
@@ -74,14 +74,65 @@ export function executeOpcode(proccesor, opcode) {
       const postFix = getPostfixValue(opcode);
 
       switch (postFix) {
-        case 0x0: setRegisterVX(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
+        case 0x0: movRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
 
+        case 0x1: orTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
 
+        case 0x2: andTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
+
+        case 0x3: xorTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
+
+        case 0x4: {
+          const carryFlag = sumTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)) > 0xFF ?
+            CARRY_FLAG_SET : CARRY_FLAG_CLEAR;
+          setRegisterVF(proccesor, carryFlag);
+
+          break;
+        }
+
+        case 0x5: {
+          const isXGreaterY = getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) > getRegisterVX(proccesor, getRightRegisterNumber(opcode));
+          const carryFlag = isXGreaterY ? CARRY_FLAG_SET : CARRY_FLAG_CLEAR;
+
+          if (carryFlag) {
+            subTwoRegisters(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode));
+          } else {
+            subTwoRegisters(proccesor, getRightRegisterNumber(opcode), getLeftRegisterNumber(opcode));
+          }
+
+          setRegisterVF(proccesor, carryFlag);
+
+          break;
+        }
       }
 
       break;
     }
   }
+}
+
+export function movRegisters(proccesor, registerTo, registerFrom) {
+  return setRegisterVX(proccesor, registerTo, getRegisterVX(proccesor, registerFrom));
+}
+
+export function orTwoRegisters(proccesor, registerX, registerY) {
+  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) | getRegisterVX(proccesor, registerY));
+}
+
+export function andTwoRegisters(proccesor, registerX, registerY) {
+  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) & getRegisterVX(proccesor, registerY));
+}
+
+export function xorTwoRegisters(proccesor, registerX, registerY) {
+  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) ^ getRegisterVX(proccesor, registerY));
+}
+
+export function sumTwoRegisters(proccesor, registerX, registerY) {
+  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) + getRegisterVX(proccesor, registerY));
+}
+
+export function subTwoRegisters(proccesor, registerX, registerY) {
+  return setRegisterVX(proccesor, registerX, getRegisterVX(proccesor, registerX) - getRegisterVX(proccesor, registerY));
 }
 
 export function incrimentProgramCounterBy2(proccesor) {

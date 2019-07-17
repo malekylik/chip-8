@@ -11,6 +11,10 @@ export function getPrefixValue(opcode) {
   return getLastFourBitsFromMostBytes(opcode);
 }
 
+export function getPostfixValue(opcode) {
+  return getFirstFourBitsFromLeastBytes(opcode);
+}
+
 export function getValueWithourPrefix(opcode) {
   return opcode.uint16[0] & 0x0FFF;
 }
@@ -21,6 +25,18 @@ export function getLeastByte(opcode) {
 
 export function getMostByte(opcode) {
   return opcode.uint8[LEAST_SIGNIFICANT_BYTES];
+}
+
+export function getLeftRegisterNumber(opcode) {
+  return getFirstFourBitsFromMostBytes(opcode);
+}
+
+export function getRightRegisterNumber(opcode) {
+  return getLastFourBitsFromLeastBytes(opcode);
+}
+
+export function getValueFromOpcode(opcode) {
+  return getLeastByte(opcode);
 }
 
 export function getFirstFourBitsFromLeastBytes(opcode) {

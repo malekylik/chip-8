@@ -1,5 +1,13 @@
 import { REGISTERS_COUNT } from './const';
-import { getPrefixValue, getLeastByte, getValueWithourPrefix } from './opcode/opcode';
+import {
+  getPostfixValue,
+  getPrefixValue,
+  getLeastByte,
+  getValueWithourPrefix,
+  getValueFromOpcode,
+  getLeftRegisterNumber ,
+  getRightRegisterNumber
+} from './opcode/opcode';
 
 export function creatProcessor() {
   const registerBytes =  new ArrayBuffer(REGISTERS_COUNT);
@@ -32,10 +40,63 @@ export function executeOpcode(proccesor, opcode) {
 
       break;
     }
+
+    case 0x2: break; // TODO: stack
+    case 0x3: {
+      if (getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) === getValueFromOpcode(opcode)) {
+        incrimentProgramCounterBy2(proccesor);
+      }
+
+      break;
+    }
+
+    case 0x4: {
+      if (getRegisterVX(proccesor, getLeftRegisterNumber(opcode)) !== getValueFromOpcode(opcode)) {
+        incrimentProgramCounterBy2(proccesor);
+      }
+
+      break;
+    }
+
+    case 0x5: {
+      if (getLeftRegisterNumber(opcode) === getRightRegisterNumber(opcode)) {
+        incrimentProgramCounterBy2(proccesor);
+      }
+
+      break;
+    }
+
+    case 0x6: setRegisterVX(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
+
+    case 0x7: incrimentRegisterVXBy(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
+
+    case 0x8: {
+      const postFix = getPostfixValue(opcode);
+
+      switch (postFix) {
+        case 0x0: setRegisterVX(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
+
+
+      }
+
+      break;
+    }
   }
 }
 
-function setProgramCounter(proccesor, value) {
+export function incrimentProgramCounterBy2(proccesor) {
+  return incrimentRegisterVXBy(proccesor, getProgramCounter(proccesor), 2);
+}
+
+export function incrimentRegisterVXBy(proccesor, register, value) {
+  return setRegisterVX(proccesor, register, getRegisterVX(proccesor, register) + value);
+}
+
+export function getProgramCounter(proccesor) {
+  return proccesor.programCounter[0];
+}
+
+export function setProgramCounter(proccesor, value) {
   return proccesor.programCounter[0] = value;
 }
 
@@ -157,4 +218,12 @@ export function getRegisterVF(proccesor) {
 
 export function setRegisterVF(proccesor, value) {
   return proccesor.registers[REGISTERS_MAP.VF] = value;
+};
+
+export function getRegisterVX(proccesor, register) {
+  return proccesor.registers[register];
+};
+
+export function setRegisterVX(proccesor, register, value) {
+  return proccesor.registers[register] = value;
 };

@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 
 import './main.css';
 import { creatProcessor, executeOpcode } from './chip-8/processor/processor';
-import { MOCK_GAME } from './chip-8/processor/const';
+import { getProgramCounter } from './chip-8/processor/methods';
+import { MOCK_GAME, PROGRAM_START_ADDRESS } from './chip-8/processor/const';
 import { createOpcode } from './chip-8/processor/opcode/opcode';
 
 class ABC extends React.Component {
@@ -14,6 +15,14 @@ ReactDOM.render(<span className='span'>hello</span>, document.getElementById('ap
 
 const processor = creatProcessor();
 
-for (let i = 0; i + 2 < MOCK_GAME.length; i += 2) {
-  executeOpcode(processor, createOpcode(MOCK_GAME.subarray(i, i + 2)));
+function main() {
+  requestAnimationFrame(main);
+
+  const I = getProgramCounter(processor) - PROGRAM_START_ADDRESS;
+
+  executeOpcode(processor, createOpcode(MOCK_GAME.subarray(I, I + 2)));
+
+  console.log(`I: ${I}`);
 }
+
+main();

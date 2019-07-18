@@ -59,7 +59,8 @@ export function executeOpcode(proccesor, opcode, stack) {
 
       switch(leastByte) {
         case 0xE0: CLR(); break; // TODO: display
-        case 0xEE: RET(); break // TODO: stack
+
+        case 0xEE: RET(proccesor, stack); break
       }
 
       break;

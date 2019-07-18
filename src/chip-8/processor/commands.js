@@ -10,14 +10,14 @@ import {
   shiftRihgtRegister,
   shiftLeftRegister,
 } from './methods';
-import { push } from '../stack/stack';
+import { push, pop } from '../stack/stack';
 
 export function CLR() {
 
 }
 
-export function RET() {
-
+export function RET(proccesor, stack) {
+  JP(proccesor, pop(stack));
 }
 
 export function JP(proccesor, address) {

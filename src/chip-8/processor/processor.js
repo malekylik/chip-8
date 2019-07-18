@@ -49,7 +49,7 @@ export function creatProcessor() {
   return proccesor;
 }
 
-export function executeOpcode(proccesor, opcode) {
+export function executeOpcode(proccesor, opcode, stack) {
   const PC = getProgramCounter(proccesor);
   const prefix = getPrefixValue(opcode);
 
@@ -59,7 +59,8 @@ export function executeOpcode(proccesor, opcode) {
 
       switch(leastByte) {
         case 0xE0: CLR(); break; // TODO: display
-        case 0xEE: RET(); break // TODO: stack
+
+        case 0xEE: RET(proccesor, stack); break
       }
 
       break;
@@ -67,7 +68,7 @@ export function executeOpcode(proccesor, opcode) {
 
     case 0x1: JP(proccesor, getValueWithourPrefix(opcode)); break;
 
-    case 0x2: CALL(); break; // TODO: stack
+    case 0x2: CALL(proccesor, stack, getValueFromOpcode(opcode)); break;
 
     case 0x3: SE(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 

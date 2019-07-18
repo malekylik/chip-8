@@ -1,5 +1,6 @@
 import {
   getRegisterVX,
+  getProgramCounter,
   setProgramCounter,
   setRegisterVX,
   setRegisterVF,
@@ -9,21 +10,23 @@ import {
   shiftRihgtRegister,
   shiftLeftRegister,
 } from './methods';
+import { push, pop } from '../stack/stack';
 
 export function CLR() {
 
 }
 
-export function RET() {
-
+export function RET(proccesor, stack) {
+  JP(proccesor, pop(stack));
 }
 
 export function JP(proccesor, address) {
   return setProgramCounter(proccesor, address);
 }
 
-export function CALL() {
-
+export function CALL(proccesor, stack, address) {
+  push(stack, getProgramCounter(proccesor));
+  JP(proccesor, address);
 }
 
 export function SE(proccesor, register, value) {

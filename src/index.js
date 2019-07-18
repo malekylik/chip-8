@@ -6,6 +6,7 @@ import { creatProcessor, executeOpcode } from './chip-8/processor/processor';
 import { getProgramCounter } from './chip-8/processor/methods';
 import { MOCK_GAME, PROGRAM_START_ADDRESS } from './chip-8/processor/const';
 import { createOpcode } from './chip-8/processor/opcode/opcode';
+import { createStack } from './chip-8/stack/stack';
 
 class ABC extends React.Component {
   state = { a: 'asd' }
@@ -14,13 +15,14 @@ class ABC extends React.Component {
 ReactDOM.render(<span className='span'>hello</span>, document.getElementById('app'));
 
 const processor = creatProcessor();
+const stack = createStack();
 
 function main() {
   requestAnimationFrame(main);
 
   const I = getProgramCounter(processor) - PROGRAM_START_ADDRESS;
 
-  executeOpcode(processor, createOpcode(MOCK_GAME.subarray(I, I + 2)));
+  executeOpcode(processor, createOpcode(MOCK_GAME.subarray(I, I + 2)), stack);
 
   console.log(`I: ${I}`);
 }

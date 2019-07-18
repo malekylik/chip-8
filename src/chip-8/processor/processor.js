@@ -171,7 +171,17 @@ export function executeOpcode(proccesor, opcode, stack, memory) {
           break;
         }
 
-        case 0x55: break; // TODO: I
+        case 0x55: {
+          const registerCount = getLeftRegisterNumber(opcode);
+
+          for (let i = 0; i < registerCount; i++) {
+            setMemoryByte(memory, PC + i, getRegisterVX(proccesor, i));
+          }
+
+          JP(proccesor, PC + registerCount + 1);
+
+          break;
+        }
 
         case 0x65: break; // TODO: I
       }

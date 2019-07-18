@@ -1,4 +1,8 @@
-import { REGISTERS_MAP } from './const';
+import { REGISTERS_MAP, OPCODE_BYTES } from './const';
+
+export function getNextInstructionAddress(instructionAddress) {
+  return instructionAddress + OPCODE_BYTES;
+}
 
 export function shiftRihgtRegister(proccesor, registerX, value) {
   return setRegisterVX(proccesor, registerX, value >>> 1);

@@ -6,7 +6,7 @@ import {
   CARRY_FLAG_CLEAR,
   CARRY_FLAG_SET
 } from './const';
-import { getRegisterVX, getRegisterV0, getProgramCounter } from './methods';
+import { getRegisterVX, getRegisterV0, getProgramCounter, getNextInstructionAddress } from './methods';
 import {
   getPostfixValue,
   getPrefixValue,
@@ -14,7 +14,7 @@ import {
   getValueWithourPrefix,
   getValueFromOpcode,
   getLeftRegisterNumber ,
-  getRightRegisterNumber
+  getRightRegisterNumber,
 } from './opcode/opcode';
 import {
   CLR,
@@ -50,6 +50,7 @@ export function creatProcessor() {
 }
 
 export function executeOpcode(proccesor, opcode) {
+  const PC = getProgramCounter(proccesor);
   const prefix = getPrefixValue(opcode);
 
   switch (prefix) {
@@ -167,4 +168,16 @@ export function executeOpcode(proccesor, opcode) {
       break;
     }
   }
+
+  return updateProgramCounter(proccesor, PC);
+}
+
+function updateProgramCounter(proccesor, prevPC) {
+  const PC = getProgramCounter(proccesor);
+
+  if (prevPC === PC) {
+    return JP(proccesor, getNextInstructionAddress(prevPC));
+  }
+
+  return PC;
 }

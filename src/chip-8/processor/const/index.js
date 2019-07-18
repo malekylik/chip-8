@@ -5,8 +5,6 @@ export const PROGRAM_COUNTER_BYTES = 2;
 export const CARRY_FLAG_CLEAR = 0;
 export const CARRY_FLAG_SET = 1;
 
-export const PROGRAM_START_ADDRESS = 0x200;
-
 export const OPCODE_BYTES = 2;
 
 export const REGISTERS_MAP = {

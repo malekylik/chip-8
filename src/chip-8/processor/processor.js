@@ -2,10 +2,10 @@ import {
   REGISTERS_COUNT,
   PROGRAM_COUNTER_BYTES,
   PROGRAM_COUNTER,
-  PROGRAM_START_ADDRESS,
   CARRY_FLAG_CLEAR,
   CARRY_FLAG_SET
 } from './const';
+import { PROGRAM_START_ADDRESS } from '../memory/const';
 import { getRegisterVX, getRegisterV0, getProgramCounter, getNextInstructionAddress } from './methods';
 import {
   getPostfixValue,

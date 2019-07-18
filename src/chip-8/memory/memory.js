@@ -18,6 +18,10 @@ export function readMemory(memory, start, length) {
   return memory.bytes.subarray(start, start + length);
 }
 
+export function readMemoreByte(memory, position) {
+  return memory.bytes[position];
+}
+
 export function setMemoryByte(memory, position, byte) {
   return memory.bytes[position] = byte;
 }

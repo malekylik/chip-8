@@ -36,7 +36,7 @@ import {
   SKP,
   SKNP,
 } from './commands';
-import { setMemoryByte } from '../memory/memory';
+import { readMemoreByte, setMemoryByte } from '../memory/memory';
 import { getDigit } from '../../util/index';
 
 export function creatProcessor() {
@@ -183,7 +183,17 @@ export function executeOpcode(proccesor, opcode, stack, memory) {
           break;
         }
 
-        case 0x65: break; // TODO: I
+        case 0x65: {
+          const registerCount = getLeftRegisterNumber(opcode);
+
+          for (let i = 0; i < registerCount; i++) {
+            LD(proccesor, i, readMemoreByte(memory, PC + i));
+          }
+
+          JP(proccesor, PC + registerCount + 1);
+
+          break;
+        }
       }
 
       break;

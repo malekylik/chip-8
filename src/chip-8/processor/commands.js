@@ -79,3 +79,15 @@ export function SHL(proccesor, register, value) {
 export function RND(proccesor, register, mask) {
   return setRegisterVX(proccesor, register, ((Math.random() * 255) | 0) & mask);
 }
+
+export function DRW() {
+
+}
+
+export function SKP() {
+
+}
+
+export function SKNP() {
+
+}

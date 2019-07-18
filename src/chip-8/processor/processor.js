@@ -6,7 +6,7 @@ import {
   CARRY_FLAG_CLEAR,
   CARRY_FLAG_SET
 } from './const';
-import { getRegisterVX, getRegisterV0 } from './methods';
+import { getRegisterVX, getRegisterV0, getProgramCounter } from './methods';
 import {
   getPostfixValue,
   getPrefixValue,
@@ -32,6 +32,9 @@ import {
   SHR,
   SHL,
   RND,
+  DRW,
+  SKP,
+  SKNP,
 } from './commands';
 
 export function creatProcessor() {
@@ -122,6 +125,46 @@ export function executeOpcode(proccesor, opcode) {
 
     case 0xB: JP(proccesor, getValueWithourPrefix(opcode) + getRegisterV0(proccesor));
 
-    case 0xC: RND(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode))
+    case 0xC: RND(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode));
+
+    case 0xD: DRW(); // TODO: display
+
+    case 0xE: {
+      const postFix = getValueFromOpcode(opcode);
+
+      switch (postFix) {
+        case 0x9E: SKP(); break; // TODO: keyboard
+
+        case 0xA1: SKNP(); break; // TODO: keyboard
+      }
+
+      break;
+    }
+
+    case 0xF: {
+      const postFix = getValueFromOpcode(opcode);
+
+      switch (postFix) {
+        case 0x07: break; // TODO: delay timer
+
+        case 0x0A: break; // TODO: keyboard
+
+        case 0x15: break; // TODO: delay timer
+
+        case 0x18: break; // TODO: sound timer
+
+        case 0x1E: JP(proccesor, getProgramCounter(proccesor) + getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
+
+        case 0x29: break; // TODO: display
+
+        case 0x33: break; // TODO: I
+
+        case 0x55: break; // TODO: I
+
+        case 0x65: break; // TODO: I
+      }
+
+      break;
+    }
   }
 }

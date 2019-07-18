@@ -17,3 +17,7 @@ export function loadGame(memory, game) {
 export function readMemory(memory, start, length) {
   return memory.bytes.subarray(start, start + length);
 }
+
+export function setMemoryByte(memory, position, byte) {
+  return memory.bytes[position] = byte;
+}

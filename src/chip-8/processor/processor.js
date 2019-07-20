@@ -2,10 +2,10 @@ import {
   REGISTERS_COUNT,
   PROGRAM_COUNTER_BYTES,
   PROGRAM_COUNTER,
-  PROGRAM_START_ADDRESS,
   CARRY_FLAG_CLEAR,
   CARRY_FLAG_SET
 } from './const';
+import { PROGRAM_START_ADDRESS } from '../memory/const';
 import { getRegisterVX, getRegisterV0, getProgramCounter, getNextInstructionAddress } from './methods';
 import {
   getPostfixValue,
@@ -36,6 +36,8 @@ import {
   SKP,
   SKNP,
 } from './commands';
+import { readMemoreByte, setMemoryByte } from '../memory/memory';
+import { getDigit } from '../../util/index';
 
 export function creatProcessor() {
   const registerBytes =  new ArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES);
@@ -49,7 +51,7 @@ export function creatProcessor() {
   return proccesor;
 }
 
-export function executeOpcode(proccesor, opcode, stack) {
+export function executeOpcode(proccesor, opcode, stack, memory) {
   const PC = getProgramCounter(proccesor);
   const prefix = getPrefixValue(opcode);
 
@@ -159,11 +161,39 @@ export function executeOpcode(proccesor, opcode, stack) {
 
         case 0x29: break; // TODO: display
 
-        case 0x33: break; // TODO: I
+        case 0x33: {
+          const registerValue = getRegisterVX(proccesor, getLeftRegisterNumber(opcode));
 
-        case 0x55: break; // TODO: I
+          setMemoryByte(memory, PC, getDigit(registerValue, 2));
+          setMemoryByte(memory, PC + 1, getDigit(registerValue, 1));
+          setMemoryByte(memory, PC + 2, getDigit(registerValue, 0));
 
-        case 0x65: break; // TODO: I
+          break;
+        }
+
+        case 0x55: {
+          const registerCount = getLeftRegisterNumber(opcode);
+
+          for (let i = 0; i < registerCount; i++) {
+            setMemoryByte(memory, PC + i, getRegisterVX(proccesor, i));
+          }
+
+          JP(proccesor, PC + registerCount + 1);
+
+          break;
+        }
+
+        case 0x65: {
+          const registerCount = getLeftRegisterNumber(opcode);
+
+          for (let i = 0; i < registerCount; i++) {
+            LD(proccesor, i, readMemoreByte(memory, PC + i));
+          }
+
+          JP(proccesor, PC + registerCount + 1);
+
+          break;
+        }
       }
 
       break;

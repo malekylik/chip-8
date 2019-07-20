@@ -25,12 +25,12 @@ loadGame(memory, MOCK_GAME);
 function main() {
   requestAnimationFrame(main);
 
-  const I = getProgramCounter(processor);
-  const opcode = createOpcode(readMemory(memory, I, OPCODE_BYTES));
+  const PC = getProgramCounter(processor);
+  const opcode = createOpcode(readMemory(memory, PC, OPCODE_BYTES));
 
   executeOpcode(processor, opcode, stack);
 
-  console.log(`I: ${I}`);
+  console.log(`PC: ${PC}`);
 }
 
 main();

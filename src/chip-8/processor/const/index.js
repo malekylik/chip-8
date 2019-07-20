@@ -1,6 +1,8 @@
 export const REGISTERS_COUNT = 16;
 export const PROGRAM_COUNTER = 8;
 export const PROGRAM_COUNTER_BYTES = 2;
+export const I_REGISTER = 9;
+export const I_REGISTER_BYTES = 2;
 
 export const CARRY_FLAG_CLEAR = 0;
 export const CARRY_FLAG_SET = 1;

@@ -4,6 +4,8 @@ export const DISPLAY_HEIGHT = 32;
 export const PIXEL_OFF = 0;
 export const PIXEL_ON = 1;
 
+export const FONT_SIZE = 5;
+
 export const FONTS = new Uint8Array([
   0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
   0x20, 0x60, 0x20, 0x20, 0x70, // 1

@@ -1,4 +1,4 @@
-import { MEMORY_BYTES, PROGRAM_START_ADDRESS } from './const';
+import { MEMORY_BYTES, FONTS_START_ADDRESS, PROGRAM_START_ADDRESS } from './const';
 
 export function createMemory() {
   const bytes = new ArrayBuffer(MEMORY_BYTES);
@@ -9,7 +9,7 @@ export function createMemory() {
 }
 
 export function loadFonts(memory, fonts) {
-  setMemoryBytes(memory, 0, fonts);
+  setMemoryBytes(memory, FONTS_START_ADDRESS, fonts);
 }
 
 export function loadGame(memory, game) {

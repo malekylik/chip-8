@@ -7,7 +7,7 @@ import {
   CARRY_FLAG_CLEAR,
   CARRY_FLAG_SET
 } from './const';
-import { PROGRAM_START_ADDRESS } from '../memory/const';
+import { PROGRAM_START_ADDRESS, FONTS_START_ADDRESS } from '../memory/const';
 import {
   getRegisterVX,
   getRegisterV0,
@@ -47,6 +47,7 @@ import {
 } from './commands';
 import { readMemoreByte, setMemoryByte } from '../memory/memory';
 import { getDigit } from '../../util/index';
+import { getFontAddress } from '../display/display';
 
 export function creatProcessor() {
   const registerBytes =  new ArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES + I_REGISTER_BYTES);
@@ -169,7 +170,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display) {
 
         case 0x1E: setIRegister(proccesor, getIRegister(proccesor) + getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
-        case 0x29: break; // TODO: display
+        case 0x29: setIRegister(proccesor, getFontAddress(FONTS_START_ADDRESS, getLeftRegisterNumber(opcode))); break; // TODO: display
 
         case 0x33: {
           const registerValue = getRegisterVX(proccesor, getLeftRegisterNumber(opcode));

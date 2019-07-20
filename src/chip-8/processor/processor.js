@@ -8,7 +8,14 @@ import {
   CARRY_FLAG_SET
 } from './const';
 import { PROGRAM_START_ADDRESS } from '../memory/const';
-import { getRegisterVX, getRegisterV0, getProgramCounter, getNextInstructionAddress } from './methods';
+import {
+  getRegisterVX,
+  getRegisterV0,
+  getProgramCounter,
+  getNextInstructionAddress,
+  getIRegister,
+  setIRegister,
+} from './methods';
 import {
   getPostfixValue,
   getPrefixValue,
@@ -128,7 +135,7 @@ export function executeOpcode(proccesor, opcode, stack, memory) {
 
     case 0x9: SNE(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode)));
 
-    case 0xA: JP(proccesor, getValueWithourPrefix(opcode));
+    case 0xA: setIRegister(proccesor, getValueWithourPrefix(opcode));
 
     case 0xB: JP(proccesor, getValueWithourPrefix(opcode) + getRegisterV0(proccesor));
 
@@ -160,40 +167,43 @@ export function executeOpcode(proccesor, opcode, stack, memory) {
 
         case 0x18: break; // TODO: sound timer
 
-        case 0x1E: JP(proccesor, getProgramCounter(proccesor) + getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
+        case 0x1E: setIRegister(proccesor, getIRegister(proccesor) + getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
         case 0x29: break; // TODO: display
 
         case 0x33: {
           const registerValue = getRegisterVX(proccesor, getLeftRegisterNumber(opcode));
+          const I = getIRegister(proccesor);
 
-          setMemoryByte(memory, PC, getDigit(registerValue, 2));
-          setMemoryByte(memory, PC + 1, getDigit(registerValue, 1));
-          setMemoryByte(memory, PC + 2, getDigit(registerValue, 0));
+          setMemoryByte(memory, I, getDigit(registerValue, 2));
+          setMemoryByte(memory, I + 1, getDigit(registerValue, 1));
+          setMemoryByte(memory, I + 2, getDigit(registerValue, 0));
 
           break;
         }
 
         case 0x55: {
           const registerCount = getLeftRegisterNumber(opcode);
+          const I = getIRegister(proccesor);
 
           for (let i = 0; i < registerCount; i++) {
-            setMemoryByte(memory, PC + i, getRegisterVX(proccesor, i));
+            setMemoryByte(memory, I + i, getRegisterVX(proccesor, i));
           }
 
-          JP(proccesor, PC + registerCount + 1);
+          setIRegister(proccesor, PC + registerCount + 1);
 
           break;
         }
 
         case 0x65: {
           const registerCount = getLeftRegisterNumber(opcode);
+          const I = getIRegister(proccesor);
 
           for (let i = 0; i < registerCount; i++) {
-            LD(proccesor, i, readMemoreByte(memory, PC + i));
+            LD(proccesor, i, readMemoreByte(memory, I + i));
           }
 
-          JP(proccesor, PC + registerCount + 1);
+          setIRegister(proccesor, I + registerCount + 1);
 
           break;
         }

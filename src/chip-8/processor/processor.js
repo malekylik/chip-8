@@ -61,7 +61,7 @@ export function creatProcessor() {
   return proccesor;
 }
 
-export function executeOpcode(proccesor, opcode, stack, memory) {
+export function executeOpcode(proccesor, opcode, stack, memory, display) {
   const PC = getProgramCounter(proccesor);
   const prefix = getPrefixValue(opcode);
 

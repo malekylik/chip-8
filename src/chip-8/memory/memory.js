@@ -8,10 +8,12 @@ export function createMemory() {
   };
 }
 
+export function loadFonts(memory, fonts) {
+  setMemoryBytes(memory, 0, fonts);
+}
+
 export function loadGame(memory, game) {
-  for (let i = 0; i < game.length; i++) {
-    memory.bytes[PROGRAM_START_ADDRESS + i] = game[i];
-  }
+  setMemoryBytes(memory, PROGRAM_START_ADDRESS, game);
 }
 
 export function readMemory(memory, start, length) {
@@ -24,4 +26,10 @@ export function readMemoreByte(memory, position) {
 
 export function setMemoryByte(memory, position, byte) {
   return memory.bytes[position] = byte;
+}
+
+export function setMemoryBytes(memory, position, bytes) {
+  for (let i = 0; i < memory.bytes.length && i < bytes.length; i++) {
+    memory.bytes[position + i] = bytes[i];
+  }
 }

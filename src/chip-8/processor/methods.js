@@ -32,6 +32,14 @@ export function setProgramCounter(proccesor, value) {
   return proccesor.programCounter[0] = value;
 }
 
+export function getIRegister(proccesor) {
+  return proccesor.I[0];
+}
+
+export function setIRegister(proccesor, value) {
+  return proccesor.I[0] = value;
+}
+
 export function getRegisterV0(proccesor) {
   return proccesor.registers[REGISTERS_MAP.V0];
 };

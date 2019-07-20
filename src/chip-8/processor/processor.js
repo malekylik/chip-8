@@ -2,6 +2,8 @@ import {
   REGISTERS_COUNT,
   PROGRAM_COUNTER_BYTES,
   PROGRAM_COUNTER,
+  I_REGISTER,
+  I_REGISTER_BYTES,
   CARRY_FLAG_CLEAR,
   CARRY_FLAG_SET
 } from './const';
@@ -40,10 +42,11 @@ import { readMemoreByte, setMemoryByte } from '../memory/memory';
 import { getDigit } from '../../util/index';
 
 export function creatProcessor() {
-  const registerBytes =  new ArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES);
+  const registerBytes =  new ArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES + I_REGISTER_BYTES);
   const proccesor = {
     registers: new Uint8Array(registerBytes).subarray(0, REGISTERS_COUNT),
-    programCounter: new Uint16Array(registerBytes).subarray(PROGRAM_COUNTER)
+    programCounter: new Uint16Array(registerBytes).subarray(PROGRAM_COUNTER, I_REGISTER),
+    I: new Uint16Array(registerBytes).subarray(I_REGISTER),
   };
 
   JP(proccesor, PROGRAM_START_ADDRESS);

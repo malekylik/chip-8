@@ -11,9 +11,15 @@ import {
   shiftLeftRegister,
 } from './methods';
 import { push, pop } from '../stack/stack';
+import { DISPLAY_WIDTH, DISPLAY_HEIGHT } from '../display/const/index';
+import { clearPixel } from '../display/display';
 
-export function CLR() {
-
+export function CLR(display) {
+  for (let i = 0; i < DISPLAY_HEIGHT; i++) {
+    for (let j = 0; j < DISPLAY_WIDTH; j++) {
+      clearPixel(display, j, i);
+    }
+  }
 }
 
 export function RET(proccesor, stack) {

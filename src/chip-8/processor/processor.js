@@ -70,7 +70,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display) {
       const leastByte = getLeastByte(opcode);
 
       switch(leastByte) {
-        case 0xE0: CLR(); break; // TODO: display
+        case 0xE0: CLR(display); break;
 
         case 0xEE: RET(proccesor, stack); break
       }

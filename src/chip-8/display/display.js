@@ -1,6 +1,6 @@
 import { DISPLAY_WIDTH, DISPLAY_HEIGHT, PIXEL_OFF, PIXEL_ON } from './const';
 
-export function creatDisplay() {
+export function createDisplay() {
   const videoBuffer = new ArrayBuffer(DISPLAY_WIDTH * DISPLAY_HEIGHT);
 
   return {

@@ -7,7 +7,8 @@ import { getProgramCounter } from './chip-8/processor/methods';
 import { MOCK_GAME, OPCODE_BYTES } from './chip-8/processor/const';
 import { createOpcode } from './chip-8/processor/opcode/opcode';
 import { createStack } from './chip-8/stack/stack';
-import { createMemory, loadGame, readMemory } from './chip-8/memory/memory';
+import { createMemory, loadGame, readMemory, loadFonts } from './chip-8/memory/memory';
+import { createDisplay } from './chip-8/display/display';
 import { FONTS } from './chip-8/display/const/index';
 
 ReactDOM.render(<span className='span'>hello</span>, document.getElementById('app'));

@@ -4,7 +4,6 @@ import {
   setProgramCounter,
   setRegisterVX,
   setRegisterVF,
-  incrimentProgramCounterBy2,
   incrimentProgramCounterBy4,
   incrimentRegisterVXBy,
   decrementRegisterVXBy,
@@ -91,7 +90,7 @@ export function RND(proccesor, register, mask) {
   return setRegisterVX(proccesor, register, ((Math.random() * 255) | 0) & mask);
 }
 
-export function DRW(proccesor, display, x, y, memory, I, n) {
+export function DRW(display, x, y, memory, I, n) {
   let eraseCount = 0;
 
   for (let i = 0; i < n; i++) {
@@ -105,7 +104,7 @@ export function DRW(proccesor, display, x, y, memory, I, n) {
     }
   }
 
-  setRegisterVF(proccesor, (eraseCount / eraseCount) | 0);
+  return (eraseCount / eraseCount) | 0;
 }
 
 export function SKP() {

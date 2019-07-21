@@ -11,6 +11,7 @@ import { PROGRAM_START_ADDRESS, FONTS_START_ADDRESS } from '../memory/const';
 import {
   getRegisterVX,
   getRegisterV0,
+  setRegisterVF,
   getProgramCounter,
   getNextInstructionAddress,
   getIRegister,
@@ -142,16 +143,17 @@ export function executeOpcode(proccesor, opcode, stack, memory, display) {
 
     case 0xC: RND(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 
-    case 0xD: 
-      DRW(
-        proccesor,
-        display,
-        getRegisterVX(proccesor, getLeftRegisterNumber(opcode)),
-        getRegisterVX(proccesor, getRightRegisterNumber(opcode)),
-        memory,
-        getIRegister(proccesor),
-        getPostfixValue(opcode)
-        );
+    case 0xD:
+      setRegisterVF(proccesor,
+        DRW(
+          display,
+          getRegisterVX(proccesor, getLeftRegisterNumber(opcode)),
+          getRegisterVX(proccesor, getRightRegisterNumber(opcode)),
+          memory,
+          getIRegister(proccesor),
+          getPostfixValue(opcode)
+        )
+      );
       break;
 
     case 0xE: {
@@ -180,7 +182,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display) {
 
         case 0x1E: setIRegister(proccesor, getIRegister(proccesor) + getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
-        case 0x29: setIRegister(proccesor, getFontAddress(FONTS_START_ADDRESS, getLeftRegisterNumber(opcode))); break;
+        case 0x29: setIRegister(proccesor, getFontAddress(FONTS_START_ADDRESS, getRegisterVX(proccesor, getLeftRegisterNumber(opcode)))); break;
 
         case 0x33: {
           const registerValue = getRegisterVX(proccesor, getLeftRegisterNumber(opcode));

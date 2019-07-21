@@ -5,11 +5,11 @@ import {
   setRegisterVX,
   setRegisterVF,
   incrimentProgramCounterBy2,
+  incrimentProgramCounterBy4,
   incrimentRegisterVXBy,
   decrementRegisterVXBy,
   shiftRihgtRegister,
   shiftLeftRegister,
-  setIRegister,
 } from './methods';
 import { push, pop } from '../stack/stack';
 import { DISPLAY_WIDTH, DISPLAY_HEIGHT } from '../display/const/index';
@@ -39,13 +39,13 @@ export function CALL(proccesor, stack, address) {
 
 export function SE(proccesor, register, value) {
   if (getRegisterVX(proccesor, register) === value) {
-    incrimentProgramCounterBy2(proccesor);
+    incrimentProgramCounterBy4(proccesor);
   }
 }
 
 export function SNE(proccesor, register, value) {
   if (getRegisterVX(proccesor, register) !== value) {
-    incrimentProgramCounterBy2(proccesor);
+    incrimentProgramCounterBy4(proccesor);
   }
 }
 
@@ -95,15 +95,17 @@ export function DRW(proccesor, display, x, y, memory, I, n) {
   let eraseCount = 0;
 
   for (let i = 0; i < n; i++) {
-    eraseCount += xorPixel(
-      display,
-      (x + i) % DISPLAY_WIDTH,
-      y,
-      readMemoreByte(memory, I + i)
-    );
+    for (let j = 0; j < 8; j++) {
+      eraseCount += xorPixel(
+        display,
+        (x + j) % DISPLAY_WIDTH,
+        (y + i) % DISPLAY_HEIGHT,
+        (readMemoreByte(memory, I + i) & (0x80 >>> j))
+      );
+    }
   }
 
-  setIRegister(proccesor, eraseCount % 1);
+  setRegisterVF(proccesor, (eraseCount / eraseCount) | 0);
 }
 
 export function SKP() {

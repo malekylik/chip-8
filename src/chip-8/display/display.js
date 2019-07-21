@@ -9,7 +9,11 @@ export function createDisplay() {
 }
 
 export function xorPixel(display, x, y, value) {
-  return Number(!setPixel(display, x, y, getPixel(display, x, y) ^ value));
+  const isErased = Number(Boolean(value) && Boolean(getPixel(display, x, y)));
+
+  setPixel(display, x, y, getPixel(display, x, y) ^ value);
+
+  return isErased
 }
 
 export function getPixel(display, x, y) {
@@ -17,7 +21,7 @@ export function getPixel(display, x, y) {
 }
 
 export function setPixel(display, x, y, value) {
-  return display.buffer[DISPLAY_WIDTH * y + x] = value % 1;
+  return display.buffer[DISPLAY_WIDTH * y + x] = value / value;
 }
 
 export function setPixelON(display, x, y) {

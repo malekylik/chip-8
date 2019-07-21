@@ -81,7 +81,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display) {
 
     case 0x1: JP(proccesor, getValueWithourPrefix(opcode)); break;
 
-    case 0x2: CALL(proccesor, stack, getValueFromOpcode(opcode)); break;
+    case 0x2: CALL(proccesor, stack, getValueWithourPrefix(opcode)); break;
 
     case 0x3: SE(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 
@@ -134,15 +134,25 @@ export function executeOpcode(proccesor, opcode, stack, memory, display) {
       break;
     }
 
-    case 0x9: SNE(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode)));
+    case 0x9: SNE(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
 
-    case 0xA: setIRegister(proccesor, getValueWithourPrefix(opcode));
+    case 0xA: setIRegister(proccesor, getValueWithourPrefix(opcode)); break;
 
-    case 0xB: JP(proccesor, getValueWithourPrefix(opcode) + getRegisterV0(proccesor));
+    case 0xB: JP(proccesor, getValueWithourPrefix(opcode) + getRegisterV0(proccesor)); break;
 
-    case 0xC: RND(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode));
+    case 0xC: RND(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 
-    case 0xD: DRW(proccesor, display, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode), memory, getIRegister(proccesor), getPostfixValue(opcode));
+    case 0xD: 
+      DRW(
+        proccesor,
+        display,
+        getRegisterVX(proccesor, getLeftRegisterNumber(opcode)),
+        getRegisterVX(proccesor, getRightRegisterNumber(opcode)),
+        memory,
+        getIRegister(proccesor),
+        getPostfixValue(opcode)
+        );
+      break;
 
     case 0xE: {
       const postFix = getPostfixValue(opcode);
@@ -157,7 +167,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display) {
     }
 
     case 0xF: {
-      const postFix = getPostfixValue(opcode);
+      const postFix = getValueFromOpcode(opcode);
 
       switch (postFix) {
         case 0x07: break; // TODO: delay timer
@@ -170,7 +180,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display) {
 
         case 0x1E: setIRegister(proccesor, getIRegister(proccesor) + getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
-        case 0x29: setIRegister(proccesor, getFontAddress(FONTS_START_ADDRESS, getLeftRegisterNumber(opcode))); break; // TODO: display
+        case 0x29: setIRegister(proccesor, getFontAddress(FONTS_START_ADDRESS, getLeftRegisterNumber(opcode))); break;
 
         case 0x33: {
           const registerValue = getRegisterVX(proccesor, getLeftRegisterNumber(opcode));

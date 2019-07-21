@@ -24,7 +24,7 @@ export function getLeastByte(opcode) {
 }
 
 export function getMostByte(opcode) {
-  return opcode.uint8[LEAST_SIGNIFICANT_BYTES];
+  return opcode.uint8[MOST_SIGNIFICANT_BYTES];
 }
 
 export function getLeftRegisterNumber(opcode) {

@@ -9,10 +9,12 @@ import {
   decrementRegisterVXBy,
   shiftRihgtRegister,
   shiftLeftRegister,
+  setIRegister,
 } from './methods';
 import { push, pop } from '../stack/stack';
 import { DISPLAY_WIDTH, DISPLAY_HEIGHT } from '../display/const/index';
-import { clearPixel } from '../display/display';
+import { clearPixel, xorPixel } from '../display/display';
+import { readMemoreByte } from '../memory/memory';
 
 export function CLR(display) {
   for (let i = 0; i < DISPLAY_HEIGHT; i++) {
@@ -89,8 +91,19 @@ export function RND(proccesor, register, mask) {
   return setRegisterVX(proccesor, register, ((Math.random() * 255) | 0) & mask);
 }
 
-export function DRW() {
+export function DRW(proccesor, display, x, y, memory, I, n) {
+  let eraseCount = 0;
 
+  for (let i = 0; i < n; i++) {
+    eraseCount += xorPixel(
+      display,
+      (x + i) % DISPLAY_WIDTH,
+      y,
+      readMemoreByte(memory, I + i)
+    );
+  }
+
+  setIRegister(proccesor, eraseCount % 1);
 }
 
 export function SKP() {

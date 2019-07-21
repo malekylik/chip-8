@@ -8,12 +8,24 @@ export function createDisplay() {
   };
 }
 
-export function setPixel(display, x, y) {
-  display.buffer[DISPLAY_WIDTH * y + x] = PIXEL_ON;
+export function xorPixel(display, x, y, value) {
+  return Number(!setPixel(display, x, y, getPixel(display, x, y) ^ value));
+}
+
+export function getPixel(display, x, y) {
+  return display.buffer[DISPLAY_WIDTH * y + x];
+}
+
+export function setPixel(display, x, y, value) {
+  return display.buffer[DISPLAY_WIDTH * y + x] = value % 1;
+}
+
+export function setPixelON(display, x, y) {
+  return display.buffer[DISPLAY_WIDTH * y + x] = PIXEL_ON;
 }
 
 export function clearPixel(display, x, y) {
-  display.buffer[DISPLAY_WIDTH * y + x] = PIXEL_OFF;
+  return display.buffer[DISPLAY_WIDTH * y + x] = PIXEL_OFF;
 }
 
 export function getFontAddress(fontsStartAddress, font) {

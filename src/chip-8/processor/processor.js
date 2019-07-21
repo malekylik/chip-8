@@ -142,10 +142,10 @@ export function executeOpcode(proccesor, opcode, stack, memory, display) {
 
     case 0xC: RND(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode));
 
-    case 0xD: DRW(); // TODO: display
+    case 0xD: DRW(proccesor, display, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode), memory, getIRegister(proccesor), getPostfixValue(opcode));
 
     case 0xE: {
-      const postFix = getValueFromOpcode(opcode);
+      const postFix = getPostfixValue(opcode);
 
       switch (postFix) {
         case 0x9E: SKP(); break; // TODO: keyboard
@@ -157,7 +157,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display) {
     }
 
     case 0xF: {
-      const postFix = getValueFromOpcode(opcode);
+      const postFix = getPostfixValue(opcode);
 
       switch (postFix) {
         case 0x07: break; // TODO: delay timer

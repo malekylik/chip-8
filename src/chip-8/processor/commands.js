@@ -9,6 +9,7 @@ import {
   decrementRegisterVXBy,
   shiftRihgtRegister,
   shiftLeftRegister,
+  getNextInstructionAddress,
 } from './methods';
 import { push, pop } from '../stack/stack';
 import { DISPLAY_WIDTH, DISPLAY_HEIGHT } from '../display/const/index';
@@ -24,7 +25,7 @@ export function CLR(display) {
 }
 
 export function RET(proccesor, stack) {
-  JP(proccesor, pop(stack));
+  JP(proccesor, getNextInstructionAddress(pop(stack)));
 }
 
 export function JP(proccesor, address) {

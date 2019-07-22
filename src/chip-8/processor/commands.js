@@ -4,20 +4,28 @@ import {
   setProgramCounter,
   setRegisterVX,
   setRegisterVF,
-  incrimentProgramCounterBy2,
+  incrimentProgramCounterBy4,
   incrimentRegisterVXBy,
   decrementRegisterVXBy,
   shiftRihgtRegister,
   shiftLeftRegister,
+  getNextInstructionAddress,
 } from './methods';
 import { push, pop } from '../stack/stack';
+import { DISPLAY_WIDTH, DISPLAY_HEIGHT } from '../display/const/index';
+import { clearPixel, xorPixel } from '../display/display';
+import { readMemoreByte } from '../memory/memory';
 
-export function CLR() {
-
+export function CLR(display) {
+  for (let i = 0; i < DISPLAY_HEIGHT; i++) {
+    for (let j = 0; j < DISPLAY_WIDTH; j++) {
+      clearPixel(display, j, i);
+    }
+  }
 }
 
 export function RET(proccesor, stack) {
-  JP(proccesor, pop(stack));
+  JP(proccesor, getNextInstructionAddress(pop(stack)));
 }
 
 export function JP(proccesor, address) {
@@ -31,13 +39,13 @@ export function CALL(proccesor, stack, address) {
 
 export function SE(proccesor, register, value) {
   if (getRegisterVX(proccesor, register) === value) {
-    incrimentProgramCounterBy2(proccesor);
+    incrimentProgramCounterBy4(proccesor);
   }
 }
 
 export function SNE(proccesor, register, value) {
   if (getRegisterVX(proccesor, register) !== value) {
-    incrimentProgramCounterBy2(proccesor);
+    incrimentProgramCounterBy4(proccesor);
   }
 }
 
@@ -83,8 +91,21 @@ export function RND(proccesor, register, mask) {
   return setRegisterVX(proccesor, register, ((Math.random() * 255) | 0) & mask);
 }
 
-export function DRW() {
+export function DRW(display, x, y, memory, I, n) {
+  let eraseCount = 0;
 
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < 8; j++) {
+      eraseCount += xorPixel(
+        display,
+        (x + j) % DISPLAY_WIDTH,
+        (y + i) % DISPLAY_HEIGHT,
+        (readMemoreByte(memory, I + i) & (0x80 >>> j))
+      );
+    }
+  }
+
+  return (eraseCount / eraseCount) | 0;
 }
 
 export function SKP() {

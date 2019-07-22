@@ -7,10 +7,11 @@ import {
   CARRY_FLAG_CLEAR,
   CARRY_FLAG_SET
 } from './const';
-import { PROGRAM_START_ADDRESS } from '../memory/const';
+import { PROGRAM_START_ADDRESS, FONTS_START_ADDRESS } from '../memory/const';
 import {
   getRegisterVX,
   getRegisterV0,
+  setRegisterVF,
   getProgramCounter,
   getNextInstructionAddress,
   getIRegister,
@@ -47,6 +48,7 @@ import {
 } from './commands';
 import { readMemoreByte, setMemoryByte } from '../memory/memory';
 import { getDigit } from '../../util/index';
+import { getFontAddress } from '../display/display';
 
 export function creatProcessor() {
   const registerBytes =  new ArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES + I_REGISTER_BYTES);
@@ -61,7 +63,7 @@ export function creatProcessor() {
   return proccesor;
 }
 
-export function executeOpcode(proccesor, opcode, stack, memory) {
+export function executeOpcode(proccesor, opcode, stack, memory, display) {
   const PC = getProgramCounter(proccesor);
   const prefix = getPrefixValue(opcode);
 
@@ -70,7 +72,7 @@ export function executeOpcode(proccesor, opcode, stack, memory) {
       const leastByte = getLeastByte(opcode);
 
       switch(leastByte) {
-        case 0xE0: CLR(); break; // TODO: display
+        case 0xE0: CLR(display); break;
 
         case 0xEE: RET(proccesor, stack); break
       }
@@ -80,7 +82,7 @@ export function executeOpcode(proccesor, opcode, stack, memory) {
 
     case 0x1: JP(proccesor, getValueWithourPrefix(opcode)); break;
 
-    case 0x2: CALL(proccesor, stack, getValueFromOpcode(opcode)); break;
+    case 0x2: CALL(proccesor, stack, getValueWithourPrefix(opcode)); break;
 
     case 0x3: SE(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 
@@ -133,18 +135,29 @@ export function executeOpcode(proccesor, opcode, stack, memory) {
       break;
     }
 
-    case 0x9: SNE(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode)));
+    case 0x9: SNE(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
 
-    case 0xA: setIRegister(proccesor, getValueWithourPrefix(opcode));
+    case 0xA: setIRegister(proccesor, getValueWithourPrefix(opcode)); break;
 
-    case 0xB: JP(proccesor, getValueWithourPrefix(opcode) + getRegisterV0(proccesor));
+    case 0xB: JP(proccesor, getValueWithourPrefix(opcode) + getRegisterV0(proccesor)); break;
 
-    case 0xC: RND(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode));
+    case 0xC: RND(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 
-    case 0xD: DRW(); // TODO: display
+    case 0xD:
+      setRegisterVF(proccesor,
+        DRW(
+          display,
+          getRegisterVX(proccesor, getLeftRegisterNumber(opcode)),
+          getRegisterVX(proccesor, getRightRegisterNumber(opcode)),
+          memory,
+          getIRegister(proccesor),
+          getPostfixValue(opcode)
+        )
+      );
+      break;
 
     case 0xE: {
-      const postFix = getValueFromOpcode(opcode);
+      const postFix = getPostfixValue(opcode);
 
       switch (postFix) {
         case 0x9E: SKP(); break; // TODO: keyboard
@@ -169,7 +182,7 @@ export function executeOpcode(proccesor, opcode, stack, memory) {
 
         case 0x1E: setIRegister(proccesor, getIRegister(proccesor) + getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
-        case 0x29: break; // TODO: display
+        case 0x29: setIRegister(proccesor, getFontAddress(FONTS_START_ADDRESS, getRegisterVX(proccesor, getLeftRegisterNumber(opcode)))); break;
 
         case 0x33: {
           const registerValue = getRegisterVX(proccesor, getLeftRegisterNumber(opcode));

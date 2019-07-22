@@ -16,6 +16,10 @@ export function incrimentProgramCounterBy2(proccesor) {
   return setProgramCounter(proccesor, getProgramCounter(proccesor) + 2);
 }
 
+export function incrimentProgramCounterBy4(proccesor) {
+  return setProgramCounter(proccesor, getProgramCounter(proccesor) + 4);
+}
+
 export function incrimentRegisterVXBy(proccesor, register, value) {
   return setRegisterVX(proccesor, register, getRegisterVX(proccesor, register) + value);
 }

@@ -46,7 +46,7 @@ function main() {
   const PC = getProgramCounter(processor);
   const opcode = createOpcode(readMemory(memory, PC, OPCODE_BYTES));
 
-  executeOpcode(processor, opcode, stack, memory, display);
+  executeOpcode(processor, opcode, stack, memory, display, delayTimer, soundTimer);
 
   for (let i = 0; i < DISPLAY_HEIGHT * scale; i++) {
     for (let j = 0; j < DISPLAY_WIDTH * scale; j++) {

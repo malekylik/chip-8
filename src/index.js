@@ -10,6 +10,7 @@ import { createStack } from './chip-8/stack/stack';
 import { createMemory, loadGame, readMemory, loadFonts } from './chip-8/memory/memory';
 import { createDisplay, getPixel } from './chip-8/display/display';
 import { FONTS, DISPLAY_WIDTH, DISPLAY_HEIGHT } from './chip-8/display/const/index';
+import { creatTimer, updateTimer } from './chip-8/timer/timer';
 
 ReactDOM.render(<span className='span'>hello</span>, document.getElementById('app'));
 
@@ -31,6 +32,8 @@ const processor = creatProcessor();
 const stack = createStack();
 const memory = createMemory();
 const display = createDisplay();
+const delayTimer = creatTimer();
+const soundTimer = creatTimer();
 
 loadFonts(memory, FONTS);
 loadGame(memory, MOCK_GAME);
@@ -43,13 +46,16 @@ function main() {
   const PC = getProgramCounter(processor);
   const opcode = createOpcode(readMemory(memory, PC, OPCODE_BYTES));
 
-  executeOpcode(processor, opcode, stack, memory, display);
+  executeOpcode(processor, opcode, stack, memory, display, delayTimer, soundTimer);
 
   for (let i = 0; i < DISPLAY_HEIGHT * scale; i++) {
     for (let j = 0; j < DISPLAY_WIDTH * scale; j++) {
       putPixel(canvasBuffer, j, i, getPixel(display, (j / scale) | 0, (i / scale) | 0));
     }
   }
+
+  updateTimer(delayTimer);
+  updateTimer(soundTimer);
 
   ctx.putImageData(canvasBuffer, 0, 0);
 

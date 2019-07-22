@@ -49,6 +49,7 @@ import {
 import { readMemoreByte, setMemoryByte } from '../memory/memory';
 import { getDigit } from '../../util/index';
 import { getFontAddress } from '../display/display';
+import { setTimerValue, getTimerValue } from '../timer/timer';
 
 export function creatProcessor() {
   const registerBytes =  new ArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES + I_REGISTER_BYTES);
@@ -63,7 +64,7 @@ export function creatProcessor() {
   return proccesor;
 }
 
-export function executeOpcode(proccesor, opcode, stack, memory, display) {
+export function executeOpcode(proccesor, opcode, stack, memory, display, delayTimer, soundTimer) {
   const PC = getProgramCounter(proccesor);
   const prefix = getPrefixValue(opcode);
 
@@ -172,11 +173,11 @@ export function executeOpcode(proccesor, opcode, stack, memory, display) {
       const postFix = getValueFromOpcode(opcode);
 
       switch (postFix) {
-        case 0x07: break; // TODO: delay timer
+        case 0x07: LD(proccesor, getLeftRegisterNumber(opcode), getTimerValue(delayTimer)); break;
 
         case 0x0A: break; // TODO: keyboard
 
-        case 0x15: break; // TODO: delay timer
+        case 0x15: setTimerValue(delayTimer, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
         case 0x18: break; // TODO: sound timer
 

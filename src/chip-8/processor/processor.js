@@ -49,7 +49,7 @@ import {
 import { readMemoreByte, setMemoryByte } from '../memory/memory';
 import { getDigit } from '../../util/index';
 import { getFontAddress } from '../display/display';
-import { setTimerValue } from '../timer/timer';
+import { setTimerValue, getTimerValue } from '../timer/timer';
 
 export function creatProcessor() {
   const registerBytes =  new ArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES + I_REGISTER_BYTES);
@@ -173,7 +173,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
       const postFix = getValueFromOpcode(opcode);
 
       switch (postFix) {
-        case 0x07: break; // TODO: delay timer
+        case 0x07: LD(proccesor, getLeftRegisterNumber(opcode), getTimerValue(delayTimer)); break;
 
         case 0x0A: break; // TODO: keyboard
 

@@ -64,7 +64,7 @@ export function creatProcessor() {
   return proccesor;
 }
 
-export function executeOpcode(proccesor, opcode, stack, memory, display, delayTimer, soundTimer) {
+export function executeOpcode(proccesor, opcode, stack, memory, display, delayTimer, soundTimer, keyboard) {
   const PC = getProgramCounter(proccesor);
   const prefix = getPrefixValue(opcode);
 
@@ -161,9 +161,9 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
       const postFix = getPostfixValue(opcode);
 
       switch (postFix) {
-        case 0x9E: SKP(); break; // TODO: keyboard
+        case 0x9E: SKP(proccesor, keyboard, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
-        case 0xA1: SKNP(); break; // TODO: keyboard
+        case 0xA1: SKNP(proccesor, keyboard, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
       }
 
       break;
@@ -179,7 +179,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
 
         case 0x15: setTimerValue(delayTimer, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
-        case 0x18: break; // TODO: sound timer
+        case 0x18: setTimerValue(soundTimer, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
         case 0x1E: setIRegister(proccesor, getIRegister(proccesor) + getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 

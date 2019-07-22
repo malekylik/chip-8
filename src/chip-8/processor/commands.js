@@ -15,6 +15,7 @@ import { push, pop } from '../stack/stack';
 import { DISPLAY_WIDTH, DISPLAY_HEIGHT } from '../display/const/index';
 import { clearPixel, xorPixel } from '../display/display';
 import { readMemoreByte } from '../memory/memory';
+import { isKeyUnpress, isKeyPress } from '../keyboard/keyboard';
 
 export function CLR(display) {
   for (let i = 0; i < DISPLAY_HEIGHT; i++) {
@@ -108,10 +109,14 @@ export function DRW(display, x, y, memory, I, n) {
   return (eraseCount / eraseCount) | 0;
 }
 
-export function SKP() {
-
+export function SKP(proccesor, keyboard, key) {
+  if(isKeyPress(keyboard, key)) {
+    incrimentProgramCounterBy4(proccesor);
+  }
 }
 
 export function SKNP() {
-
+  if(isKeyUnpress(keyboard, key)) {
+    incrimentProgramCounterBy4(proccesor);
+  }
 }

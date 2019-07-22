@@ -163,7 +163,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
       switch (postFix) {
         case 0x9E: SKP(proccesor, keyboard, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
-        case 0xA1: SKNP(); break; // TODO: keyboard
+        case 0xA1: SKNP(proccesor, keyboard, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
       }
 
       break;

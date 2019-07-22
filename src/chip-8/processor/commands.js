@@ -15,7 +15,7 @@ import { push, pop } from '../stack/stack';
 import { DISPLAY_WIDTH, DISPLAY_HEIGHT } from '../display/const/index';
 import { clearPixel, xorPixel } from '../display/display';
 import { readMemoreByte } from '../memory/memory';
-import { isKeyPress } from '../keyboard/keyboard';
+import { isKeyUnpress, isKeyPress } from '../keyboard/keyboard';
 
 export function CLR(display) {
   for (let i = 0; i < DISPLAY_HEIGHT; i++) {
@@ -116,5 +116,7 @@ export function SKP(proccesor, keyboard, key) {
 }
 
 export function SKNP() {
-
+  if(isKeyUnpress(keyboard, key)) {
+    incrimentProgramCounterBy4(proccesor);
+  }
 }

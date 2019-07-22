@@ -4,7 +4,7 @@ export function createKeyboard() {
   const keyboardBytes = new ArrayBuffer(KEYBOARD_KEYS_COUNT);
 
   return {
-    keyboard: Uint8Array(keyboardBytes),
+    keyboard: new Uint8Array(keyboardBytes),
     keyboardMap: Uint8Array.from(KEYBOARD_MAP)
   };
 }

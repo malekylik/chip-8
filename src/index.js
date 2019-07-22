@@ -11,6 +11,7 @@ import { createMemory, loadGame, readMemory, loadFonts } from './chip-8/memory/m
 import { createDisplay, getPixel } from './chip-8/display/display';
 import { FONTS, DISPLAY_WIDTH, DISPLAY_HEIGHT } from './chip-8/display/const/index';
 import { creatTimer, updateTimer } from './chip-8/timer/timer';
+import { createKeyboard } from './chip-8/keyboard/keyboard';
 
 ReactDOM.render(<span className='span'>hello</span>, document.getElementById('app'));
 
@@ -34,6 +35,7 @@ const memory = createMemory();
 const display = createDisplay();
 const delayTimer = creatTimer();
 const soundTimer = creatTimer();
+const keyboard = createKeyboard();
 
 loadFonts(memory, FONTS);
 loadGame(memory, MOCK_GAME);
@@ -46,7 +48,7 @@ function main() {
   const PC = getProgramCounter(processor);
   const opcode = createOpcode(readMemory(memory, PC, OPCODE_BYTES));
 
-  executeOpcode(processor, opcode, stack, memory, display, delayTimer, soundTimer);
+  executeOpcode(processor, opcode, stack, memory, display, delayTimer, soundTimer, keyboard);
 
   for (let i = 0; i < DISPLAY_HEIGHT * scale; i++) {
     for (let j = 0; j < DISPLAY_WIDTH * scale; j++) {

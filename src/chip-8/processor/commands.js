@@ -4,6 +4,7 @@ import {
   setProgramCounter,
   setRegisterVX,
   setRegisterVF,
+  incrimentProgramCounterBy2,
   incrimentProgramCounterBy4,
   incrimentRegisterVXBy,
   decrementRegisterVXBy,
@@ -42,12 +43,16 @@ export function CALL(proccesor, stack, address) {
 export function SE(proccesor, register, value) {
   if (getRegisterVX(proccesor, register) === value) {
     incrimentProgramCounterBy4(proccesor);
+  } else {
+    incrimentProgramCounterBy2(proccesor);
   }
 }
 
 export function SNE(proccesor, register, value) {
   if (getRegisterVX(proccesor, register) !== value) {
     incrimentProgramCounterBy4(proccesor);
+  } else {
+    incrimentProgramCounterBy2(proccesor);
   }
 }
 
@@ -112,11 +117,15 @@ export function DRW(display, x, y, memory, I, n) {
 export function SKP(proccesor, keyboard, key) {
   if(isKeyPress(keyboard, key)) {
     incrimentProgramCounterBy4(proccesor);
+  } else {
+    incrimentProgramCounterBy2(proccesor);
   }
 }
 
 export function SKNP(proccesor, keyboard, key) {
   if(isKeyUnpress(keyboard, key)) {
     incrimentProgramCounterBy4(proccesor);
+  } else {
+    incrimentProgramCounterBy2(proccesor);
   }
 }

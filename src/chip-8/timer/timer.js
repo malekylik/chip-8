@@ -1,35 +1,34 @@
-export function creatTimer() {
-  const bytes = new ArrayBuffer(1);
+import { DELAY_TIMER_ADDRESS, SOUND_TIMRE_ADDRESS } from './const/index';
+import { readMemoreByte, setMemoryByte } from '../memory/memory';
 
-  return {
-    timerValue: new Uint8Array(bytes),
-  };
+export function getDelayTimerValue(memory) {
+  return readMemoreByte(memory, DELAY_TIMER_ADDRESS);
 }
 
-export function getTimerValue(timer) {
-  return timer.timerValue[0];
+export function getSoundTimerValue(memory) {
+  return readMemoreByte(memory, SOUND_TIMRE_ADDRESS);
 }
 
-export function setTimerValue(timer, value) {
-  return timer.timerValue[0] = value;
+export function setDelayTimerValue(memory, value) {
+  return setMemoryByte(memory, DELAY_TIMER_ADDRESS, value);
 }
 
-export function decrementTimer(timer) {
-  return setTimerValue(timer, getTimerValue(timer) - 1);
+export function setSoundTimerValue(memory, value) {
+  return setMemoryByte(memory, SOUND_TIMRE_ADDRESS, value);
 }
 
-export function updateTimer(timer) {
-  if (getTimerValue(timer) > 0) {
-    return decrementTimer(timer) === 0;
+export function updateDelayTimer(memory) {
+  if (getDelayTimerValue(memory) > 0) {
+    return setDelayTimerValue(memory, getDelayTimerValue(memory) - 1) === 0;
   }
 
   return false;
 }
 
-export function updateTimerAndDo(timer, callback) {
-  if (getTimerValue(timer) > 0) {
+export function updateSoundTimer(memory, callback) {
+  if (getSoundTimerValue(memory) > 0) {
     callback();
-    return decrementTimer(timer) === 0;
+    return setSoundTimerValue(memory, getSoundTimerValue(memory) - 1) === 0;
   }
 
   return false;

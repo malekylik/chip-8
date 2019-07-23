@@ -50,7 +50,7 @@ import {
 import { readMemoreByte, setMemoryByte } from '../memory/memory';
 import { getDigit } from '../../util/index';
 import { getFontAddress } from '../display/display';
-import { setTimerValue, getTimerValue } from '../timer/timer';
+import { setDelayTimerValue, setSoundTimerValue, getDelayTimerValue } from '../timer/timer';
 
 export function creatProcessor() {
   const registerBytes =  new ArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES + I_REGISTER_BYTES);
@@ -65,7 +65,7 @@ export function creatProcessor() {
   return proccesor;
 }
 
-export function executeOpcode(proccesor, opcode, stack, memory, display, delayTimer, soundTimer, keyboard) {
+export function executeOpcode(proccesor, opcode, stack, memory, display, keyboard) {
   const PC = getProgramCounter(proccesor);
   const prefix = getPrefixValue(opcode);
 
@@ -176,13 +176,13 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
       const postFix = getValueFromOpcode(opcode);
 
       switch (postFix) {
-        case 0x07: LD(proccesor, getLeftRegisterNumber(opcode), getTimerValue(delayTimer)); break;
+        case 0x07: LD(proccesor, getLeftRegisterNumber(opcode), getDelayTimerValue(memory)); break;
 
         case 0x0A: break; // TODO: keyboard
 
-        case 0x15: setTimerValue(delayTimer, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
+        case 0x15: setDelayTimerValue(memory, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
-        case 0x18: setTimerValue(soundTimer, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
+        case 0x18: setSoundTimerValue(memory, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
         case 0x1E: setIRegister(proccesor, getIRegister(proccesor) + getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 

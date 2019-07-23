@@ -25,8 +25,8 @@ function putPixel(buffer, x, y, value) {
   buffer.data[offset++] = 255;
 }
 
-const chip8 = createChip8(MOCK_GAME);
-// const chip8 = createChip8(TEST_ROM);
+// const chip8 = createChip8(MOCK_GAME);
+const chip8 = createChip8(TEST_ROM);
 
 const scale = 5;
 

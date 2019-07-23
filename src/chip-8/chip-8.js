@@ -1,6 +1,6 @@
 import { creatProcessor, executeOpcode } from './processor/processor';
 import { getProgramCounter } from './processor/methods';
-import { creatTimer, updateTimer, updateTimerAndDo } from './timer/timer';
+import { updateDelayTimer, updateSoundTimer } from './timer/timer';
 import { createKeyboard } from './keyboard/keyboard';
 import { createOpcode } from './processor/opcode/opcode';
 import { createStack } from './stack/stack';
@@ -16,9 +16,7 @@ export function createChip8(game) {
     memory: createMemory(),
 
     display: createDisplay(),
-    delayTimer: creatTimer(),
 
-    soundTimer: creatTimer(),
     onSoundTime: noop,
 
     keyboard: createKeyboard(),
@@ -46,13 +44,11 @@ export function executeNextCycly(chip8) {
     chip8.stack,
     chip8.memory,
     chip8.display,
-    chip8.delayTimer,
-    chip8.soundTimer,
     chip8.keyboard
   );
 
-  updateTimer(chip8.delayTimer);
-  updateTimerAndDo(chip8.soundTimer, chip8.onSoundTime);
+  updateDelayTimer(chip8.memory);
+  updateSoundTimer(chip8.memory, chip8.onSoundTime);
 
   return PC;
 }

@@ -1,4 +1,5 @@
 import { MEMORY_BYTES, FONTS_START_ADDRESS, PROGRAM_START_ADDRESS } from './const';
+import { OPCODE_BYTES } from '../processor/const/index';
 
 export function createMemory() {
   const bytes = new ArrayBuffer(MEMORY_BYTES);
@@ -32,4 +33,8 @@ export function setMemoryBytes(memory, position, bytes) {
   for (let i = 0; i < memory.bytes.length && i < bytes.length; i++) {
     memory.bytes[position + i] = bytes[i];
   }
+}
+
+export function readOpcode(memory, start) {
+  return readMemory(memory, start, OPCODE_BYTES);
 }

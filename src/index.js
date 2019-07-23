@@ -1,17 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { MOCK_GAME, TEST_ROM } from './chip-8/processor/const';
+import { executeNextCycly, getDisplay } from './chip-8/chip-8';
+import { getPixel } from './chip-8/display/display';
+import { DISPLAY_WIDTH, DISPLAY_HEIGHT } from './chip-8/display/const/index';
+import { createChip8 } from './chip-8/chip-8';
+
 import './main.css';
-import { creatProcessor, executeOpcode } from './chip-8/processor/processor';
-import { getProgramCounter } from './chip-8/processor/methods';
-import { MOCK_GAME, TEST_ROM, OPCODE_BYTES } from './chip-8/processor/const';
-import { createOpcode } from './chip-8/processor/opcode/opcode';
-import { createStack } from './chip-8/stack/stack';
-import { createMemory, loadGame, readMemory, loadFonts } from './chip-8/memory/memory';
-import { createDisplay, getPixel } from './chip-8/display/display';
-import { FONTS, DISPLAY_WIDTH, DISPLAY_HEIGHT } from './chip-8/display/const/index';
-import { creatTimer, updateTimer } from './chip-8/timer/timer';
-import { createKeyboard } from './chip-8/keyboard/keyboard';
 
 ReactDOM.render(<span className='span'>hello</span>, document.getElementById('app'));
 
@@ -29,36 +25,23 @@ function putPixel(buffer, x, y, value) {
   buffer.data[offset++] = 255;
 }
 
-const processor = creatProcessor();
-const stack = createStack();
-const memory = createMemory();
-const display = createDisplay();
-const delayTimer = creatTimer();
-const soundTimer = creatTimer();
-const keyboard = createKeyboard();
-
-loadFonts(memory, FONTS);
-loadGame(memory, MOCK_GAME);
-// loadGame(memory, TEST_ROM);
+const chip8 = createChip8(MOCK_GAME);
+// const chip8 = createChip8(TEST_ROM);
 
 const scale = 5;
 
 function main() {
   requestAnimationFrame(main);
 
-  const PC = getProgramCounter(processor);
-  const opcode = createOpcode(readMemory(memory, PC, OPCODE_BYTES));
+  const PC = executeNextCycly(chip8);
 
-  executeOpcode(processor, opcode, stack, memory, display, delayTimer, soundTimer, keyboard);
+  const display = getDisplay(chip8);
 
   for (let i = 0; i < DISPLAY_HEIGHT * scale; i++) {
     for (let j = 0; j < DISPLAY_WIDTH * scale; j++) {
       putPixel(canvasBuffer, j, i, getPixel(display, (j / scale) | 0, (i / scale) | 0));
     }
   }
-
-  updateTimer(delayTimer);
-  updateTimer(soundTimer);
 
   ctx.putImageData(canvasBuffer, 0, 0);
 

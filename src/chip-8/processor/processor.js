@@ -229,4 +229,6 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
       break;
     }
   }
+
+  return getProgramCounter(proccesor);
 }

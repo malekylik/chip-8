@@ -25,3 +25,12 @@ export function updateTimer(timer) {
 
   return false;
 }
+
+export function updateTimerAndDo(timer, callback) {
+  if (getTimerValue(timer) > 0) {
+    callback();
+    return decrementTimer(timer) === 0;
+  }
+
+  return false;
+}

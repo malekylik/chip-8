@@ -85,7 +85,7 @@ export function SUBN(proccesor, register, value) {
 }
 
 export function SHL(proccesor, register, value) {
-  setRegisterVF(proccesor, value & 0x80);
+  setRegisterVF(proccesor, value >> 7);
   return shiftLeftRegister(proccesor, register, value);
 }
 

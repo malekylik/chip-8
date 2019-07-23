@@ -122,7 +122,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
               CARRY_FLAG_SET : CARRY_FLAG_CLEAR
             ); break;
 
-        case 0x6: SHR(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
+        case 0x6: SHR(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
         case 0x7:
             setRegisterVF(
@@ -131,7 +131,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
               CARRY_FLAG_SET : CARRY_FLAG_CLEAR
             ); break;
 
-        case 0xE: SHL(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
+        case 0xE: SHL(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
       }
 
       break;
@@ -190,9 +190,9 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
           const registerValue = getRegisterVX(proccesor, getLeftRegisterNumber(opcode));
           const I = getIRegister(proccesor);
 
-          setMemoryByte(memory, I, getDigit(registerValue, 2));
-          setMemoryByte(memory, I + 1, getDigit(registerValue, 1));
           setMemoryByte(memory, I + 2, getDigit(registerValue, 0));
+          setMemoryByte(memory, I + 1, getDigit(registerValue, 1));
+          setMemoryByte(memory, I, getDigit(registerValue, 2));
 
           break;
         }
@@ -201,7 +201,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
           const registerCount = getLeftRegisterNumber(opcode);
           const I = getIRegister(proccesor);
 
-          for (let i = 0; i < registerCount; i++) {
+          for (let i = 0; i <= registerCount; i++) {
             setMemoryByte(memory, I + i, getRegisterVX(proccesor, i));
           }
 
@@ -214,7 +214,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
           const registerCount = getLeftRegisterNumber(opcode);
           const I = getIRegister(proccesor);
 
-          for (let i = 0; i < registerCount; i++) {
+          for (let i = 0; i <= registerCount; i++) {
             LD(proccesor, i, readMemoreByte(memory, I + i));
           }
 

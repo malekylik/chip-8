@@ -38,7 +38,8 @@ const soundTimer = creatTimer();
 const keyboard = createKeyboard();
 
 loadFonts(memory, FONTS);
-loadGame(memory, TEST_ROM);
+loadGame(memory, MOCK_GAME);
+// loadGame(memory, TEST_ROM);
 
 const scale = 5;
 

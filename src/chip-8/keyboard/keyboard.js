@@ -10,7 +10,7 @@ export function createKeyboard() {
 }
 
 export function getKeyValue(keyboard, key) {
-  return keyboard.keyboard[mapFromRealKeyboardToChip8Keyboard(key)];
+  return keyboard.keyboard[mapFromRealKeyboardToChip8Keyboard(keyboard, key)];
 }
 
 export function isKeyPress(keyboard, key) {

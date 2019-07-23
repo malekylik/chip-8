@@ -4,6 +4,7 @@ import {
   setProgramCounter,
   setRegisterVX,
   setRegisterVF,
+  incrimentProgramCounterBy2,
   incrimentProgramCounterBy4,
   incrimentRegisterVXBy,
   decrementRegisterVXBy,
@@ -16,6 +17,7 @@ import { DISPLAY_WIDTH, DISPLAY_HEIGHT } from '../display/const/index';
 import { clearPixel, xorPixel } from '../display/display';
 import { readMemoreByte } from '../memory/memory';
 import { isKeyUnpress, isKeyPress } from '../keyboard/keyboard';
+import { getBinDigit } from '../../util/index';
 
 export function CLR(display) {
   for (let i = 0; i < DISPLAY_HEIGHT; i++) {
@@ -41,12 +43,16 @@ export function CALL(proccesor, stack, address) {
 export function SE(proccesor, register, value) {
   if (getRegisterVX(proccesor, register) === value) {
     incrimentProgramCounterBy4(proccesor);
+  } else {
+    incrimentProgramCounterBy2(proccesor);
   }
 }
 
 export function SNE(proccesor, register, value) {
   if (getRegisterVX(proccesor, register) !== value) {
     incrimentProgramCounterBy4(proccesor);
+  } else {
+    incrimentProgramCounterBy2(proccesor);
   }
 }
 
@@ -84,7 +90,7 @@ export function SUBN(proccesor, register, value) {
 }
 
 export function SHL(proccesor, register, value) {
-  setRegisterVF(proccesor, value & 0x80);
+  setRegisterVF(proccesor, value >> 7);
   return shiftLeftRegister(proccesor, register, value);
 }
 
@@ -94,29 +100,32 @@ export function RND(proccesor, register, mask) {
 
 export function DRW(display, x, y, memory, I, n) {
   let eraseCount = 0;
-
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < 8; j++) {
       eraseCount += xorPixel(
         display,
         (x + j) % DISPLAY_WIDTH,
         (y + i) % DISPLAY_HEIGHT,
-        (readMemoreByte(memory, I + i) & (0x80 >>> j))
+        getBinDigit(readMemoreByte(memory, I + i), 7 - j)
       );
     }
   }
 
-  return (eraseCount / eraseCount) | 0;
+  return eraseCount & 0x1;
 }
 
 export function SKP(proccesor, keyboard, key) {
   if(isKeyPress(keyboard, key)) {
     incrimentProgramCounterBy4(proccesor);
+  } else {
+    incrimentProgramCounterBy2(proccesor);
   }
 }
 
-export function SKNP() {
+export function SKNP(proccesor, keyboard, key) {
   if(isKeyUnpress(keyboard, key)) {
     incrimentProgramCounterBy4(proccesor);
+  } else {
+    incrimentProgramCounterBy2(proccesor);
   }
 }

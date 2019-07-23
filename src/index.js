@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import './main.css';
 import { creatProcessor, executeOpcode } from './chip-8/processor/processor';
 import { getProgramCounter } from './chip-8/processor/methods';
-import { MOCK_GAME, OPCODE_BYTES } from './chip-8/processor/const';
+import { MOCK_GAME, TEST_ROM, OPCODE_BYTES } from './chip-8/processor/const';
 import { createOpcode } from './chip-8/processor/opcode/opcode';
 import { createStack } from './chip-8/stack/stack';
 import { createMemory, loadGame, readMemory, loadFonts } from './chip-8/memory/memory';
@@ -38,7 +38,7 @@ const soundTimer = creatTimer();
 const keyboard = createKeyboard();
 
 loadFonts(memory, FONTS);
-loadGame(memory, MOCK_GAME);
+loadGame(memory, TEST_ROM);
 
 const scale = 5;
 

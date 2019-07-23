@@ -5,11 +5,11 @@ export function getNextInstructionAddress(instructionAddress) {
 }
 
 export function shiftRihgtRegister(proccesor, registerX, value) {
-  return setRegisterVX(proccesor, registerX, value >>> 1);
+  return setRegisterVX(proccesor, registerX, (value >>> 1));
 }
 
 export function shiftLeftRegister(proccesor, registerX, value) {
-  return setRegisterVX(proccesor, registerX, value << 1);
+  return setRegisterVX(proccesor, registerX, (value << 1));
 }
 
 export function incrimentProgramCounterBy2(proccesor) {

@@ -39,6 +39,7 @@ import {
   AND,
   XOR,
   SUB,
+  SUBN,
   SHR,
   SHL,
   RND,

@@ -21,7 +21,7 @@ export function getPixel(display, x, y) {
 }
 
 export function setPixel(display, x, y, value) {
-  return display.buffer[DISPLAY_WIDTH * y + x] = value / value;
+  return display.buffer[DISPLAY_WIDTH * y + x] = value;
 }
 
 export function setPixelON(display, x, y) {

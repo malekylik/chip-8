@@ -69,12 +69,14 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
   const PC = getProgramCounter(proccesor);
   const prefix = getPrefixValue(opcode);
 
+  JP(proccesor, getNextInstructionAddress(PC));
+
   switch (prefix) {
     case 0x0: {
       const leastByte = getLeastByte(opcode);
 
       switch(leastByte) {
-        case 0xE0: CLR(display); JP(proccesor, getNextInstructionAddress(PC)); break;
+        case 0xE0: CLR(display);  break;
 
         case 0xEE: RET(proccesor, stack); break
       }
@@ -92,46 +94,46 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
 
     case 0x5: SE(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
 
-    case 0x6: LD(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); JP(proccesor, getNextInstructionAddress(PC)); break;
+    case 0x6: LD(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 
-    case 0x7: ADD(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); JP(proccesor, getNextInstructionAddress(PC)); break;
+    case 0x7: ADD(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 
     case 0x8: {
       const postFix = getPostfixValue(opcode);
 
       switch (postFix) {
-        case 0x0: LD(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); JP(proccesor, getNextInstructionAddress(PC)); break;
+        case 0x0: LD(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
 
-        case 0x1: OR(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); JP(proccesor, getNextInstructionAddress(PC)); break;
+        case 0x1: OR(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
 
-        case 0x2: AND(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); JP(proccesor, getNextInstructionAddress(PC)); break;
+        case 0x2: AND(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
 
-        case 0x3: XOR(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); JP(proccesor, getNextInstructionAddress(PC)); break;
+        case 0x3: XOR(proccesor, getLeftRegisterNumber(opcode), getRightRegisterNumber(opcode)); break;
 
         case 0x4:
           setRegisterVF(
             proccesor,
             ADD(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))) > 0xFF ?
             CARRY_FLAG_SET : CARRY_FLAG_CLEAR
-          ); JP(proccesor, getNextInstructionAddress(PC)); break;
+          ); break;
 
         case 0x5:
             setRegisterVF(
               proccesor,
               SUB(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))) > 0x0 ?
               CARRY_FLAG_SET : CARRY_FLAG_CLEAR
-            ); JP(proccesor, getNextInstructionAddress(PC)); break;
+            ); break;
 
-        case 0x6: SHR(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); JP(proccesor, getNextInstructionAddress(PC)); break;
+        case 0x6: SHR(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode)));  break;
 
         case 0x7:
             setRegisterVF(
               proccesor,
               SUBN(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))) > 0x0 ?
               CARRY_FLAG_SET : CARRY_FLAG_CLEAR
-            ); JP(proccesor, getNextInstructionAddress(PC)); break;
+            ); break;
 
-        case 0xE: SHL(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); JP(proccesor, getNextInstructionAddress(PC)); break;
+        case 0xE: SHL(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
       }
 
       break;
@@ -139,11 +141,11 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
 
     case 0x9: SNE(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
 
-    case 0xA: setIRegister(proccesor, getValueWithourPrefix(opcode)); JP(proccesor, getNextInstructionAddress(PC)); break;
+    case 0xA: setIRegister(proccesor, getValueWithourPrefix(opcode)); break;
 
     case 0xB: JP(proccesor, getValueWithourPrefix(opcode) + getRegisterV0(proccesor)); break;
 
-    case 0xC: RND(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); JP(proccesor, getNextInstructionAddress(PC)); break;
+    case 0xC: RND(proccesor, getLeftRegisterNumber(opcode), getValueFromOpcode(opcode)); break;
 
     case 0xD:
       setRegisterVF(proccesor,
@@ -155,7 +157,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
           getIRegister(proccesor),
           getPostfixValue(opcode)
         )
-      ); JP(proccesor, getNextInstructionAddress(PC));
+      );
       break;
 
     case 0xE: {
@@ -174,17 +176,17 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
       const postFix = getValueFromOpcode(opcode);
 
       switch (postFix) {
-        case 0x07: LD(proccesor, getLeftRegisterNumber(opcode), getTimerValue(delayTimer)); JP(proccesor, getNextInstructionAddress(PC)); break;
+        case 0x07: LD(proccesor, getLeftRegisterNumber(opcode), getTimerValue(delayTimer)); break;
 
         case 0x0A: break; // TODO: keyboard
 
-        case 0x15: setTimerValue(delayTimer, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); JP(proccesor, getNextInstructionAddress(PC)); break;
+        case 0x15: setTimerValue(delayTimer, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
-        case 0x18: setTimerValue(soundTimer, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); JP(proccesor, getNextInstructionAddress(PC)); break;
+        case 0x18: setTimerValue(soundTimer, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
-        case 0x1E: setIRegister(proccesor, getIRegister(proccesor) + getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); JP(proccesor, getNextInstructionAddress(PC)); break;
+        case 0x1E: setIRegister(proccesor, getIRegister(proccesor) + getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
-        case 0x29: setIRegister(proccesor, getFontAddress(FONTS_START_ADDRESS, getRegisterVX(proccesor, getLeftRegisterNumber(opcode)))); JP(proccesor, getNextInstructionAddress(PC)); break;
+        case 0x29: setIRegister(proccesor, getFontAddress(FONTS_START_ADDRESS, getRegisterVX(proccesor, getLeftRegisterNumber(opcode)))); break;
 
         case 0x33: {
           const registerValue = getRegisterVX(proccesor, getLeftRegisterNumber(opcode));
@@ -193,8 +195,6 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
           setMemoryByte(memory, I + 2, getDigit(registerValue, 0));
           setMemoryByte(memory, I + 1, getDigit(registerValue, 1));
           setMemoryByte(memory, I, getDigit(registerValue, 2));
-
-          JP(proccesor, getNextInstructionAddress(PC));
 
           break;
         }
@@ -209,8 +209,6 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
 
           setIRegister(proccesor, PC + registerCount + 1);
 
-          JP(proccesor, getNextInstructionAddress(PC));
-
           break;
         }
 
@@ -223,8 +221,6 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, delayTi
           }
 
           setIRegister(proccesor, I + registerCount + 1);
-
-          JP(proccesor, getNextInstructionAddress(PC));
 
           break;
         }

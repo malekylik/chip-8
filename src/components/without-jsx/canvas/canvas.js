@@ -20,6 +20,15 @@ export default class Canvas extends React.Component {
     }
   }
 
+  shouldComponentUpdate(nextProps) {
+    if (
+      this.props.width === nextProps.width &&
+      this.props.height === nextProps.height
+    ) return false;
+
+    return true;
+  }
+
   render() {
     const { width, height } = this.props;
 

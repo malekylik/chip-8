@@ -36,9 +36,10 @@ export default class App extends React.Component {
     this.state = {
       width: 320,
       height: 160,
-      imageData: new ImageData(320, 160),
     };
 
+    this.imageData = new ImageData(this.state.width, this.state.height);
+    this.canvasRef = React.createRef();
     this.chip8 = createChip8(MOCK_GAME);
     this.requestCallback = null;
   }
@@ -48,20 +49,24 @@ export default class App extends React.Component {
 
     executeNextCycly(this.chip8);
 
-    this.setState({
-      imageData: fillImageDataWithDisplay(this.state.imageData, getDisplay(this.chip8)),
-     });
+    fillImageDataWithDisplay(this.imageData, getDisplay(this.chip8));
+
+    this.setImageData();
   }
 
   componentDidMount() {
     this.mainLoop();
   }
 
+  setImageData() {
+    this.canvasRef.current.setImageData(this.imageData);
+  }
+
   render() {
-    const { imageData, width, height } = this.state;
+    const { width, height } = this.state;
 
     return (
-      React.createElement(Canvas, { imageData, width, height }, null)
+      React.createElement(Canvas, { ref: this.canvasRef, imageData: this.imageData, width, height }, null)
     );
   }
 }

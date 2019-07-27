@@ -48,7 +48,7 @@ export default class App extends React.Component {
 
     executeNextCycly(this.chip8);
 
-    this.setState({ 
+    this.setState({
       imageData: fillImageDataWithDisplay(this.state.imageData, getDisplay(this.chip8)),
      });
   }

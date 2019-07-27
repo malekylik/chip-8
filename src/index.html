@@ -4,13 +4,12 @@
     <title>chip-8</title>
     <style>
         body { 
-            margin: 0; 
+            margin: 0;
         } 
     </style>
 </head>
 <body>
     <div id="app"></div>
-    <canvas id="canvas" width="320" height="160"></canvas>
 
     <% if (htmlWebpackPlugin.files.chunks.vendor) { %>
         <script src="<%= htmlWebpackPlugin.files.chunks.vendor.entry  %>"></script>

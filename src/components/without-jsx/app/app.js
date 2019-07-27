@@ -19,6 +19,16 @@ function putPixel(buffer, x, y, value) {
 
 const scale = 5;
 
+function fillImageDataWithDisplay(imageData, display) {
+  for (let i = 0; i < DISPLAY_HEIGHT * scale; i++) {
+    for (let j = 0; j < DISPLAY_WIDTH * scale; j++) {
+      putPixel(imageData, j, i, getPixel(display, (j / scale) | 0, (i / scale) | 0));
+    }
+  }
+
+  return imageData;
+}
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -26,31 +36,32 @@ export default class App extends React.Component {
     this.state = {
       width: 320,
       height: 160,
+      imageData: new ImageData(320, 160),
     };
 
     this.chip8 = createChip8(MOCK_GAME);
-    this.imageData = new ImageData(this.state.width, this.state.height);
+    this.requestCallback = null;
+  }
+
+  mainLoop = () => {
+    this.requestCallback = requestAnimationFrame(this.mainLoop);
 
     executeNextCycly(this.chip8);
-    executeNextCycly(this.chip8);
-    executeNextCycly(this.chip8);
-    executeNextCycly(this.chip8);
-    executeNextCycly(this.chip8);
-    executeNextCycly(this.chip8);
-    executeNextCycly(this.chip8);
 
-    const display = getDisplay(this.chip8);
+    this.setState({ 
+      imageData: fillImageDataWithDisplay(this.state.imageData, getDisplay(this.chip8)),
+     });
+  }
 
-    for (let i = 0; i < DISPLAY_HEIGHT * scale; i++) {
-      for (let j = 0; j < DISPLAY_WIDTH * scale; j++) {
-        putPixel(this.imageData, j, i, getPixel(display, (j / scale) | 0, (i / scale) | 0));
-      }
-    }
+  componentDidMount() {
+    this.mainLoop();
   }
 
   render() {
+    const { imageData, width, height } = this.state;
+
     return (
-      React.createElement(Canvas, { imageData: this.imageData }, null)
+      React.createElement(Canvas, { imageData, width, height }, null)
     );
   }
 }

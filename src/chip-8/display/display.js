@@ -78,3 +78,10 @@ export function getScaleFactor(width) {
 
   return scaleWidth / DISPLAY_WIDTH;
 }
+
+export function scaleDisplay(scale) {
+  return ({
+    width: DISPLAY_WIDTH * scale,
+    height: DISPLAY_HEIGHT * scale,
+  })
+}

@@ -14,12 +14,6 @@ export default class Canvas extends React.Component {
     this.setImageData(nextProps.imageData);
   }
 
-  setImageData(imageData) {
-    if (imageData) {
-      this.ctx.putImageData(imageData, 0, 0);
-    }
-  }
-
   shouldComponentUpdate(nextProps) {
     if (
       this.props.width === nextProps.width &&
@@ -29,11 +23,17 @@ export default class Canvas extends React.Component {
     return true;
   }
 
+  setImageData(imageData) {
+    if (imageData) {
+      this.ctx.putImageData(imageData, 0, 0);
+    }
+  }
+
   render() {
     const { width, height } = this.props;
 
     return (
-      React.createElement('canvas', { width, height, ref: this.canvasRef }, null)
+      React.createElement('canvas', { ref: this.canvasRef, width, height, }, null)
     );
   }
 }

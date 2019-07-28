@@ -1,0 +1,49 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import Canvas from '../canvas/canvas';
+
+import { fillImageDataWithDisplay, scaleDisplay } from '../../../chip-8/display/display';
+
+export default class Display extends React.Component {
+  constructor(props) {
+    super(props);
+
+    const { width, height } = scaleDisplay(props.scale);
+
+    this.canvasRef = React.createRef();
+    this.imageData = new ImageData(width, height);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    if (this.props.scale === nextProps.scale) return false;
+
+    return true;
+  }
+
+  updateDisplayData(display) {
+    fillImageDataWithDisplay(this.imageData, display, this.props.scale);
+    this.setImageData();
+  }
+
+  setImageData() {
+    this.canvasRef.current.setImageData(this.imageData);
+  }
+
+  render () {
+    const { width, height } = scaleDisplay(this.props.scale);
+
+    return (
+      React.createElement(Canvas, { ref: this.canvasRef, imageData: this.imageData, width, height }, null)
+    );
+  }
+}
+
+Display.propTypes = {
+  scale: PropTypes.number,
+  display: PropTypes.object,
+};
+
+Display.defaultProps = {
+  scale: 1,
+};

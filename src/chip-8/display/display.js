@@ -72,3 +72,9 @@ export function fitDisplayIntoRect(width, height) {
     height: scaledHeight,
   });
 }
+
+export function getScaleFactor(width) {
+  const { width: scaleWidth } = fitDisplayIntoRect(width, 0);
+
+  return scaleWidth / DISPLAY_WIDTH;
+}

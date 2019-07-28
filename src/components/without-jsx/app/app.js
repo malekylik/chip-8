@@ -1,33 +1,9 @@
 import React from 'react';
 
-import Canvas from '../canvas/canvas';
+import Display from '../display/display';
 
-import { DISPLAY_WIDTH, DISPLAY_HEIGHT } from '../../../chip-8/display/const/index';
 import { createChip8, executeNextCycly, getDisplay } from '../../../chip-8/chip-8';
 import { MOCK_GAME } from '../../../chip-8/processor/const/index';
-import { getPixel } from '../../../chip-8/display/display';
-
-function putPixel(buffer, x, y, value) {
-  const color = value * 255;
-
-  let offset = 4 * x + buffer.width * 4 * y;
-  buffer.data[offset++] = color;
-  buffer.data[offset++] = color;
-  buffer.data[offset++] = color;
-  buffer.data[offset++] = 255;
-}
-
-const scale = 5;
-
-function fillImageDataWithDisplay(imageData, display) {
-  for (let i = 0; i < DISPLAY_HEIGHT * scale; i++) {
-    for (let j = 0; j < DISPLAY_WIDTH * scale; j++) {
-      putPixel(imageData, j, i, getPixel(display, (j / scale) | 0, (i / scale) | 0));
-    }
-  }
-
-  return imageData;
-}
 
 export default class App extends React.Component {
   constructor(props) {
@@ -39,9 +15,13 @@ export default class App extends React.Component {
     };
 
     this.imageData = new ImageData(this.state.width, this.state.height);
-    this.canvasRef = React.createRef();
+    this.displayRef = React.createRef();
     this.chip8 = createChip8(MOCK_GAME);
     this.requestCallback = null;
+  }
+
+  componentDidMount() {
+    this.mainLoop();
   }
 
   mainLoop = () => {
@@ -49,24 +29,23 @@ export default class App extends React.Component {
 
     executeNextCycly(this.chip8);
 
-    fillImageDataWithDisplay(this.imageData, getDisplay(this.chip8));
-
-    this.setImageData();
+    this.updateDisplay();
   }
 
-  componentDidMount() {
-    this.mainLoop();
-  }
-
-  setImageData() {
-    this.canvasRef.current.setImageData(this.imageData);
+  updateDisplay() {
+    this.displayRef.current.updateDisplayData(getDisplay(this.chip8));
   }
 
   render() {
     const { width, height } = this.state;
 
     return (
-      React.createElement(Canvas, { ref: this.canvasRef, imageData: this.imageData, width, height }, null)
+      React.createElement(Display, {
+        ref: this.displayRef,
+        display: getDisplay(this.chip8),
+        width,
+        height,
+      }, null)
     );
   }
 }

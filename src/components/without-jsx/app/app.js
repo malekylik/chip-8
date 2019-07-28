@@ -1,8 +1,8 @@
 import React from 'react';
 
-import Display from '../display/display';
+import Chip8 from '../chip-8/chip-8';
 
-import { createChip8, executeNextCycly, getDisplay } from '../../../chip-8/chip-8';
+import { createChip8 } from '../../../chip-8/chip-8';
 import { MOCK_GAME } from '../../../chip-8/processor/const/index';
 
 export default class App extends React.Component {
@@ -11,7 +11,7 @@ export default class App extends React.Component {
 
     this.state = { scale: 10 };
 
-    this.displayRef = React.createRef();
+    this.chip8Ref = React.createRef();
     this.chip8 = createChip8(MOCK_GAME);
     this.requestCallback = null;
   }
@@ -23,22 +23,20 @@ export default class App extends React.Component {
   mainLoop = () => {
     this.requestCallback = requestAnimationFrame(this.mainLoop);
 
-    executeNextCycly(this.chip8);
-
-    this.updateDisplay();
+    this.nextStep();
   }
 
-  updateDisplay() {
-    this.displayRef.current.updateDisplayData(getDisplay(this.chip8));
+  nextStep() {
+    this.chip8Ref.current.executeNextCycly();
   }
 
   render() {
     const { scale } = this.state;
 
     return (
-      React.createElement(Display, {
-        ref: this.displayRef,
-        display: getDisplay(this.chip8),
+      React.createElement(Chip8, {
+        ref: this.chip8Ref,
+        chip8: this.chip8,
         scale,
       }, null)
     );

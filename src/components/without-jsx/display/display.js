@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Canvas from '../canvas/canvas';
 
-import { fillImageDataWithDisplay } from '../../../chip-8/display/display';
+import { fillImageDataWithDisplay, fitDisplayIntoRect } from '../../../chip-8/display/display';
 
 export default class Display extends React.Component {
   constructor(props) {

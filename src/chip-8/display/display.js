@@ -46,3 +46,29 @@ export function fillImageDataWithDisplay(imageData, display, scale) {
 
   return imageData;
 }
+
+export function fitDisplayIntoRect(width, height) {
+  let scaledWidth = 0;
+  let scaledHeight = 0;
+
+  if (DISPLAY_WIDTH < width) {
+    scaledWidth = width - (width % DISPLAY_WIDTH);
+  } else {
+    const scale = DISPLAY_WIDTH / width;
+
+    scaledWidth = DISPLAY_WIDTH / (Number.isInteger(scale) ? scale : (scale << 1));
+  }
+
+  if (DISPLAY_HEIGHT < height) {
+    scaledHeight = height - (height % DISPLAY_HEIGHT);
+  } else {
+    const scale = DISPLAY_HEIGHT / height;
+
+    scaledHeight = DISPLAY_HEIGHT / (Number.isInteger(scale) ? scale : (scale << 1));
+  }
+
+  return ({
+    width: scaledWidth,
+    height: scaledHeight,
+  });
+}

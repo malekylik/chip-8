@@ -9,12 +9,8 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      width: 320,
-      height: 160,
-    };
+    this.state = { scale: 10 };
 
-    this.imageData = new ImageData(this.state.width, this.state.height);
     this.displayRef = React.createRef();
     this.chip8 = createChip8(MOCK_GAME);
     this.requestCallback = null;
@@ -37,14 +33,13 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { width, height } = this.state;
+    const { scale } = this.state;
 
     return (
       React.createElement(Display, {
         ref: this.displayRef,
         display: getDisplay(this.chip8),
-        width,
-        height,
+        scale,
       }, null)
     );
   }

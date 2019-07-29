@@ -171,3 +171,12 @@ export function getRegisterVX(proccesor, register) {
 export function setRegisterVX(proccesor, register, value) {
   return proccesor.registers[register] = value;
 };
+
+export function getRegisters(proccesor) {
+  const registers = new Array(proccesor.registers.length);
+
+  let i = proccesor.registers.length;
+  while (i--) registers[i] = proccesor.registers[i];
+
+  return registers;
+}

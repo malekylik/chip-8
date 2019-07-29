@@ -57,4 +57,8 @@ export function getDisplay(chip8) {
   return chip8.display;
 }
 
+export function getProcessor(chip8) {
+  return chip8.processor;
+}
+
 function noop() {}

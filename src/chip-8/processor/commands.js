@@ -5,12 +5,10 @@ import {
   setRegisterVX,
   setRegisterVF,
   incrimentProgramCounterBy2,
-  incrimentProgramCounterBy4,
   incrimentRegisterVXBy,
   decrementRegisterVXBy,
   shiftRihgtRegister,
   shiftLeftRegister,
-  getNextInstructionAddress,
 } from './methods';
 import { push, pop } from '../stack/stack';
 import { DISPLAY_WIDTH, DISPLAY_HEIGHT } from '../display/const/index';

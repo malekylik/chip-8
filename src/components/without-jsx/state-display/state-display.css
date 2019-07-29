@@ -1,4 +1,13 @@
-.registers {
- display: grid;
- grid-template-columns: 1fr 1fr;
+.state-display {
+  display: flex;
+}
+
+.state-display__registers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.state-display__chip-8-state {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }

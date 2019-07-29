@@ -61,4 +61,8 @@ export function getProcessor(chip8) {
   return chip8.processor;
 }
 
+export function getMemory(chip8) {
+  return chip8.memory;
+}
+
 function noop() {}

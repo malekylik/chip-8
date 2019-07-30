@@ -6,12 +6,13 @@ import RegisterI from './register-i/register-i';
 import DelayTimer from './delay-timer/delay-timer';
 import SoundTimer from './sound-timer/sound-timer';
 import ProgramCounter from './program-counter/program-counter';
+import StackState from './stack-state/stack-state';
 
 import './state-display.css';
 
 export default class StateDisplay extends React.Component {
   render() {
-    const { registerI, delayTimer, soundTimer, programCounter } = this.props;
+    const { registerI, delayTimer, soundTimer, programCounter, stackPointer, stackValues } = this.props;
     const registers = this.props.registers.map(
       (value, i) => React.createElement(Register, { value, number: i, key: i })
     );
@@ -26,6 +27,7 @@ export default class StateDisplay extends React.Component {
           React.createElement(DelayTimer, { value: delayTimer }),
           React.createElement(SoundTimer, { value: soundTimer }),
           React.createElement(ProgramCounter, { value: programCounter }),
+          React.createElement(StackState, { stackPointer, stackValues }),
         ),
       )
     );
@@ -38,4 +40,6 @@ StateDisplay.propTypes = {
   delayTimer: PropTypes.number.isRequired,
   soundTimer: PropTypes.number.isRequired,
   programCounter: PropTypes.number.isRequired,
+  stackPointer: PropTypes.number.isRequired,
+  stackValues: PropTypes.arrayOf(PropTypes.number).isRequired,
 };

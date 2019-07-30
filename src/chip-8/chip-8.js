@@ -65,4 +65,8 @@ export function getMemory(chip8) {
   return chip8.memory;
 }
 
+export function getStack(chip8) {
+  return chip8.stack;
+}
+
 function noop() {}

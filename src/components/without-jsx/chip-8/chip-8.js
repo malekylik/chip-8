@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 import Display from '../display/display';
 import StateDisplay from '../state-display/state-display';
 
-import { executeNextCycly, getDisplay, getProcessor, getMemory } from '../../../chip-8/chip-8';
+import { executeNextCycly, getDisplay, getProcessor, getMemory, getStack } from '../../../chip-8/chip-8';
 import { getRegisters, getIRegister, getProgramCounter } from '../../../chip-8/processor/methods';
 import { getDelayTimerValue, getSoundTimerValue } from '../../../chip-8/timer/timer';
+import { getStackPointer, getStackValues } from '../../../chip-8/stack/stack';
 
 import './chip-8.css';
 
@@ -22,6 +23,8 @@ export default class Chip8 extends React.Component {
       delayTimer: getDelayTimerValue(getMemory(chip8)),
       soundTimer: getSoundTimerValue(getMemory(chip8)),
       programCounter: getProgramCounter(getProcessor(chip8)),
+      stackPointer: getStackPointer(getStack(chip8)),
+      stackValues: getStackValues(getStack(chip8)),
     }
 
     this.displayRef = React.createRef();
@@ -47,12 +50,14 @@ export default class Chip8 extends React.Component {
       delayTimer: getDelayTimerValue(getMemory(chip8)),
       soundTimer: getSoundTimerValue(getMemory(chip8)),
       programCounter: getProgramCounter(getProcessor(chip8)),
+      stackPointer: getStackPointer(getStack(chip8)),
+      stackValues: getStackValues(getStack(chip8)),
     });
   }
 
   render () {
     const { chip8, scale } = this.props;
-    const { registers, registerI, delayTimer, soundTimer, programCounter } = this.state;
+    const { registers, registerI, delayTimer, soundTimer, programCounter, stackPointer, stackValues } = this.state;
 
     return (
       React.createElement('div', { className: 'chip-8' },
@@ -62,7 +67,7 @@ export default class Chip8 extends React.Component {
           scale,
         }),
         React.createElement(
-          StateDisplay, { registers, registerI, delayTimer, soundTimer, programCounter }
+          StateDisplay, { registers, registerI, delayTimer, soundTimer, programCounter, stackPointer, stackValues }
         ),
       )
     );

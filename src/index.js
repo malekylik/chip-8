@@ -6,6 +6,10 @@ import { executeNextCycly, getDisplay } from './chip-8/chip-8';
 import { getPixel } from './chip-8/display/display';
 import { DISPLAY_WIDTH, DISPLAY_HEIGHT } from './chip-8/display/const/index';
 import { createChip8 } from './chip-8/chip-8';
+import { readOpcode } from './chip-8/memory/memory';
+import { createOpcode } from './chip-8/processor/opcode/opcode';
+import { getProgramCounter } from './chip-8/processor/methods';
+import { getAssemblerForOpcode } from './chip-8/debugger/debugger';
 
 import './main.css';
 
@@ -25,8 +29,8 @@ function putPixel(buffer, x, y, value) {
   buffer.data[offset++] = 255;
 }
 
-// const chip8 = createChip8(MOCK_GAME);
-const chip8 = createChip8(TEST_ROM);
+const chip8 = createChip8(MOCK_GAME);
+// const chip8 = createChip8(TEST_ROM);
 
 const scale = 5;
 
@@ -34,6 +38,7 @@ function main() {
   requestAnimationFrame(main);
 
   const PC = executeNextCycly(chip8);
+  const opcode = createOpcode(readOpcode(chip8.memory, getProgramCounter(chip8.processor)));
 
   const display = getDisplay(chip8);
 
@@ -45,7 +50,7 @@ function main() {
 
   ctx.putImageData(canvasBuffer, 0, 0);
 
-  console.log(`PC: ${PC}`);
+  console.log(`${PC} - ${getAssemblerForOpcode(opcode)}`);
 }
 
 main();

@@ -4,10 +4,15 @@ import PropTypes from 'prop-types';
 import Display from '../display/display';
 import StateDisplay from '../state-display/state-display';
 
-import { executeNextCycly, getDisplay, getProcessor, getMemory, getStack } from '../../../chip-8/chip-8';
-import { getRegisters, getIRegister, getProgramCounter } from '../../../chip-8/processor/methods';
-import { getDelayTimerValue, getSoundTimerValue } from '../../../chip-8/timer/timer';
-import { getStackPointer, getStackValues } from '../../../chip-8/stack/stack';
+import {
+  executeNextCycly,
+  getDisplay,
+  getProgramCounter,
+  getRegisters,
+  getIRegister,
+  getDelayTimerValue,
+  getSoundTimerValue,
+} from '../../../chip-8/chip-8';
 
 import './chip-8.css';
 
@@ -18,13 +23,11 @@ export default class Chip8 extends React.Component {
     const { chip8 } = props;
 
     this.state = {
-      registers: getRegisters(getProcessor(chip8)),
-      registerI: getIRegister(getProcessor(chip8)),
-      delayTimer: getDelayTimerValue(getMemory(chip8)),
-      soundTimer: getSoundTimerValue(getMemory(chip8)),
-      programCounter: getProgramCounter(getProcessor(chip8)),
-      stackPointer: getStackPointer(getStack(chip8)),
-      stackValues: getStackValues(getStack(chip8)),
+      registers: getRegisters(chip8),
+      registerI: getIRegister(chip8),
+      delayTimer: getDelayTimerValue(chip8),
+      soundTimer: getSoundTimerValue(chip8),
+      programCounter: getProgramCounter(chip8),
     }
 
     this.displayRef = React.createRef();
@@ -45,13 +48,11 @@ export default class Chip8 extends React.Component {
     const { chip8 } = this.props;
 
     this.setState({
-      registers: getRegisters(getProcessor(chip8)),
-      registerI: getIRegister(getProcessor(chip8)),
-      delayTimer: getDelayTimerValue(getMemory(chip8)),
-      soundTimer: getSoundTimerValue(getMemory(chip8)),
-      programCounter: getProgramCounter(getProcessor(chip8)),
-      stackPointer: getStackPointer(getStack(chip8)),
-      stackValues: getStackValues(getStack(chip8)),
+      registers: getRegisters(chip8),
+      registerI: getIRegister(chip8),
+      delayTimer: getDelayTimerValue(chip8),
+      soundTimer: getSoundTimerValue(chip8),
+      programCounter: getProgramCounter(chip8),
     });
   }
 

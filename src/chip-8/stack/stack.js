@@ -22,3 +22,16 @@ export function pop(stack) {
 
   return value;
 }
+
+export function getStackPointer(stack) {
+  return stack.stackPointer;
+}
+
+export function getStackValues(stack) {
+  const stackValues = new Array(stack.stack.length);
+
+  let i = stack.stack.length;
+  while (i--) stackValues[i] = stack.stack[i];
+
+  return stackValues;
+}

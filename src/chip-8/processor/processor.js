@@ -78,7 +78,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, keyboar
       switch(leastByte) {
         case 0xE0: CLR(display);  break;
 
-        case 0xEE: RET(proccesor, stack); break
+        case 0xEE: RET(proccesor, stack); break;
       }
 
       break;
@@ -207,8 +207,6 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, keyboar
             setMemoryByte(memory, I + i, getRegisterVX(proccesor, i));
           }
 
-          setIRegister(proccesor, PC + registerCount + 1);
-
           break;
         }
 
@@ -219,8 +217,6 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, keyboar
           for (let i = 0; i <= registerCount; i++) {
             LD(proccesor, i, readMemoreByte(memory, I + i));
           }
-
-          setIRegister(proccesor, I + registerCount + 1);
 
           break;
         }

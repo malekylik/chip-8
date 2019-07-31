@@ -113,5 +113,5 @@ export function getAssemblerForOpcode(opcode) {
     }
   }
 
-  return 'ERROR';
+  return 'UNKNOWN OPCODE';
 }

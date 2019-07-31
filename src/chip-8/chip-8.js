@@ -10,6 +10,10 @@ import {
   getDelayTimerValue as getDelayTimerValueFromMemory,
   getSoundTimerValue as getSoundTimerValueFromMemory,
 } from './timer/timer';
+import {
+  getStackPointer as getStackPointerFromStack,
+  getStackValues as getStackValuesFromStack,
+} from './stack/stack';
 import { createKeyboard } from './keyboard/keyboard';
 import { createOpcode } from './processor/opcode/opcode';
 import { createStack } from './stack/stack';
@@ -96,6 +100,14 @@ export function getDelayTimerValue(chip8) {
 
 export function getSoundTimerValue(chip8) {
   return getSoundTimerValueFromMemory(getMemory(chip8));
+}
+
+export function getStackPointer(chip8) {
+  return getStackPointerFromStack(getStack(chip8))
+}
+
+export function getStackValues(chip8) {
+  return getStackValuesFromStack(getStack(chip8))
 }
 
 function noop() {}

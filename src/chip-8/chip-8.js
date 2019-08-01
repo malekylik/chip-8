@@ -17,7 +17,7 @@ import {
 import { createKeyboard } from './keyboard/keyboard';
 import { createOpcode } from './processor/opcode/opcode';
 import { createStack } from './stack/stack';
-import { createMemory, loadGame, loadFonts, readOpcode } from './memory/memory';
+import { createMemory, loadGame, loadFonts, readOpcode as readOpcodeFromMemory } from './memory/memory';
 import { createDisplay } from './display/display';
 import { FONTS } from './display/const/index';
 
@@ -49,7 +49,7 @@ export function loadRom(chip8, game) {
 }
 
 export function executeNextCycly(chip8) {
-  const opcode = createOpcode(readOpcode(chip8.memory, getProgramCounter(chip8)));
+  const opcode = createOpcode(readOpcode(chip8, getProgramCounter(chip8)));
 
   const PC = executeOpcode(
     chip8.processor,
@@ -108,6 +108,10 @@ export function getStackPointer(chip8) {
 
 export function getStackValues(chip8) {
   return getStackValuesFromStack(getStack(chip8))
+}
+
+export function readOpcode(chip8, address) {
+  return readOpcodeFromMemory(getMemory(chip8), address);
 }
 
 function noop() {}

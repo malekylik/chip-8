@@ -5,7 +5,3 @@ export function getDigit(value, digit) {
 export function getBinDigit(value, digit) {
   return (value >>> digit) & 0x1;
 }
-
-export function joinHighAlignedBytes(bytes) {
-  return (bytes[MOST_SIGNIFICANT_BYTES] << 8) | bytes[LEAST_SIGNIFICANT_BYTES];
-}

@@ -23,7 +23,7 @@ import { createOpcode, getOpcodeValue } from '../../../chip-8/processor/opcode/o
 
 import './chip-8.css';
 
-const ASSEMBLY_LINES_COUNT = 10;
+const ASSEMBLY_LINES_COUNT = 13;
 
 export default class Chip8 extends React.Component {
   constructor(props) {
@@ -73,10 +73,10 @@ export default class Chip8 extends React.Component {
 
   getAssemblyLines(pc) {
     const { chip8 } = this.props;
-    const startMemoryAddress = pc - (ASSEMBLY_LINES_COUNT / 2);
+    const startMemoryAddress = pc - (ASSEMBLY_LINES_COUNT - 1);
     const lines = new Array(ASSEMBLY_LINES_COUNT);
 
-    for (let i = 0, address = startMemoryAddress; i < ASSEMBLY_LINES_COUNT; i++, address = getNextInstructionAddress(i)) {
+    for (let i = 0, address = startMemoryAddress; i < ASSEMBLY_LINES_COUNT; i++, address = getNextInstructionAddress(address)) {
       const opcode = createOpcode(readOpcode(chip8, address));
 
       lines[i] = {

@@ -123,6 +123,17 @@ export default class Chip8 extends React.Component {
     return lines;
   }
 
+  onKeyDown = (e) => {
+    if (!e.repeat) {
+      const key = e.key.toLowerCase();
+      console.log(`keydown: ${key}`);
+    }
+  }
+
+  onKeyUp = (e) => {
+    console.log(`keyup: ${e.key}`);
+  }
+
   render () {
     const { chip8, scale } = this.props;
     const {
@@ -140,6 +151,8 @@ export default class Chip8 extends React.Component {
       React.createElement('div', { className: 'chip-8' },
         React.createElement(Display, {
           ref: this.displayRef,
+          onKeyDown: this.onKeyDown,
+          onKeyUp: this.onKeyUp,
           display: getDisplay(chip8),
           scale,
         }),

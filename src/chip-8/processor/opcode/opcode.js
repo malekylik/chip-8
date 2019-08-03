@@ -7,6 +7,10 @@ export function createOpcode(bytes) {
   }
 }
 
+export function getOpcodeValue(opcode) {
+  return opcode.uint16[0];
+}
+
 export function getPrefixValue(opcode) {
   return getLastFourBitsFromMostBytes(opcode);
 }
@@ -16,7 +20,7 @@ export function getPostfixValue(opcode) {
 }
 
 export function getValueWithourPrefix(opcode) {
-  return opcode.uint16[0] & 0x0FFF;
+  return getOpcodeValue(opcode) & 0x0FFF;
 }
 
 export function getLeastByte(opcode) {
@@ -56,5 +60,5 @@ export function getLastFourBitsFromMostBytes(opcode) {
 }
 
 export function getMiddleByte(opcode) {
-  return (opcode.uint16[0] >>> 4) & 0x0FF;
+  return (getOpcodeValue(opcode) >>> 4) & 0x0FF;
 }

@@ -16,6 +16,9 @@ import {
   getStackPointer,
   getStackValues,
   readOpcode,
+  isKeyExist,
+  pressKey,
+  releaseKey,
 } from '../../../chip-8/chip-8';
 import { getAssemblerForOpcode } from '../../../chip-8/debugger/debugger';
 import { getNextInstructionAddress } from '../../../chip-8/processor/methods';
@@ -126,12 +129,22 @@ export default class Chip8 extends React.Component {
   onKeyDown = (e) => {
     if (!e.repeat) {
       const key = e.key.toLowerCase();
-      console.log(`keydown: ${key}`);
+      const { chip8 } = this.props;
+
+      if (isKeyExist(chip8, key)) {
+        pressKey(chip8, key);
+      }
     }
   }
 
   onKeyUp = (e) => {
-    console.log(`keyup: ${e.key}`);
+    const key = e.key.toLowerCase();
+    const { chip8 } = this.props;
+
+    if (isKeyExist(chip8, key)) {
+      releaseKey(chip8, key);
+    }
+
   }
 
   render () {

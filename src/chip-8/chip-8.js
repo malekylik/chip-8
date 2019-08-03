@@ -14,7 +14,12 @@ import {
   getStackPointer as getStackPointerFromStack,
   getStackValues as getStackValuesFromStack,
 } from './stack/stack';
-import { createKeyboard } from './keyboard/keyboard';
+import {
+  createKeyboard,
+  isKeyExist as isKeyExistFromKeyboard,
+  pressKey as pressKeyOnKey,
+  releaseKey as releaseKeyOnKey,
+} from './keyboard/keyboard';
 import { createOpcode } from './processor/opcode/opcode';
 import { createStack } from './stack/stack';
 import { createMemory, loadGame, loadFonts, readOpcode as readOpcodeFromMemory } from './memory/memory';
@@ -112,6 +117,18 @@ export function getStackValues(chip8) {
 
 export function readOpcode(chip8, address) {
   return readOpcodeFromMemory(getMemory(chip8), address);
+}
+
+export function isKeyExist(chip8, key) {
+  return isKeyExistFromKeyboard(chip8.keyboard, key);
+}
+
+export function pressKey(chip8, key) {
+  return pressKeyOnKey(chip8.keyboard, key);
+}
+
+export function releaseKey(chip8, key) {
+  return releaseKeyOnKey(chip8.keyboard, key);
 }
 
 function noop() {}

@@ -20,6 +20,7 @@ import {
 import { getAssemblerForOpcode } from '../../../chip-8/debugger/debugger';
 import { getNextInstructionAddress } from '../../../chip-8/processor/methods';
 import { createOpcode, getOpcodeValue } from '../../../chip-8/processor/opcode/opcode';
+import { OPCODE_BYTES } from '../../../chip-8/processor/const/index';
 
 import './chip-8.css';
 
@@ -43,6 +44,7 @@ export default class Chip8 extends React.Component {
     }
 
     this.displayRef = React.createRef();
+    this.prevPC = getProgramCounter(chip8);
   }
 
   executeNextCycly() {
@@ -50,6 +52,8 @@ export default class Chip8 extends React.Component {
 
     this.updateDisplay();
     this.updateState();
+
+    this.prevPC = getProgramCounter(this.props.chip8);
   }
 
   updateDisplay() {
@@ -72,11 +76,41 @@ export default class Chip8 extends React.Component {
   }
 
   getAssemblyLines(pc) {
-    const { chip8 } = this.props;
-    const startMemoryAddress = pc - (ASSEMBLY_LINES_COUNT - 1);
     const lines = new Array(ASSEMBLY_LINES_COUNT);
 
-    for (let i = 0, address = startMemoryAddress; i < ASSEMBLY_LINES_COUNT; i++, address = getNextInstructionAddress(address)) {
+    if (this.prevPC < pc && pc - this.prevPC < ASSEMBLY_LINES_COUNT) {
+      const diffCount = (pc - this.prevPC) / OPCODE_BYTES;
+      const startMemoryAddress = pc + ASSEMBLY_LINES_COUNT + 1 - (diffCount * OPCODE_BYTES);
+
+      this.copyAssembyLines(lines, diffCount, ASSEMBLY_LINES_COUNT, 0);
+
+      return this.fillAssemblyLines(lines, ASSEMBLY_LINES_COUNT - diffCount, ASSEMBLY_LINES_COUNT, startMemoryAddress);
+    } else if (pc < this.prevPC && this.prevPC - pc < ASSEMBLY_LINES_COUNT) {
+      const diffCount = (this.prevPC - pc) / OPCODE_BYTES;
+      const startMemoryAddress = pc - (ASSEMBLY_LINES_COUNT - 1);
+
+      this.copyAssembyLines(lines, 0, ASSEMBLY_LINES_COUNT - diffCount, diffCount);
+
+      return this.fillAssemblyLines(lines, 0, diffCount, startMemoryAddress);
+    }
+
+    const startMemoryAddress = pc - (ASSEMBLY_LINES_COUNT - 1);
+
+    return this.fillAssemblyLines(lines, 0, ASSEMBLY_LINES_COUNT, startMemoryAddress);
+  }
+
+  copyAssembyLines(lines, start, end, startTo) {
+    const { assemblyLines } = this.state;
+
+    for (let i = start, j = startTo; i < end; i++, j++) {
+      lines[j] = assemblyLines[i] 
+    }
+  }
+
+  fillAssemblyLines(lines, start, end, startMemoryAddress) {
+    const { chip8 } = this.props;
+
+    for (let i = start, address = startMemoryAddress; i < end; i++, address = getNextInstructionAddress(address)) {
       const opcode = createOpcode(readOpcode(chip8, address));
 
       lines[i] = {

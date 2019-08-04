@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Canvas from '../canvas/canvas';
+import Canvas from '../canvas/canvas-gl';
 
 import { fillImageDataWithDisplay, scaleDisplay } from '../../../chip-8/display/display';
 
@@ -22,12 +22,13 @@ export default class Display extends React.Component {
   }
 
   updateDisplayData(display) {
-    fillImageDataWithDisplay(this.imageData, display, this.props.scale);
-    this.setImageData();
+    // fillImageDataWithDisplay(this.imageData, display, this.props.scale);
+    this.setImageData(display);
   }
 
-  setImageData() {
-    this.canvasRef.current.setImageData(this.imageData);
+  setImageData(display) {
+    // this.canvasRef.current.setImageData(this.imageData);
+    this.canvasRef.current.setImageData(display.buffer);
   }
 
   render () {

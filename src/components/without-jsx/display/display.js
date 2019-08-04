@@ -31,10 +31,18 @@ export default class Display extends React.Component {
   }
 
   render () {
+    const { onKeyDown, onKeyUp } = this.props;
     const { width, height } = scaleDisplay(this.props.scale);
 
     return (
-      React.createElement(Canvas, { ref: this.canvasRef, imageData: this.imageData, width, height }, null)
+      React.createElement(Canvas, {
+        ref: this.canvasRef,
+        imageData: this.imageData,
+        width,
+        height,
+        onKeyDown,
+        onKeyUp,
+      }, null)
     );
   }
 }
@@ -42,6 +50,8 @@ export default class Display extends React.Component {
 Display.propTypes = {
   scale: PropTypes.number,
   display: PropTypes.object,
+  onKeyDown: PropTypes.func,
+  onKeyUp: PropTypes.func,
 };
 
 Display.defaultProps = {

@@ -5,20 +5,39 @@ export function createKeyboard() {
 
   return {
     keyboard: new Uint8Array(keyboardBytes),
-    keyboardMap: Uint8Array.from(KEYBOARD_MAP)
+    keyboardMap: { ...KEYBOARD_MAP },
+    keyboardKeys: Object.keys(KEYBOARD_MAP)
   };
 }
 
-export function getKeyValue(keyboard, key) {
-  return keyboard.keyboard[mapFromRealKeyboardToChip8Keyboard(keyboard, key)];
+export function getKeyValue(keyboard, keyCode) {
+  return keyboard.keyboard[keyCode];
 }
 
-export function isKeyPress(keyboard, key) {
-  return getKeyValue(keyboard, key) === KEY_PRESS_VALUE;
+export function pressKey(keyboard, key) {
+  return keyboard.keyboard[mapFromRealKeyboardToChip8Keyboard(keyboard, key)] = KEY_PRESS_VALUE;
 }
 
-export function isKeyUnpress(keyboard, key) {
-  return getKeyValue(keyboard, key) === KEY_UNPRESS_VALUE;
+export function releaseKey(keyboard, key) {
+  return keyboard.keyboard[mapFromRealKeyboardToChip8Keyboard(keyboard, key)] = KEY_UNPRESS_VALUE;
+}
+
+export function isKeyExist(keyboard, key) {
+  const { keyboardKeys } = keyboard;
+
+  for (let i = 0; i < keyboardKeys.length; i++) {
+    if (keyboardKeys[i] === key) return true;
+  }
+
+  return false;
+}
+
+export function isKeyPress(keyboard, keyCode) {
+  return getKeyValue(keyboard, keyCode) === KEY_PRESS_VALUE;
+}
+
+export function isKeyUnpress(keyboard, keyCode) {
+  return getKeyValue(keyboard, keyCode) === KEY_UNPRESS_VALUE;
 }
 
 function mapFromRealKeyboardToChip8Keyboard(keyboard, key) {

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Display from '../display/display';
 import StateDisplay from '../state-display/state-display';
 import Assambly from '../assembly/assembly';
+import KeyboardState from '../keyboard-state/keyboard-state';
 
 import {
   executeNextCycly,
@@ -16,6 +17,10 @@ import {
   getStackPointer,
   getStackValues,
   readOpcode,
+  isKeyExist,
+  pressKey,
+  releaseKey,
+  getKeyboard,
 } from '../../../chip-8/chip-8';
 import { getAssemblerForOpcode } from '../../../chip-8/debugger/debugger';
 import { getNextInstructionAddress } from '../../../chip-8/processor/methods';
@@ -41,6 +46,7 @@ export default class Chip8 extends React.Component {
       stackPointer: getStackPointer(chip8),
       stackValues: getStackValues(chip8),
       assemblyLines: this.getAssemblyLines(getProgramCounter(chip8)),
+      isKeyboardNeedToRerender: false,
     }
 
     this.displayRef = React.createRef();
@@ -72,6 +78,7 @@ export default class Chip8 extends React.Component {
       stackPointer: getStackPointer(chip8),
       stackValues: getStackValues(chip8),
       assemblyLines: this.getAssemblyLines(getProgramCounter(chip8)),
+      isKeyboardNeedToRerender: !this.state.isKeyboardNeedToRerender,
     });
   }
 
@@ -123,6 +130,27 @@ export default class Chip8 extends React.Component {
     return lines;
   }
 
+  onKeyDown = (e) => {
+    if (!e.repeat) {
+      const key = e.key.toLowerCase();
+      const { chip8 } = this.props;
+
+      if (isKeyExist(chip8, key)) {
+        pressKey(chip8, key);
+      }
+    }
+  }
+
+  onKeyUp = (e) => {
+    const key = e.key.toLowerCase();
+    const { chip8 } = this.props;
+
+    if (isKeyExist(chip8, key)) {
+      releaseKey(chip8, key);
+    }
+
+  }
+
   render () {
     const { chip8, scale } = this.props;
     const {
@@ -134,20 +162,31 @@ export default class Chip8 extends React.Component {
       stackPointer,
       stackValues,
       assemblyLines,
+      isKeyboardNeedToRerender,
     } = this.state;
 
     return (
-      React.createElement('div', { className: 'chip-8' },
-        React.createElement(Display, {
-          ref: this.displayRef,
-          display: getDisplay(chip8),
-          scale,
-        }),
-        React.createElement(
-          StateDisplay, { registers, registerI, delayTimer, soundTimer, programCounter, stackPointer, stackValues }
+      React.createElement('div', null,
+        React.createElement('div', { className: 'chip-8' },
+          React.createElement(Display, {
+            ref: this.displayRef,
+            onKeyDown: this.onKeyDown,
+            onKeyUp: this.onKeyUp,
+            display: getDisplay(chip8),
+            scale,
+          }),
+          React.createElement(
+            StateDisplay, { registers, registerI, delayTimer, soundTimer, programCounter, stackPointer, stackValues }
+          ),
+          React.createElement(
+            Assambly, { assemblyLines }
+          )
         ),
-        React.createElement(
-          Assambly, { assemblyLines }
+        React.createElement('div', null,
+          React.createElement(KeyboardState, {
+            keyboard: getKeyboard(chip8),
+            isKeyboardNeedToRerender: isKeyboardNeedToRerender,
+          })
         )
       )
     );

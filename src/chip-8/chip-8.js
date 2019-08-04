@@ -87,6 +87,10 @@ export function getStack(chip8) {
   return chip8.stack;
 }
 
+export function getKeyboard(chip8) {
+  return chip8.keyboard;
+}
+
 export function getRegisters(chip8) {
   return getRegistersFromProcessor(getProcessor(chip8));
 }
@@ -129,6 +133,10 @@ export function pressKey(chip8, key) {
 
 export function releaseKey(chip8, key) {
   return releaseKeyOnKey(chip8.keyboard, key);
+}
+
+export function getKeyboardState(chip8) {
+  return getKeyboardStateFromKeyboard(chip8.keyboard);
 }
 
 function noop() {}

@@ -1,25 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { createShader } from '../../../gl/index';
+import { SHADER_TYPES } from '../../../gl/const/index';
+
 export default class CanvasGL extends React.Component {
   canvasRef = React.createRef();
   ctx = null;
 
   componentDidMount() {
+    this.ctx = this.canvasRef.current.getContext('webgl2');
+    // this.setImageData(this.props.imageData);
+
+    const { ctx: gl } = this;
+
     Promise.all([
       fetch('./src/assets/shaders/main.vert'),
       fetch('./src/assets/shaders/main.frag')
     ]
     ).then(([vert, frag]) => Promise.all([vert.text(), frag.text()]))
-    .then(([vert, frag]) => console.log(vert, frag));
+    .then(([vert, frag]) => {
+      console.log(vert, frag)
 
-
-    this.ctx = this.canvasRef.current.getContext('webgl2');
-    // this.setImageData(this.props.imageData);
-
-    const { ctx } = this;
-    const texture = ctx.createTexture();
-    ctx.bindTexture(ctx.TEXTURE_2D, texture);
+      const vertShader = createShader(gl, SHADER_TYPES.vertexShader, vert);
+      const fragShader = createShader(gl, SHADER_TYPES.fragmentShader, frag);
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -38,17 +43,17 @@ export default class CanvasGL extends React.Component {
   setImageData(imageData) {
     const { ctx } = this;
 
-    ctx.texImage2D(
-      ctx.TEXTURE_2D,
-      0,
-      ctx.R8,
-      64,
-      32,
-      0,
-      ctx.RED,
-      ctx.UNSIGNED_BYTE,
-      imageData,
-      0);
+    // ctx.texImage2D(
+    //   ctx.TEXTURE_2D,
+    //   0,
+    //   ctx.R8,
+    //   64,
+    //   32,
+    //   0,
+    //   ctx.RED,
+    //   ctx.UNSIGNED_BYTE,
+    //   imageData,
+    //   0);
     // if (imageData) {
     //   this.ctx.putImageData(imageData, 0, 0);
     // }

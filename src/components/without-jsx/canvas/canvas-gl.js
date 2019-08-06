@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { createShader } from '../../../gl/index';
+import { createGLShader } from '../../../gl/shader';
+import { createGLProgram } from '../../../gl/program';
 import { SHADER_TYPES } from '../../../gl/const/index';
 
 export default class CanvasGL extends React.Component {
@@ -22,8 +23,10 @@ export default class CanvasGL extends React.Component {
     .then(([vert, frag]) => {
       console.log(vert, frag)
 
-      const vertShader = createShader(gl, SHADER_TYPES.vertexShader, vert);
-      const fragShader = createShader(gl, SHADER_TYPES.fragmentShader, frag);
+      const vertShader = createGLShader(gl, SHADER_TYPES.vertexShader, vert);
+      const fragShader = createGLShader(gl, SHADER_TYPES.fragmentShader, frag);
+
+      const program = createGLProgram(gl, vertShader, fragShader);
     });
   }
 

@@ -2,8 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { createGLShader } from '../../../gl/shader';
-import { createGLProgram } from '../../../gl/program';
+import { createGLProgram, useProgram } from '../../../gl/program';
 import { SHADER_TYPES } from '../../../gl/const/index';
+
+const triangle = Float32Array.from([
+  0.0, 0.5, 0.0,
+  1.0, 0.0, 0.0,
+
+  -0.5, -0.5, 0.0,
+  0.0, 1.0, 0.0,
+
+  0.5, -0.5, 0.0,
+  0.0, 0.0, 0.5,
+
+]);
 
 export default class CanvasGL extends React.Component {
   canvasRef = React.createRef();
@@ -23,10 +35,27 @@ export default class CanvasGL extends React.Component {
     .then(([vert, frag]) => {
       console.log(vert, frag)
 
+      gl.viewport(0, 0, this.props.width, this.props.height);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
       const vertShader = createGLShader(gl, SHADER_TYPES.vertexShader, vert);
       const fragShader = createGLShader(gl, SHADER_TYPES.fragmentShader, frag);
-
+      
       const program = createGLProgram(gl, vertShader, fragShader);
+
+      useProgram(gl, program);
+
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, triangle, gl.STATIC_DRAW);
+
+      gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
+      gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+      gl.enableVertexAttribArray(0);
+      gl.enableVertexAttribArray(1);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
     });
   }
 

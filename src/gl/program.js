@@ -1,4 +1,5 @@
 import { SHADER_TYPES } from './const/index';
+import { ENABLED_PROGRAM, DISABLED_PROGRAM } from './const/index';
 import { getShaderType, getNativeShader } from './shader';
 
 export function createGLProgram(gl, vertShader, fragShader) {
@@ -22,17 +23,39 @@ export function createGLProgram(gl, vertShader, fragShader) {
     return null;
   }
 
-  return createProgram(program, true, false);
+  return createProgram(program, true, false, false);
 }
 
-export function createProgram(nativeProgram, isLinked, isDeleted) {
+export function createProgram(nativeProgram, isLinked, isUsed, isDeleted) {
   return ({
     nativeProgram,
     isLinked,
+    isUsed,
     isDeleted,
   });
 }
 
 export function getNativeProgram(program) {
   return program.nativeProgram;
+}
+
+export function useProgram(gl, program) {
+  gl.useProgram(getNativeProgram(program));
+  setProgramUsed(program, ENABLED_PROGRAM);
+}
+
+export function validateProgram(gl, program) {
+  const nativeProgram = getNativeProgram(program);
+
+  gl.validateProgram(nativeProgram);
+
+  if (!gl.getProgramParameter(nativeProgram, gl.VALIDATE_STATUS)) {
+    return gl.getProgramInfoLog(nativeProgram);
+  }
+
+  return '';
+}
+
+function setProgramUsed(program, value) {
+  return program.isUsed = value;
 }

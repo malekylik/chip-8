@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Display from '../display/display';
+import Display2D from '../display/display-gl';
+import DisplayGL from '../display/display-gl';
 import StateDisplay from '../state-display/state-display';
 import Assambly from '../assembly/assembly';
 import KeyboardState from '../keyboard-state/keyboard-state';
@@ -168,7 +169,7 @@ export default class Chip8 extends React.Component {
     return (
       React.createElement('div', null,
         React.createElement('div', { className: 'chip-8' },
-          React.createElement(Display, {
+          React.createElement(DisplayGL, {
             ref: this.displayRef,
             onKeyDown: this.onKeyDown,
             onKeyUp: this.onKeyUp,

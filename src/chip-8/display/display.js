@@ -85,3 +85,7 @@ export function scaleDisplay(scale) {
     height: DISPLAY_HEIGHT * scale,
   })
 }
+
+export function getPixels(display) {
+  return display.buffer;
+}

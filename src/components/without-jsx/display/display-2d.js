@@ -23,11 +23,11 @@ export default class Display extends React.Component {
 
   updateDisplayData(display) {
     fillImageDataWithDisplay(this.imageData, display, this.props.scale);
-    this.setImageData();
+    this.setImageData(this.props.display);
   }
 
-  setImageData() {
-    this.canvasRef.current.setImageData(this.imageData);
+  setImageData(display) {
+    this.canvasRef.current.setImageBinaries(this.imageData);
   }
 
   render () {

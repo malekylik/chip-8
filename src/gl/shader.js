@@ -45,10 +45,19 @@ export function createShader(type, nativeTypy, nativeShader, source, isCompiled,
   });
 }
 
+export function deleteShader(gl, shader) {
+  gl.deleteShader(getNativeShader(shader));
+  setIsDelete(shader, true);
+}
+
 export function getShaderType(shader) {
   return shader.type;
 }
 
 export function getNativeShader(shader) {
   return shader.nativeShader;
+}
+
+function setIsDelete(shader, value) {
+  return shader.isDeleted = value;
 }

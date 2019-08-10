@@ -7,11 +7,11 @@ export default class Canvas extends React.Component {
 
   componentDidMount() {
     this.ctx = this.canvasRef.current.getContext('2d');
-    this.setImageData(this.props.imageData);
+    this.setImageBinaries(this.props.imageData);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setImageData(nextProps.imageData);
+    this.setImageBinaries(nextProps.imageData);
   }
 
   shouldComponentUpdate(nextProps) {
@@ -23,7 +23,7 @@ export default class Canvas extends React.Component {
     return true;
   }
 
-  setImageData(imageData) {
+  setImageBinaries(imageData) {
     if (imageData) {
       this.ctx.putImageData(imageData, 0, 0);
     }

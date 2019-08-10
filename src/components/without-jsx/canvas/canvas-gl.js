@@ -6,15 +6,30 @@ import { createGLProgram, useProgram } from '../../../gl/program';
 import { SHADER_TYPES } from '../../../gl/const/index';
 
 const triangle = Float32Array.from([
-  0.0, 0.5, 0.0,
-  1.0, 0.0, 0.0,
+  // first triangle
+  -1.0, 1.0, 0.0, // top-left v0
+  0.0, 1.0, // texCoord v0
 
-  -0.5, -0.5, 0.0,
-  0.0, 1.0, 0.0,
+  1.0, 1.0, 0.0, // top-right v1
+  1.0, 1.0, // texCoord v1
 
-  0.5, -0.5, 0.0,
-  0.0, 0.0, 0.5,
+  -1.0, -1.0, 0.0, // bottom-left v2
+  0.0, 0.0, // texCoord v2
 
+  // second triangle
+  1.0, 1.0, 0.0, // top-rigth v1
+  1.0, 1.0, // texCoord v1
+
+  1.0, -1.0, 0.0, // bottom-right v4
+  1.0, 0.0, // texCoord v4
+
+  -1.0, -1.0, 0.0, // bottom-left v2
+  0.0, 0.0, // texCoord v2
+]);
+
+const indecies = Uint16Array.from([
+  0, 1, 2,
+  1, 4, 2,
 ]);
 
 export default class CanvasGL extends React.Component {
@@ -41,21 +56,46 @@ export default class CanvasGL extends React.Component {
 
       const vertShader = createGLShader(gl, SHADER_TYPES.vertexShader, vert);
       const fragShader = createGLShader(gl, SHADER_TYPES.fragmentShader, frag);
-      
+
       const program = createGLProgram(gl, vertShader, fragShader);
+
+      const textUniformLocation = gl.getUniformLocation(program.nativeProgram, 's_texture');
 
       useProgram(gl, program);
 
       const buffer = gl.createBuffer();
+      const indexBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
       gl.bufferData(gl.ARRAY_BUFFER, triangle, gl.STATIC_DRAW);
 
-      gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
-      gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indecies, gl.STATIC_DRAW);
+
+      gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
+      gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
       gl.enableVertexAttribArray(0);
       gl.enableVertexAttribArray(1);
 
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+
+      const texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8, 64, 32, 0, gl.RED, gl.UNSIGNED_BYTE, this.props.imageData);
+
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+      gl.activeTexture(gl.TEXTURE0);
+
+      gl.uniform1i(textUniformLocation, 0);
+      //   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+      //   GL_NEAREST);
+
+      gl.drawElements(gl.TRIANGLES, indecies.length, gl.UNSIGNED_SHORT, 0);
+
+      this.texture = texture;
+      this.program = program;
+      this.textUniformLocation = textUniformLocation;
     });
   }
 
@@ -73,7 +113,16 @@ export default class CanvasGL extends React.Component {
   }
 
   setImageData(imageData) {
-    const { ctx } = this;
+    const { ctx: gl } = this;
+
+    if (this.texture) {
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      // useProgram(gl, this.program);
+
+      // gl.bindTexture(gl.TEXTURE_2D, this.texture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8, 64, 32, 0, gl.RED, gl.UNSIGNED_BYTE, imageData);
+      gl.drawElements(gl.TRIANGLES, indecies.length, gl.UNSIGNED_SHORT, 0);
+    }
 
     // ctx.texImage2D(
     //   ctx.TEXTURE_2D,

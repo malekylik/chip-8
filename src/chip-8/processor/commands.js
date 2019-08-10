@@ -105,7 +105,7 @@ export function DRW(display, x, y, memory, I, n) {
     }
   }
 
-  return eraseCount & 0x1;
+  return eraseCount === 0 ? 0 : 1;
 }
 
 export function SKP(proccesor, keyboard, key) {

@@ -94,9 +94,10 @@ export function RND(proccesor, register, mask) {
 
 export function DRW(display, x, y, memory, I, n) {
   let eraseCount = 0;
+
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < 8; j++) {
-      eraseCount += xorPixel(
+      eraseCount |= xorPixel(
         display,
         (x + j) % DISPLAY_WIDTH,
         (y + i) % DISPLAY_HEIGHT,
@@ -105,7 +106,7 @@ export function DRW(display, x, y, memory, I, n) {
     }
   }
 
-  return eraseCount === 0 ? 0 : 1;
+  return eraseCount;
 }
 
 export function SKP(proccesor, keyboard, key) {

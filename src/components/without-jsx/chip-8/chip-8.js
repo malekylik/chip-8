@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { connect } from 'react-redux';
+
 import Display2D from '../display/display-gl';
 import DisplayGL from '../display/display-gl';
 import StateDisplay from '../state-display/state-display';
@@ -27,12 +29,13 @@ import { getAssemblerForOpcode } from '../../../chip-8/debugger/debugger';
 import { getNextInstructionAddress } from '../../../chip-8/processor/methods';
 import { createOpcode, getOpcodeValue } from '../../../chip-8/processor/opcode/opcode';
 import { OPCODE_BYTES } from '../../../chip-8/processor/const/index';
+import { setAssemblyLineNumber } from '../../../redux/assembly/assembly.actions';
 
 import './chip-8.css';
 
 const ASSEMBLY_LINES_COUNT = 13;
 
-export default class Chip8 extends React.Component {
+class Chip8 extends React.Component {
   constructor(props) {
     super(props);
 
@@ -69,6 +72,8 @@ export default class Chip8 extends React.Component {
 
   updateState() {
     const { chip8 } = this.props;
+
+    this.props.setAssemblyLineNumber((getProgramCounter(chip8) - 512) / 2);
 
     this.setState({
       registers: getRegisters(chip8),
@@ -198,3 +203,5 @@ Chip8.propTypes = {
   chip8: PropTypes.object.isRequired,
   scale: PropTypes.number,
 };
+
+export default connect(null, { setAssemblyLineNumber }, null, { forwardRef: true })(Chip8);

@@ -3,7 +3,8 @@ import { getNextInstructionAddress } from '../../chip-8/processor/methods';
 import { createOpcode, getOpcodeValue } from '../../chip-8/processor/opcode/opcode';
 import { getAssemblerForOpcode } from '../../chip-8/debugger/debugger';
 
-export const SET_ASSEMBLY_LINES = '[App] SET_ASSEMBLY_LINES';
+export const SET_ASSEMBLY_LINES = '[Assembly] SET_ASSEMBLY_LINES';
+export const SET_ASSEMBLY_LINE_NUMBER = '[Assembly] SET_ASSEMBLY_LINE_NUMBER';
 
 export function disassemblyCode(rom) {
   return function (dispatch) {
@@ -15,7 +16,7 @@ export function disassemblyCode(rom) {
         address,
         opcode: getOpcodeValue(opcode),
         assembly: getAssemblerForOpcode(opcode),
-      } ;
+      };
     }
 
     dispatch(setAssemblyLines(lines));
@@ -28,5 +29,12 @@ export function setAssemblyLines(lines) {
   return ({
     type: SET_ASSEMBLY_LINES,
     payload: { lines },
+  });
+}
+
+export function setAssemblyLineNumber(lineNumber) {
+  return ({
+    type: SET_ASSEMBLY_LINE_NUMBER,
+    payload: { lineNumber },
   });
 }

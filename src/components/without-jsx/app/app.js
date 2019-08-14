@@ -1,11 +1,14 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import Chip8 from '../chip-8/chip-8';
 
 import { createChip8 } from '../../../chip-8/chip-8';
 import { MOCK_GAME } from '../../../chip-8/processor/const/index';
+import { selectSubAssemblyLines } from '../../../redux/assembly/assembly.selectors';
+import { disassemblyCode } from '../../../redux/assembly/assembly.actions';
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
 
@@ -14,6 +17,7 @@ export default class App extends React.Component {
     this.chip8Ref = React.createRef();
     this.chip8 = createChip8(MOCK_GAME);
     this.requestCallback = null;
+    this.props.disassemblyCode(MOCK_GAME);
   }
 
   componentDidMount() {
@@ -42,3 +46,11 @@ export default class App extends React.Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  return ({
+    assemblyLines: selectSubAssemblyLines(state),
+  });
+}
+
+export default connect(mapStateToProps, { disassemblyCode })(App);

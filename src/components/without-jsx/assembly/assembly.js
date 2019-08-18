@@ -1,9 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { connect } from 'react-redux';
+
+import { selectSubAssemblyLines } from '../../../redux/assembly/assembly.selectors';
+
 import './assembly.css';
 
-const Assambly = ({ assemblyLines }) => {
+const Assembly = ({ assemblyLines }) => {
   const lines = assemblyLines.map(({ address, opcode, assembly}) => (
     React.createElement(React.Fragment, { key: address },
       React.createElement(
@@ -31,8 +35,12 @@ const Assambly = ({ assemblyLines }) => {
   );
 };
 
-Assambly.propTypes = {
+Assembly.propTypes = {
   assemblyLines: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-export default Assambly;
+const mapStateToProps = (state) => ({
+  assemblyLines: selectSubAssemblyLines(state),
+});
+
+export default connect(mapStateToProps)(Assembly);

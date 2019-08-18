@@ -25,6 +25,7 @@ import {
   getKeyboard,
 } from '../../../chip-8/chip-8';
 import { setAssemblyLineNumber } from '../../../redux/assembly/assembly.actions';
+import { setProgramCounter } from '../../../redux/chip-8/chip-8.actions';
 
 import './chip-8.css';
 
@@ -39,13 +40,11 @@ class Chip8 extends React.Component {
       registerI: getIRegister(chip8),
       delayTimer: getDelayTimerValue(chip8),
       soundTimer: getSoundTimerValue(chip8),
-      programCounter: getProgramCounter(chip8),
       stackPointer: getStackPointer(chip8),
       stackValues: getStackValues(chip8),
     }
 
     this.displayRef = React.createRef();
-    this.prevPC = getProgramCounter(chip8);
   }
 
   executeNextCycly() {
@@ -53,8 +52,6 @@ class Chip8 extends React.Component {
 
     this.updateDisplay();
     this.updateState();
-
-    this.prevPC = getProgramCounter(this.props.chip8);
   }
 
   updateDisplay() {
@@ -65,16 +62,17 @@ class Chip8 extends React.Component {
     const { chip8 } = this.props;
 
     this.props.setAssemblyLineNumber(getProgramCounter(chip8));
+    this.props.setProgramCounter(getProgramCounter(chip8));
 
     this.setState({
       registers: getRegisters(chip8),
       registerI: getIRegister(chip8),
       delayTimer: getDelayTimerValue(chip8),
       soundTimer: getSoundTimerValue(chip8),
-      programCounter: getProgramCounter(chip8),
       stackPointer: getStackPointer(chip8),
       stackValues: getStackValues(chip8),
     });
+
   }
 
   onKeyDown = (e) => {
@@ -105,7 +103,6 @@ class Chip8 extends React.Component {
       registerI,
       delayTimer,
       soundTimer,
-      programCounter,
       stackPointer,
       stackValues,
     } = this.state;
@@ -121,7 +118,7 @@ class Chip8 extends React.Component {
             scale,
           }),
           React.createElement(
-            StateDisplay, { registers, registerI, delayTimer, soundTimer, programCounter, stackPointer, stackValues }
+            StateDisplay, { registers, registerI, delayTimer, soundTimer, stackPointer, stackValues }
           ),
           React.createElement(Asseambly)
         ),
@@ -140,4 +137,9 @@ Chip8.propTypes = {
   scale: PropTypes.number,
 };
 
-export default connect(null, { setAssemblyLineNumber }, null, { forwardRef: true })(Chip8);
+const mapDispatchToProps = {
+  setAssemblyLineNumber,
+  setProgramCounter,
+};
+
+export default connect(null, mapDispatchToProps, null, { forwardRef: true })(Chip8);

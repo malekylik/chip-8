@@ -25,27 +25,20 @@ import {
   getKeyboard,
 } from '../../../chip-8/chip-8';
 import { setAssemblyLineNumber } from '../../../redux/assembly/assembly.actions';
-import { setProgramCounter } from '../../../redux/chip-8/chip-8.actions';
+import {
+  setProgramCounter,
+  setRegisterI,
+  setSoundTimer,
+  setDelayTimer,
+  setStackPointer,
+  setStackValues,
+  setRegisters,
+} from '../../../redux/chip-8/chip-8.actions';
 
 import './chip-8.css';
 
 class Chip8 extends React.Component {
-  constructor(props) {
-    super(props);
-
-    const { chip8 } = props;
-
-    this.state = {
-      registers: getRegisters(chip8),
-      registerI: getIRegister(chip8),
-      delayTimer: getDelayTimerValue(chip8),
-      soundTimer: getSoundTimerValue(chip8),
-      stackPointer: getStackPointer(chip8),
-      stackValues: getStackValues(chip8),
-    }
-
-    this.displayRef = React.createRef();
-  }
+  displayRef = React.createRef();
 
   executeNextCycly() {
     executeNextCycly(this.props.chip8);
@@ -63,16 +56,12 @@ class Chip8 extends React.Component {
 
     this.props.setAssemblyLineNumber(getProgramCounter(chip8));
     this.props.setProgramCounter(getProgramCounter(chip8));
-
-    this.setState({
-      registers: getRegisters(chip8),
-      registerI: getIRegister(chip8),
-      delayTimer: getDelayTimerValue(chip8),
-      soundTimer: getSoundTimerValue(chip8),
-      stackPointer: getStackPointer(chip8),
-      stackValues: getStackValues(chip8),
-    });
-
+    this.props.setRegisterI(getIRegister(chip8));
+    this.props.setDelayTimer(getDelayTimerValue(chip8));
+    this.props.setSoundTimer(getSoundTimerValue(chip8));
+    this.props.setStackPointer(getStackPointer(chip8));
+    this.props.setStackValues(getStackValues(chip8));
+    this.props.setRegisters(getRegisters(chip8));
   }
 
   onKeyDown = (e) => {
@@ -98,14 +87,6 @@ class Chip8 extends React.Component {
 
   render () {
     const { chip8, scale } = this.props;
-    const {
-      registers,
-      registerI,
-      delayTimer,
-      soundTimer,
-      stackPointer,
-      stackValues,
-    } = this.state;
 
     return (
       React.createElement('div', null,
@@ -117,9 +98,7 @@ class Chip8 extends React.Component {
             display: getDisplay(chip8),
             scale,
           }),
-          React.createElement(
-            StateDisplay, { registers, registerI, delayTimer, soundTimer, stackPointer, stackValues }
-          ),
+          React.createElement(StateDisplay),
           React.createElement(Asseambly)
         ),
         React.createElement('div', null,
@@ -140,6 +119,12 @@ Chip8.propTypes = {
 const mapDispatchToProps = {
   setAssemblyLineNumber,
   setProgramCounter,
+  setRegisterI,
+  setSoundTimer,
+  setDelayTimer,
+  setStackPointer,
+  setStackValues,
+  setRegisters,
 };
 
 export default connect(null, mapDispatchToProps, null, { forwardRef: true })(Chip8);

@@ -38,3 +38,11 @@ export function setMemoryBytes(memory, position, bytes) {
 export function readOpcode(memory, start) {
   return readMemory(memory, start, OPCODE_BYTES);
 }
+
+export function fromMemoryToRomAddresses(memoryAddress) {
+  return memoryAddress - PROGRAM_START_ADDRESS;
+}
+
+export function fromRomToRomAddresses(memoryAddress) {
+  return memoryAddress + PROGRAM_START_ADDRESS;
+}

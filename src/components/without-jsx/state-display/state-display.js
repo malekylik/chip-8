@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { connect } from 'react-redux';
+
 import Register from './register/register';
 import RegisterI from './register-i/register-i';
 import DelayTimer from './delay-timer/delay-timer';
@@ -8,14 +10,22 @@ import SoundTimer from './sound-timer/sound-timer';
 import ProgramCounter from './program-counter/program-counter';
 import StackState from './stack-state/stack-state';
 
+import {
+  selectProgramCounter,
+  selectRegisterI,
+  selectSoundTimer,
+  selectDelayTimer,
+  selectStackPointer,
+  selectStackValues,
+  selectRegisters,
+} from '../../../redux/chip-8/chip-8.selectors';
+
 import './state-display.css';
 
-export default class StateDisplay extends React.Component {
+class StateDisplay extends React.Component {
   render() {
     const { registerI, delayTimer, soundTimer, programCounter, stackPointer, stackValues } = this.props;
-    const registers = this.props.registers.map(
-      (value, i) => React.createElement(Register, { value, number: i, key: i })
-    );
+    const registers = this.props.registers.map(registersMap);
 
     return (
       React.createElement('div', { className: 'state-display' },
@@ -34,6 +44,8 @@ export default class StateDisplay extends React.Component {
   }
 }
 
+const registersMap = (value, i) => React.createElement(Register, { value, number: i, key: i });
+
 StateDisplay.propTypes = {
   registers: PropTypes.arrayOf(PropTypes.number).isRequired,
   registerI: PropTypes.number.isRequired,
@@ -43,3 +55,15 @@ StateDisplay.propTypes = {
   stackPointer: PropTypes.number.isRequired,
   stackValues: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
+
+const fromStateToProps = (state) => ({
+  registers: selectRegisters(state),
+  registerI: selectRegisterI(state),
+  delayTimer: selectDelayTimer(state),
+  soundTimer: selectSoundTimer(state),
+  programCounter: selectProgramCounter(state),
+  stackPointer: selectStackPointer(state),
+  stackValues: selectStackValues(state),
+});
+
+export default connect(fromStateToProps)(StateDisplay);

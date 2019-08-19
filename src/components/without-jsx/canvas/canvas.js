@@ -30,7 +30,7 @@ export default class Canvas extends React.Component {
   }
 
   render() {
-    const { width, height, onKeyDown, onKeyUp } = this.props;
+    const { width, height, onKeyDown, onKeyUp, onBlur } = this.props;
 
     return (
       React.createElement('canvas', {
@@ -40,6 +40,7 @@ export default class Canvas extends React.Component {
         height,
         onKeyDown,
         onKeyUp,
+        onBlur,
       }, null)
     );
   }
@@ -51,6 +52,7 @@ Canvas.propTypes = {
   imageData: PropTypes.object,
   onKeyDown: PropTypes.func,
   onKeyUp: PropTypes.func,
+  onBlur: PropTypes.func,
 };
 
 Canvas.defaultProps = {

@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+import { connect } from 'react-redux';
+
 import { isKeyPress } from '../../../chip-8/keyboard/keyboard';
 import {
   KEY_1,
@@ -24,6 +26,7 @@ import {
   KEY_B,
   KEY_F,
 } from '../../../chip-8/keyboard/const/index.js';
+import { keyPressCount } from '../../../redux/chip-8/chip-8.selectors';
 
 import './keyboard-state.css';
 
@@ -75,6 +78,13 @@ const KeyboardState = ({ keyboard }) => {
 
 KeyboardState.propTypes = {
   keyboard: PropTypes.object.isRequired,
+  keyPressCount: PropTypes.number.isRequired,
 };
 
-export default KeyboardState;
+function mapStateToProps(state) {
+  return ({
+    keyPressCount: keyPressCount(state),
+  });
+}
+
+export default connect(mapStateToProps)(KeyboardState);

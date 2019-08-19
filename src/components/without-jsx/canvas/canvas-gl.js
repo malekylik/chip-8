@@ -101,7 +101,7 @@ class CanvasGL extends React.Component {
   }
 
   render() {
-    const { width, height, onKeyDown, onKeyUp } = this.props;
+    const { width, height, onKeyDown, onKeyUp, onBlur } = this.props;
 
     return (
       React.createElement('canvas', {
@@ -111,6 +111,7 @@ class CanvasGL extends React.Component {
         height,
         onKeyDown,
         onKeyUp,
+        onBlur,
       }, null)
     );
   }
@@ -124,6 +125,7 @@ CanvasGL.propTypes = {
   height: PropTypes.number,
   onKeyDown: PropTypes.func,
   onKeyUp: PropTypes.func,
+  onBlur: PropTypes.func,
 };
 
 CanvasGL.defaultProps = {

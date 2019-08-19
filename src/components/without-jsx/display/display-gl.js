@@ -23,7 +23,7 @@ export default class Display extends React.Component {
   }
 
   render () {
-    const { onKeyDown, onKeyUp, display } = this.props;
+    const { onKeyDown, onKeyUp, onBlur, display } = this.props;
     const { width, height } = scaleDisplay(this.props.scale);
 
     return (
@@ -34,6 +34,7 @@ export default class Display extends React.Component {
         height,
         onKeyDown,
         onKeyUp,
+        onBlur,
       }, null)
     );
   }
@@ -44,6 +45,7 @@ Display.propTypes = {
   display: PropTypes.object,
   onKeyDown: PropTypes.func,
   onKeyUp: PropTypes.func,
+  onBlur: PropTypes.func,
 };
 
 Display.defaultProps = {

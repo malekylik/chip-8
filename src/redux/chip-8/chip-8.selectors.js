@@ -13,3 +13,5 @@ export const selectStackPointer = state => selectChip8Reducer(state).stackPointe
 export const selectStackValues = state => selectChip8Reducer(state).stackValues;
 
 export const selectRegisters = state => selectChip8Reducer(state).registers;
+
+export const keyPressCount = state => selectChip8Reducer(state).keyPressCount;

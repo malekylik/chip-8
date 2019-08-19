@@ -6,6 +6,9 @@ import {
   SET_STACK_POINTER,
   SET_STACK_VALUES,
   SET_REGISTERS,
+  INCREMENT_KEY_PRESS_COUNT,
+  DECREMENT_KEY_PRESS_COUNT,
+  RESET_KEY_PRESS_COUNT,
 } from './chip-8.actions';
 
 export default function chip8Reducer(state = initialState, action) {
@@ -38,6 +41,18 @@ export default function chip8Reducer(state = initialState, action) {
       ...state,
       registers: action.payload.registers,
     });
+    case INCREMENT_KEY_PRESS_COUNT: return ({
+      ...state,
+      keyPressCount: state.keyPressCount + 1,
+    });
+    case DECREMENT_KEY_PRESS_COUNT: return ({
+      ...state,
+      keyPressCount: state.keyPressCount - 1,
+    });
+    case RESET_KEY_PRESS_COUNT: return ({
+      ...state,
+      keyPressCount: 0,
+    });
   }
 
   return state;
@@ -51,4 +66,5 @@ const initialState = {
   programCounter: 0,
   stackPointer: 0,
   stackValues: [],
+  keyPressCount: 0,
 };

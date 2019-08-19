@@ -33,6 +33,9 @@ import {
   setStackPointer,
   setStackValues,
   setRegisters,
+  incrementKeyPressCount,
+  decrementKeyPressCount,
+  resetKeyPressCount,
 } from '../../../redux/chip-8/chip-8.actions';
 
 import './chip-8.css';
@@ -71,6 +74,7 @@ class Chip8 extends React.Component {
 
       if (isKeyExist(chip8, key)) {
         pressKey(chip8, key);
+        this.props.incrementKeyPressCount();
       }
     }
   }
@@ -81,8 +85,12 @@ class Chip8 extends React.Component {
 
     if (isKeyExist(chip8, key)) {
       releaseKey(chip8, key);
+      this.props.decrementKeyPressCount();
     }
+  }
 
+  onBlur = () => {
+    this.props.resetKeyPressCount();
   }
 
   render () {
@@ -95,6 +103,7 @@ class Chip8 extends React.Component {
             ref: this.displayRef,
             onKeyDown: this.onKeyDown,
             onKeyUp: this.onKeyUp,
+            onBlur: this.onBlur,
             display: getDisplay(chip8),
             scale,
           }),
@@ -125,6 +134,9 @@ const mapDispatchToProps = {
   setStackPointer,
   setStackValues,
   setRegisters,
+  incrementKeyPressCount,
+  decrementKeyPressCount,
+  resetKeyPressCount,
 };
 
 export default connect(null, mapDispatchToProps, null, { forwardRef: true })(Chip8);

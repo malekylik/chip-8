@@ -5,6 +5,9 @@ export const SET_DELAY_TIMER = '[Chip-8] SET_DELAY_TIMER';
 export const SET_STACK_POINTER = '[Chip-8] SET_STACK_POINTER';
 export const SET_STACK_VALUES = '[Chip-8] SET_STACK_VALUES';
 export const SET_REGISTERS = '[Chip-8] SET_REGISTERS';
+export const INCREMENT_KEY_PRESS_COUNT = '[Chip-8] INCREMENT_KEY_PRESS_COUNT';
+export const DECREMENT_KEY_PRESS_COUNT = '[Chip-8] DECREMENT_KEY_PRESS_COUNT';
+export const RESET_KEY_PRESS_COUNT = '[Chip-8] RESET_KEY_PRESS_COUNT';
 
 export function setProgramCounter(pc) {
   return ({
@@ -52,5 +55,23 @@ export function setRegisters(registers) {
   return ({
     type: SET_REGISTERS,
     payload: { registers },
+  });
+}
+
+export function incrementKeyPressCount() {
+  return ({
+    type: INCREMENT_KEY_PRESS_COUNT,
+  });
+}
+
+export function decrementKeyPressCount() {
+  return ({
+    type: DECREMENT_KEY_PRESS_COUNT,
+  });
+}
+
+export function resetKeyPressCount() {
+  return ({
+    type: RESET_KEY_PRESS_COUNT,
   });
 }

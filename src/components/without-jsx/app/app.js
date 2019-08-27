@@ -22,10 +22,19 @@ class App extends React.Component {
     this.chip8 = createChip8(MOCK_GAME);
     this.requestCallback = null;
     this.props.disassemblyCode(MOCK_GAME);
-    this.props.loadShaders(
-      './src/assets/shaders/main.vert',
-      './src/assets/shaders/main.frag',
-    ).then(this.mainLoop);
+  }
+
+  componentDidMount() {
+    Promise.all([
+      this.props.loadShaders(
+        './src/assets/shaders/main.vert',
+        './src/assets/shaders/main.frag',
+      ),
+      fetch('src/worker/worker.js')
+    ])
+    .then(([shaders, worker]) => worker.blob())
+    .then(worker => this.cpuThread = new Worker(URL.createObjectURL(worker)))
+    .then(this.mainLoop);
   }
 
   mainLoop = () => {

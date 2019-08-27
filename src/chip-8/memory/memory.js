@@ -9,6 +9,14 @@ export function createMemory() {
   };
 }
 
+export function createSharedMemory() {
+  const bytes = new SharedArrayBuffer(MEMORY_BYTES);
+
+  return {
+    bytes: new Uint8Array(bytes)
+  };
+}
+
 export function loadFonts(memory, fonts) {
   setMemoryBytes(memory, FONTS_START_ADDRESS, fonts);
 }

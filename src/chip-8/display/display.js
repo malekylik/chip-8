@@ -9,6 +9,14 @@ export function createDisplay() {
   };
 }
 
+export function createSharedDisplay() {
+  const videoBuffer = new SharedArrayBuffer(DISPLAY_WIDTH * DISPLAY_HEIGHT);
+
+  return {
+    buffer: new Uint8Array(videoBuffer),
+  };
+}
+
 export function xorPixel(display, x, y, value) {
   const isErased = Number(Boolean(value) && Boolean(getPixel(display, x, y)));
 

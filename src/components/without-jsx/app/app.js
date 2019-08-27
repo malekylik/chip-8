@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import Chip8 from '../chip-8/chip-8';
 
-import { createChip8 } from '../../../chip-8/chip-8';
+import { createSharedChip8 } from '../../../chip-8/chip-8';
 import { MOCK_GAME } from '../../../chip-8/processor/const/index';
 import { selectSubAssemblyLines } from '../../../redux/assembly/assembly.selectors';
 import { disassemblyCode } from '../../../redux/assembly/assembly.actions';
@@ -19,7 +19,7 @@ class App extends React.Component {
     this.state = { scale: 10 };
 
     this.chip8Ref = React.createRef();
-    this.chip8 = createChip8(MOCK_GAME);
+    this.chip8 = createSharedChip8(MOCK_GAME);
     this.requestCallback = null;
     this.props.disassemblyCode(MOCK_GAME);
   }
@@ -30,10 +30,14 @@ class App extends React.Component {
         './src/assets/shaders/main.vert',
         './src/assets/shaders/main.frag',
       ),
-      fetch('src/worker/worker.js')
+      fetch('./dist/cpu-thread.js')
     ])
     .then(([shaders, worker]) => worker.blob())
-    .then(worker => this.cpuThread = new Worker(URL.createObjectURL(worker)))
+    .then(worker => {
+      this.cpuThread = new Worker(URL.createObjectURL(worker));
+
+      this.cpuThread.postMessage({ chip8: this.chip8 })
+    })
     .then(this.mainLoop);
   }
 

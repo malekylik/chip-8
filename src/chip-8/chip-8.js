@@ -1,4 +1,4 @@
-import { creatProcessor, executeOpcode } from './processor/processor';
+import { creatProcessor, creatSharedProcessor, executeOpcode } from './processor/processor';
 import {
   getProgramCounter as getProgramCounterFromProcessor,
   getRegisters as getRegistersFromProcessor,
@@ -16,14 +16,15 @@ import {
 } from './stack/stack';
 import {
   createKeyboard,
+  createSharedKeyboard,
   isKeyExist as isKeyExistFromKeyboard,
   pressKey as pressKeyOnKey,
   releaseKey as releaseKeyOnKey,
 } from './keyboard/keyboard';
 import { createOpcode } from './processor/opcode/opcode';
-import { createStack } from './stack/stack';
-import { createMemory, loadGame, loadFonts, readOpcode as readOpcodeFromMemory } from './memory/memory';
-import { createDisplay } from './display/display';
+import { createStack, createSharedStack } from './stack/stack';
+import { createMemory, createSharedMemory, loadGame, loadFonts, readOpcode as readOpcodeFromMemory } from './memory/memory';
+import { createDisplay, createSharedDisplay } from './display/display';
 import { FONTS } from './display/const/index';
 
 export function createChip8(game) {
@@ -35,9 +36,28 @@ export function createChip8(game) {
 
     display: createDisplay(),
 
-    onSoundTime: noop,
-
     keyboard: createKeyboard(),
+  });
+
+  loadFonts(chip8.memory, FONTS);
+
+  if (game) {
+    loadRom(chip8, game);
+  }
+
+  return chip8;
+}
+
+export function createSharedChip8(game) {
+  const chip8 = ({
+    processor: creatSharedProcessor(),
+
+    stack: createSharedStack(),
+    memory: createSharedMemory(),
+
+    display: createSharedDisplay(),
+
+    keyboard: createSharedKeyboard(),
   });
 
   loadFonts(chip8.memory, FONTS);

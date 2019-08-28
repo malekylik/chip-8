@@ -11,6 +11,7 @@ import { selectSubAssemblyLines } from '../../../redux/assembly/assembly.selecto
 import { disassemblyCode } from '../../../redux/assembly/assembly.actions';
 import { loadShaders } from '../../../redux/shader/shader.actions';
 import { selectLoadingShaders } from '../../../redux/shader/shader.selectors';
+import { createInitAction, createStartLoopAction } from '../../../worker/actions/actions';
 
 class App extends React.Component {
   constructor(props) {
@@ -36,9 +37,10 @@ class App extends React.Component {
     .then(worker => {
       this.cpuThread = new Worker(URL.createObjectURL(worker));
 
-      this.cpuThread.postMessage({ chip8: this.chip8 })
+      this.cpuThread.postMessage(createInitAction(this.chip8));
+      this.cpuThread.postMessage(createStartLoopAction());
     })
-    .then(this.mainLoop);
+    // .then(this.mainLoop);
   }
 
   mainLoop = () => {
@@ -56,13 +58,14 @@ class App extends React.Component {
     const { scale } = this.state;
 
     return (
-      shaderLoading ?
-      React.createElement('span', null, 'loading') :
-      React.createElement(Chip8, {
-        ref: this.chip8Ref,
-        chip8: this.chip8,
-        scale,
-      }, null)
+      null
+      // shaderLoading ?
+      // React.createElement('span', null, 'loading') :
+      // React.createElement(Chip8, {
+      //   ref: this.chip8Ref,
+      //   chip8: this.chip8,
+      //   scale,
+      // }, null)
     );
   }
 }

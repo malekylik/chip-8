@@ -17,13 +17,14 @@ self.addEventListener('message', (event) => {
   switch (eventType) {
     case CPU_THREAD_ACTIONS.INIT: threadChip8 = payload.chip8; break;
     case CPU_THREAD_ACTIONS.RUN_LOOP: {
-      clearInterval(loopMode);
+      clearInterval();
 
-      runLoop(payload.mode);
+      runLoop(loopMode);
 
       break;
     }
     case CPU_THREAD_ACTIONS.SET_LOOP_MODE: loopMode = payload.mode; break;
+    case CPU_THREAD_ACTIONS.EXECUTE_NEXT_INSTRUCTION: executeNextCycly(threadChip8); break;
   }
 });
 

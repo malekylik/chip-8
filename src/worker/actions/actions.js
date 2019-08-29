@@ -19,3 +19,9 @@ export function createSetLoopModeAction(mode) {
     payload: { mode }
   });
 }
+
+export function createexecuteNextInstructionAction() {
+  return ({
+    eventType: CPU_THREAD_ACTIONS.EXECUTE_NEXT_INSTRUCTION,
+  });
+}

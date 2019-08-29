@@ -1,12 +1,16 @@
 import { CPU_THREAD_ACTIONS } from './const/actions';
 import { LOOP_MODS } from './const/mode';
-import { executeNextCycly, getProgramCounter } from '../chip-8/chip-8';
+import { executeNextCycly, getInt32MemoryBytes } from '../chip-8/chip-8';
+import { CPU_THREAD_SYNC } from '../chip-8/memory/const/index';
 
 console.log('hello worker changed');
+
+const syncIndex = CPU_THREAD_SYNC >>> 2;
 
 let threadChip8 = null;
 let clearInterval = () => {};
 let loopMode = LOOP_MODS.DEFAULT_SPEED_MODE;
+let memoryLock = null;
 
 self.addEventListener('message', (event) => {
   const { data: { eventType, payload } } = event;
@@ -15,7 +19,12 @@ self.addEventListener('message', (event) => {
   console.log('data', payload);
 
   switch (eventType) {
-    case CPU_THREAD_ACTIONS.INIT: threadChip8 = payload.chip8; break;
+    case CPU_THREAD_ACTIONS.INIT: {
+      threadChip8 = payload.chip8;
+      memoryLock = getInt32MemoryBytes(threadChip8);
+
+      break;
+    }
     case CPU_THREAD_ACTIONS.RUN_LOOP: {
       clearInterval();
 
@@ -35,7 +44,6 @@ function runLoop(speed) {
 }
 
 function main() {
-  console.log('pc', getProgramCounter(threadChip8));
-
+  Atomics.wait(memoryLock, syncIndex, 1);
   executeNextCycly(threadChip8);
 }

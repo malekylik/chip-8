@@ -10,7 +10,6 @@ import Asseambly from '../assembly/assembly';
 import KeyboardState from '../keyboard-state/keyboard-state';
 
 import {
-  executeNextCycly,
   getDisplay,
   getProgramCounter,
   getRegisters,
@@ -44,8 +43,6 @@ class Chip8 extends React.Component {
   displayRef = React.createRef();
 
   executeNextCycly() {
-    executeNextCycly(this.props.chip8);
-
     this.updateDisplay();
     this.updateState();
   }

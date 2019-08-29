@@ -54,3 +54,7 @@ export function fromMemoryToRomAddresses(memoryAddress) {
 export function fromRomToRomAddresses(memoryAddress) {
   return memoryAddress + PROGRAM_START_ADDRESS;
 }
+
+export function getBytesFromMemory(memory) {
+  return memory.bytes;
+}

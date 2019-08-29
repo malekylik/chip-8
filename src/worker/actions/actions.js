@@ -12,3 +12,10 @@ export function createStartLoopAction() {
     eventType: CPU_THREAD_ACTIONS.RUN_LOOP,
   });
 }
+
+export function createSetLoopModeAction(mode) {
+  return ({
+    eventType: CPU_THREAD_ACTIONS.SET_LOOP_MODE,
+    payload: { mode }
+  });
+}

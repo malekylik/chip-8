@@ -1,6 +1,7 @@
 const CPU_THREAD_ACTIONS = {
   INIT: 0,
   RUN_LOOP: 1,
+  SET_LOOP_MODE: 2,
 };
 
 export {

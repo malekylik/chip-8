@@ -1,10 +1,12 @@
 import { CPU_THREAD_ACTIONS } from './const/actions';
+import { LOOP_MODS } from './const/mode';
 import { executeNextCycly, getProgramCounter } from '../chip-8/chip-8';
 
 console.log('hello worker changed');
 
 let threadChip8 = null;
 let clearInterval = () => {};
+let loopMode = LOOP_MODS.DEFAULT_SPEED_MODE;
 
 self.addEventListener('message', (event) => {
   const { data: { eventType, payload } } = event;
@@ -15,17 +17,18 @@ self.addEventListener('message', (event) => {
   switch (eventType) {
     case CPU_THREAD_ACTIONS.INIT: threadChip8 = payload.chip8; break;
     case CPU_THREAD_ACTIONS.RUN_LOOP: {
-      clearInterval();
+      clearInterval(loopMode);
 
-      runLoop();
+      runLoop(payload.mode);
 
       break;
     }
+    case CPU_THREAD_ACTIONS.SET_LOOP_MODE: loopMode = payload.mode; break;
   }
 });
 
-function runLoop() {
-  clearInterval = setInterval(main, 1000 / 60);
+function runLoop(speed) {
+  clearInterval = setInterval(main, speed);
 
   main();
 }

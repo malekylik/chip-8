@@ -23,7 +23,7 @@ import {
 } from './keyboard/keyboard';
 import { createOpcode } from './processor/opcode/opcode';
 import { createStack, createSharedStack } from './stack/stack';
-import { createMemory, createSharedMemory, loadGame, loadFonts, readOpcode as readOpcodeFromMemory, getBytesFromMemory } from './memory/memory';
+import { createMemory, createSharedMemory, loadGame, loadFonts, readOpcode as readOpcodeFromMemory } from './memory/memory';
 import { createDisplay, createSharedDisplay } from './display/display';
 import { FONTS } from './display/const/index';
 
@@ -157,10 +157,6 @@ export function releaseKey(chip8, key) {
 
 export function getKeyboardState(chip8) {
   return getKeyboardStateFromKeyboard(chip8.keyboard);
-}
-
-export function getInt32MemoryBytes(chip8) {
-  return new Int32Array(getBytesFromMemory(getMemory(chip8)).buffer);
 }
 
 function noop() {}

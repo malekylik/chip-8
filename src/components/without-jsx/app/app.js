@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import Chip8 from '../chip-8/chip-8';
 
-import { createSharedChip8, getInt32MemoryBytes } from '../../../chip-8/chip-8';
+import { createSharedChip8, getMemory } from '../../../chip-8/chip-8';
 import { MOCK_GAME } from '../../../chip-8/processor/const/index';
 import { selectSubAssemblyLines } from '../../../redux/assembly/assembly.selectors';
 import { disassemblyCode } from '../../../redux/assembly/assembly.actions';
@@ -14,8 +14,10 @@ import { selectLoadingShaders } from '../../../redux/shader/shader.selectors';
 import { createInitAction, createSetLoopModeAction, createStartLoopAction } from '../../../worker/actions/actions';
 import { LOOP_MODS } from '../../../worker/const/mode';
 import { CPU_THREAD_SYNC } from '../../../chip-8/memory/const/index';
+import { getBytesFromMemory } from '../../../chip-8/memory/memory';
+import { byteIndexToFutexBufferIndex, createFutex, lock, unlock } from '../../../worker/utils/index';
 
-const syncIndex = CPU_THREAD_SYNC >>> 2;
+const syncIndex = byteIndexToFutexBufferIndex(CPU_THREAD_SYNC);
 
 class App extends React.Component {
   constructor(props) {
@@ -25,7 +27,7 @@ class App extends React.Component {
 
     this.chip8Ref = React.createRef();
     this.chip8 = createSharedChip8(MOCK_GAME);
-    this.lockMemory = getInt32MemoryBytes(this.chip8);
+    this.futex = createFutex(getBytesFromMemory(getMemory(this.chip8)).buffer, syncIndex);
     this.requestCallback = null;
     this.props.disassemblyCode(MOCK_GAME);
   }
@@ -51,13 +53,11 @@ class App extends React.Component {
 
   mainLoop = () => {
     this.requestCallback = requestAnimationFrame(this.mainLoop);
-    const { lockMemory } = this;
+    const { futex } = this;
 
-    Atomics.store(lockMemory, syncIndex, 1);
+    lock(futex);
     this.nextStep();
-    Atomics.store(lockMemory, syncIndex, 0);
-
-    Atomics.notify(lockMemory, syncIndex, 1);
+    unlock(futex);
   }
 
   nextStep() {
@@ -69,7 +69,6 @@ class App extends React.Component {
     const { scale } = this.state;
 
     return (
-      // null
       shaderLoading ?
       React.createElement('span', null, 'loading') :
       React.createElement(Chip8, {

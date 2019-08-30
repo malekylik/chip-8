@@ -1,16 +1,18 @@
 import { CPU_THREAD_ACTIONS } from './const/actions';
 import { LOOP_MODS } from './const/mode';
-import { executeNextCycly, getInt32MemoryBytes } from '../chip-8/chip-8';
+import { executeNextCycly, getMemory } from '../chip-8/chip-8';
 import { CPU_THREAD_SYNC } from '../chip-8/memory/const/index';
+import { getBytesFromMemory } from '../chip-8/memory/memory';
+import { byteIndexToFutexBufferIndex, createFutex, wait } from './utils/index';
 
 console.log('hello worker changed');
 
-const syncIndex = CPU_THREAD_SYNC >>> 2;
+const syncIndex = byteIndexToFutexBufferIndex(CPU_THREAD_SYNC);
 
 let threadChip8 = null;
 let clearInterval = () => {};
 let loopMode = LOOP_MODS.DEFAULT_SPEED_MODE;
-let memoryLock = null;
+let futex = null;
 
 self.addEventListener('message', (event) => {
   const { data: { eventType, payload } } = event;
@@ -21,7 +23,7 @@ self.addEventListener('message', (event) => {
   switch (eventType) {
     case CPU_THREAD_ACTIONS.INIT: {
       threadChip8 = payload.chip8;
-      memoryLock = getInt32MemoryBytes(threadChip8);
+      futex = createFutex(getBytesFromMemory(getMemory(threadChip8)).buffer, syncIndex);
 
       break;
     }
@@ -44,6 +46,6 @@ function runLoop(speed) {
 }
 
 function main() {
-  Atomics.wait(memoryLock, syncIndex, 1);
+  wait(futex);
   executeNextCycly(threadChip8);
 }

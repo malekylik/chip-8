@@ -27,7 +27,7 @@ export function updateDelayTimer(memory) {
 
 export function updateSoundTimer(memory, callback) {
   if (getSoundTimerValue(memory) > 0) {
-    callback();
+    // callback();
     return setSoundTimerValue(memory, getSoundTimerValue(memory) - 1) === 0;
   }
 

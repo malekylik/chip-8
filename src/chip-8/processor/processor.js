@@ -54,15 +54,14 @@ import { setDelayTimerValue, setSoundTimerValue, getDelayTimerValue } from '../t
 
 export function creatProcessor() {
   const registerBytes =  new ArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES + I_REGISTER_BYTES);
-  const proccesor = {
-    registers: new Uint8Array(registerBytes).subarray(0, REGISTERS_COUNT),
-    programCounter: new Uint16Array(registerBytes).subarray(PROGRAM_COUNTER, I_REGISTER),
-    I: new Uint16Array(registerBytes).subarray(I_REGISTER),
-  };
 
-  JP(proccesor, PROGRAM_START_ADDRESS);
+  return createProccessorFromMemory(registerBytes);
+}
 
-  return proccesor;
+export function creatSharedProcessor() {
+  const registerBytes =  new SharedArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES + I_REGISTER_BYTES);
+
+  return createProccessorFromMemory(registerBytes);
 }
 
 export function executeOpcode(proccesor, opcode, stack, memory, display, keyboard) {
@@ -227,4 +226,16 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, keyboar
   }
 
   return getProgramCounter(proccesor);
+}
+
+function createProccessorFromMemory(memory) {
+  const proccesor = {
+    registers: new Uint8Array(memory).subarray(0, REGISTERS_COUNT),
+    programCounter: new Uint16Array(memory).subarray(PROGRAM_COUNTER, I_REGISTER),
+    I: new Uint16Array(memory).subarray(I_REGISTER),
+  };
+
+  JP(proccesor, PROGRAM_START_ADDRESS);
+
+  return proccesor;
 }

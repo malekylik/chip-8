@@ -5,12 +5,19 @@ import { connect } from 'react-redux';
 
 import Chip8 from '../chip-8/chip-8';
 
-import { createChip8 } from '../../../chip-8/chip-8';
+import { createSharedChip8, getMemory } from '../../../chip-8/chip-8';
 import { MOCK_GAME } from '../../../chip-8/processor/const/index';
 import { selectSubAssemblyLines } from '../../../redux/assembly/assembly.selectors';
 import { disassemblyCode } from '../../../redux/assembly/assembly.actions';
 import { loadShaders } from '../../../redux/shader/shader.actions';
 import { selectLoadingShaders } from '../../../redux/shader/shader.selectors';
+import { createInitAction, createSetLoopModeAction, createStartLoopAction } from '../../../worker/actions/actions';
+import { LOOP_MODS } from '../../../worker/const/mode';
+import { CPU_THREAD_SYNC } from '../../../chip-8/memory/const/index';
+import { getBytesFromMemory } from '../../../chip-8/memory/memory';
+import { byteIndexToFutexBufferIndex, createFutex, lock, unlock } from '../../../worker/utils/index';
+
+const syncIndex = byteIndexToFutexBufferIndex(CPU_THREAD_SYNC);
 
 class App extends React.Component {
   constructor(props) {
@@ -19,19 +26,38 @@ class App extends React.Component {
     this.state = { scale: 10 };
 
     this.chip8Ref = React.createRef();
-    this.chip8 = createChip8(MOCK_GAME);
+    this.chip8 = createSharedChip8(MOCK_GAME);
+    this.futex = createFutex(getBytesFromMemory(getMemory(this.chip8)).buffer, syncIndex);
     this.requestCallback = null;
     this.props.disassemblyCode(MOCK_GAME);
-    this.props.loadShaders(
-      './src/assets/shaders/main.vert',
-      './src/assets/shaders/main.frag',
-    ).then(this.mainLoop);
+  }
+
+  componentDidMount() {
+    Promise.all([
+      this.props.loadShaders(
+        './src/assets/shaders/main.vert',
+        './src/assets/shaders/main.frag',
+      ),
+      fetch('./dist/cpu-thread.js')
+    ])
+    .then(([shaders, worker]) => worker.blob())
+    .then(worker => {
+      this.cpuThread = new Worker(URL.createObjectURL(worker));
+
+      this.cpuThread.postMessage(createInitAction(this.chip8));
+      this.cpuThread.postMessage(createSetLoopModeAction(LOOP_MODS.DEFAULT_SPEED_MODE));
+      this.cpuThread.postMessage(createStartLoopAction());
+    })
+    .then(this.mainLoop);
   }
 
   mainLoop = () => {
     this.requestCallback = requestAnimationFrame(this.mainLoop);
+    const { futex } = this;
 
+    lock(futex);
     this.nextStep();
+    unlock(futex);
   }
 
   nextStep() {

@@ -10,6 +10,16 @@ export function createKeyboard() {
   };
 }
 
+export function createSharedKeyboard() {
+  const keyboardBytes = new SharedArrayBuffer(KEYBOARD_KEYS_COUNT);
+
+  return {
+    keyboard: new Uint8Array(keyboardBytes),
+    keyboardMap: { ...KEYBOARD_MAP },
+    keyboardKeys: Object.keys(KEYBOARD_MAP)
+  };
+}
+
 export function getKeyValue(keyboard, keyCode) {
   return keyboard.keyboard[keyCode];
 }

@@ -9,6 +9,15 @@ export function createStack() {
   };
 }
 
+export function createSharedStack() {
+  const stackBytes =  new SharedArrayBuffer(STACK_SIZE);
+
+  return {
+    stack: new Uint16Array(stackBytes),
+    stackPointer: -1
+  };
+}
+
 export function push(stack, value) {
   stack.stackPointer += 1;
 

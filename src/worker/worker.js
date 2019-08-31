@@ -4,8 +4,13 @@ import { executeNextCycly, getMemory } from '../chip-8/chip-8';
 import { CPU_THREAD_SYNC } from '../chip-8/memory/const/index';
 import { getBytesFromMemory } from '../chip-8/memory/memory';
 import { byteIndexToFutexBufferIndex, createFutex, wait } from './utils/index';
-
-console.log('hello worker changed');
+import {
+  createInitAction,
+  createStartLoopAction,
+  createSetLoopModeAction,
+  createExecuteNextInstructionAction,
+  createStopLoopAction,
+} from './actions/actions';
 
 const syncIndex = byteIndexToFutexBufferIndex(CPU_THREAD_SYNC);
 
@@ -25,6 +30,8 @@ self.addEventListener('message', (event) => {
       threadChip8 = payload.chip8;
       futex = createFutex(getBytesFromMemory(getMemory(threadChip8)).buffer, syncIndex);
 
+      self.postMessage(createInitAction(threadChip8, false));
+
       break;
     }
     case CPU_THREAD_ACTIONS.RUN_LOOP: {
@@ -32,11 +39,31 @@ self.addEventListener('message', (event) => {
 
       runLoop(loopMode);
 
+      self.postMessage(createStartLoopAction(false));
+
       break;
     }
-    case CPU_THREAD_ACTIONS.SET_LOOP_MODE: loopMode = payload.mode; break;
-    case CPU_THREAD_ACTIONS.EXECUTE_NEXT_INSTRUCTION: executeNextCycly(threadChip8); break;
-    case CPU_THREAD_ACTIONS.STOP_LOOP: clearInterval(); break;
+    case CPU_THREAD_ACTIONS.SET_LOOP_MODE: {
+      loopMode = payload.mode;
+
+      self.postMessage(createSetLoopModeAction(payload.mode, false));
+
+      break;
+    }
+    case CPU_THREAD_ACTIONS.EXECUTE_NEXT_INSTRUCTION: {
+      executeNextCycly(threadChip8);
+
+      self.postMessage(createExecuteNextInstructionAction(false));
+
+      break;
+    }
+    case CPU_THREAD_ACTIONS.STOP_LOOP: {
+      clearInterval();
+
+      self.postMessage(createStopLoopAction(false));
+
+      break;
+    }
   }
 });
 

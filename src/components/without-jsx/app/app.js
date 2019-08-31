@@ -15,7 +15,7 @@ import { createInitAction, createSetLoopModeAction, createStartLoopAction } from
 import { LOOP_MODS } from '../../../worker/const/mode';
 import { CPU_THREAD_SYNC } from '../../../chip-8/memory/const/index';
 import { getBytesFromMemory } from '../../../chip-8/memory/memory';
-import { byteIndexToFutexBufferIndex, createFutex, lock, unlock } from '../../../worker/utils/index';
+import { byteIndexToFutexBufferIndex, createFutex, lock, unlock, promisifyPostMessage } from '../../../worker/utils/index';
 
 const syncIndex = byteIndexToFutexBufferIndex(CPU_THREAD_SYNC);
 
@@ -44,10 +44,10 @@ class App extends React.Component {
     .then(worker => {
       this.cpuThread = new Worker(URL.createObjectURL(worker));
 
-      this.cpuThread.postMessage(createInitAction(this.chip8));
-      this.cpuThread.postMessage(createSetLoopModeAction(LOOP_MODS.DEFAULT_SPEED_MODE));
-      this.cpuThread.postMessage(createStartLoopAction());
+      return promisifyPostMessage(this.cpuThread, createInitAction(this.chip8));
     })
+    .then(() => promisifyPostMessage(this.cpuThread, createSetLoopModeAction(LOOP_MODS.DEFAULT_SPEED_MODE)))
+    .then(() => promisifyPostMessage(this.cpuThread, createStartLoopAction()))
     .then(this.mainLoop);
   }
 

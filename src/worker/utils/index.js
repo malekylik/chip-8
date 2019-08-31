@@ -24,3 +24,25 @@ export function unlock(futex) {
     Atomics.notify(futex.buffer, futex.index, 1);
   }
 }
+
+export function promisifyPostMessage(worker, action) {
+  worker.postMessage(action);
+
+  return new Promise((resolve, reject) => {
+    const eventListener = (event) => {
+      const { data: { eventType, payload, error } } = event;
+
+      if (action.eventType === eventType) {
+        worker.removeEventListener('message', eventListener);
+
+        if (!error) {
+          resolve(payload);
+        } else {
+          reject(payload);
+        }
+      }
+    };
+
+    worker.addEventListener('message', eventListener);
+  });
+}

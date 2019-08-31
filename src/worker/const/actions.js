@@ -3,6 +3,7 @@ const CPU_THREAD_ACTIONS = {
   RUN_LOOP: 1,
   SET_LOOP_MODE: 2,
   EXECUTE_NEXT_INSTRUCTION: 3,
+  STOP_LOOP: 4,
 };
 
 export {

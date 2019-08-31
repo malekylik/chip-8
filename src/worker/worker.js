@@ -36,6 +36,7 @@ self.addEventListener('message', (event) => {
     }
     case CPU_THREAD_ACTIONS.SET_LOOP_MODE: loopMode = payload.mode; break;
     case CPU_THREAD_ACTIONS.EXECUTE_NEXT_INSTRUCTION: executeNextCycly(threadChip8); break;
+    case CPU_THREAD_ACTIONS.STOP_LOOP: clearInterval(); break;
   }
 });
 

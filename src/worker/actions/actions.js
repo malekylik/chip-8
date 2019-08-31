@@ -20,8 +20,14 @@ export function createSetLoopModeAction(mode) {
   });
 }
 
-export function createexecuteNextInstructionAction() {
+export function createExecuteNextInstructionAction() {
   return ({
     eventType: CPU_THREAD_ACTIONS.EXECUTE_NEXT_INSTRUCTION,
+  });
+}
+
+export function createStopLoopAction() {
+  return ({
+    eventType: CPU_THREAD_ACTIONS.STOP_LOOP,
   });
 }

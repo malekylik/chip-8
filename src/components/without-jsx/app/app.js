@@ -12,11 +12,11 @@ import { disassemblyCode } from '../../../redux/assembly/assembly.actions';
 import { loadShaders } from '../../../redux/shader/shader.actions';
 import { selectLoadingShaders } from '../../../redux/shader/shader.selectors';
 import { selectResolutionValue, selectSpeedModeValue } from '../../../redux/settings/settings.selectors';
-import { createInitAction, createSetLoopModeAction } from '../../../worker/actions/actions';
+import { createInitAction } from '../../../worker/actions/actions';
 import { CPU_THREAD_SYNC } from '../../../chip-8/memory/const/index';
 import { getBytesFromMemory } from '../../../chip-8/memory/memory';
 import { byteIndexToFutexBufferIndex, createFutex, lock, unlock, promisifyPostMessage } from '../../../worker/utils/index';
-import { runCpuThread } from '../../../redux/settings/settings.actions';
+import { runCpuThread, setCpuThreadSpeedMode } from '../../../redux/settings/settings.actions';
 
 const syncIndex = byteIndexToFutexBufferIndex(CPU_THREAD_SYNC);
 
@@ -47,7 +47,7 @@ class App extends React.Component {
 
       return promisifyPostMessage(this.cpuThread, createInitAction(this.chip8));
     })
-    .then(() => promisifyPostMessage(this.cpuThread, createSetLoopModeAction(speedMode)))
+    .then(() => this.props.setCpuThreadSpeedMode(this.cpuThread, speedMode))
     .then(() => this.props.runCpuThread(this.cpuThread))
     .then(() => this.mainLoop());
   }
@@ -100,6 +100,7 @@ const mapDispatchToProps = {
   disassemblyCode,
   loadShaders,
   runCpuThread,
+  setCpuThreadSpeedMode,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

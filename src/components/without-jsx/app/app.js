@@ -16,7 +16,9 @@ import { createInitAction } from '../../../worker/actions/actions';
 import { CPU_THREAD_SYNC } from '../../../chip-8/memory/const/index';
 import { getBytesFromMemory } from '../../../chip-8/memory/memory';
 import { byteIndexToFutexBufferIndex, createFutex, lock, unlock, promisifyPostMessage } from '../../../worker/utils/index';
-import { runCpuThread, setCpuThreadSpeedMode } from '../../../redux/settings/settings.actions';
+import { runCpuThread, setCpuThreadSpeedMode, setResolutionMode } from '../../../redux/settings/settings.actions';
+import { findOptinByValue } from '../../../util/index';
+import { RESOLUTIONS_MODS } from '../../../redux/settings/const/index';
 
 const syncIndex = byteIndexToFutexBufferIndex(CPU_THREAD_SYNC);
 
@@ -33,6 +35,8 @@ class App extends React.Component {
 
   componentDidMount() {
     const { speedMode } = this.props;
+
+    this.props.setResolutionMode(findOptinByValue(RESOLUTIONS_MODS, 10));
 
     Promise.all([
       this.props.loadShaders(
@@ -101,6 +105,7 @@ const mapDispatchToProps = {
   loadShaders,
   runCpuThread,
   setCpuThreadSpeedMode,
+  setResolutionMode,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,5 +1,5 @@
 import { LOOP_MODS_OPTIONS, RESOLUTIONS_MODS } from './const/index';
-import { SET_IS_RUNNING, SET_SPEED_MODE } from './settings.actions';
+import { SET_IS_RUNNING, SET_SPEED_MODE, SET_RESOLUTION_MODE } from './settings.actions';
 
 export default function settingsReducer(state = initialState, action) {
   switch (action.type) {
@@ -10,6 +10,10 @@ export default function settingsReducer(state = initialState, action) {
     case SET_SPEED_MODE: return ({
       ...state,
       speedMode: action.payload.speedMode,
+    });
+    case SET_RESOLUTION_MODE: return ({
+      ...state,
+      resolution: action.payload.resolution,
     });
   }
 

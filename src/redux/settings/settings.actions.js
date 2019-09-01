@@ -1,9 +1,11 @@
 import { promisifyPostMessage } from '../../worker/utils/index';
 import { createStartLoopAction, createSetLoopModeAction } from '../../worker/actions/actions';
 import { LOOP_MODS_OPTIONS } from './const/index';
+import { findOptinByValue } from '../../util/index';
 
 export const SET_IS_RUNNING = '[Settings] SET_IS_RUNNING';
 export const SET_SPEED_MODE = '[Settings] SET_SPEED_MODE';
+export const SET_RESOLUTION_MODE = '[Settings] SET_RESOLUTION_MODE';
 
 export function setIsRunning(isRunning) {
   return ({
@@ -16,6 +18,13 @@ export function setSpeedMode(speedMode) {
   return ({
     type: SET_SPEED_MODE,
     payload: { speedMode },
+  });
+}
+
+export function setResolutionMode(resolution) {
+  return ({
+    type: SET_RESOLUTION_MODE,
+    payload: { resolution },
   });
 }
 
@@ -32,7 +41,7 @@ export function runCpuThread(cpuThread) {
 export function setCpuThreadSpeedMode(cpuThread, speedModeValue) {
   return async function (dispatch) {
     const [speedModeOption] = await Promise.all([
-      (async () => LOOP_MODS_OPTIONS.find(({ value }) => value === speedModeValue))(),
+      (async () => findOptinByValue(LOOP_MODS_OPTIONS, speedModeValue))(),
       promisifyPostMessage(cpuThread, createSetLoopModeAction(speedModeValue))
     ]);
 

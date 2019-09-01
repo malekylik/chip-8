@@ -11,6 +11,7 @@ import { selectSubAssemblyLines } from '../../../redux/assembly/assembly.selecto
 import { disassemblyCode } from '../../../redux/assembly/assembly.actions';
 import { loadShaders } from '../../../redux/shader/shader.actions';
 import { selectLoadingShaders } from '../../../redux/shader/shader.selectors';
+import { selectResolutionValue, selectSpeedModeValue } from '../../../redux/settings/settings.selectors';
 import { createInitAction, createSetLoopModeAction, createStartLoopAction } from '../../../worker/actions/actions';
 import { LOOP_MODS } from '../../../worker/const/mode';
 import { CPU_THREAD_SYNC } from '../../../chip-8/memory/const/index';
@@ -23,8 +24,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { scale: 10 };
-
     this.chip8Ref = React.createRef();
     this.chip8 = createSharedChip8(MOCK_GAME);
     this.futex = createFutex(getBytesFromMemory(getMemory(this.chip8)).buffer, syncIndex);
@@ -33,6 +32,8 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    const { speedMode } = this.props;
+
     Promise.all([
       this.props.loadShaders(
         './src/assets/shaders/main.vert',
@@ -46,7 +47,7 @@ class App extends React.Component {
 
       return promisifyPostMessage(this.cpuThread, createInitAction(this.chip8));
     })
-    .then(() => promisifyPostMessage(this.cpuThread, createSetLoopModeAction(LOOP_MODS.DEFAULT_SPEED_MODE)))
+    .then(() => promisifyPostMessage(this.cpuThread, createSetLoopModeAction(speedMode)))
     .then(() => promisifyPostMessage(this.cpuThread, createStartLoopAction()))
     .then(this.mainLoop);
   }
@@ -65,8 +66,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { shaderLoading } = this.props;
-    const { scale } = this.state;
+    const { shaderLoading, resolutionMode } = this.props;
 
     return (
       shaderLoading ?
@@ -74,7 +74,7 @@ class App extends React.Component {
       React.createElement(Chip8, {
         ref: this.chip8Ref,
         chip8: this.chip8,
-        scale,
+        scale: resolutionMode,
       }, null)
     );
   }
@@ -91,6 +91,8 @@ function mapStateToProps(state) {
   return ({
     assemblyLines: selectSubAssemblyLines(state),
     shaderLoading: selectLoadingShaders(state),
+    resolutionMode: selectResolutionValue(state),
+    speedMode: selectSpeedModeValue(state),
   });
 }
 

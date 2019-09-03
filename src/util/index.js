@@ -23,3 +23,7 @@ export function min(a, b) {
 export function max(a, b) {
   return a < b ? b : a;
 }
+
+export function findOptinByValue(options, value) {
+  return options.find((option) => option.value === value);
+}

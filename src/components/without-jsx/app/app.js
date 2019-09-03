@@ -11,19 +11,20 @@ import { selectSubAssemblyLines } from '../../../redux/assembly/assembly.selecto
 import { disassemblyCode } from '../../../redux/assembly/assembly.actions';
 import { loadShaders } from '../../../redux/shader/shader.actions';
 import { selectLoadingShaders } from '../../../redux/shader/shader.selectors';
-import { createInitAction, createSetLoopModeAction, createStartLoopAction } from '../../../worker/actions/actions';
-import { LOOP_MODS } from '../../../worker/const/mode';
+import { selectResolutionValue, selectSpeedModeValue } from '../../../redux/settings/settings.selectors';
+import { createInitAction } from '../../../worker/actions/actions';
 import { CPU_THREAD_SYNC } from '../../../chip-8/memory/const/index';
 import { getBytesFromMemory } from '../../../chip-8/memory/memory';
-import { byteIndexToFutexBufferIndex, createFutex, lock, unlock } from '../../../worker/utils/index';
+import { byteIndexToFutexBufferIndex, createFutex, lock, unlock, promisifyPostMessage } from '../../../worker/utils/index';
+import { runCpuThread, setCpuThreadSpeedMode, setResolutionMode } from '../../../redux/settings/settings.actions';
+import { findOptinByValue } from '../../../util/index';
+import { RESOLUTIONS_MODS } from '../../../redux/settings/const/index';
 
 const syncIndex = byteIndexToFutexBufferIndex(CPU_THREAD_SYNC);
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = { scale: 10 };
 
     this.chip8Ref = React.createRef();
     this.chip8 = createSharedChip8(MOCK_GAME);
@@ -33,6 +34,10 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    const { speedMode } = this.props;
+
+    this.props.setResolutionMode(findOptinByValue(RESOLUTIONS_MODS, 10));
+
     Promise.all([
       this.props.loadShaders(
         './src/assets/shaders/main.vert',
@@ -44,11 +49,11 @@ class App extends React.Component {
     .then(worker => {
       this.cpuThread = new Worker(URL.createObjectURL(worker));
 
-      this.cpuThread.postMessage(createInitAction(this.chip8));
-      this.cpuThread.postMessage(createSetLoopModeAction(LOOP_MODS.DEFAULT_SPEED_MODE));
-      this.cpuThread.postMessage(createStartLoopAction());
+      return promisifyPostMessage(this.cpuThread, createInitAction(this.chip8));
     })
-    .then(this.mainLoop);
+    .then(() => this.props.setCpuThreadSpeedMode(this.cpuThread, speedMode))
+    .then(() => this.props.runCpuThread(this.cpuThread))
+    .then(() => this.mainLoop());
   }
 
   mainLoop = () => {
@@ -65,8 +70,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { shaderLoading } = this.props;
-    const { scale } = this.state;
+    const { shaderLoading, resolutionMode } = this.props;
 
     return (
       shaderLoading ?
@@ -74,7 +78,7 @@ class App extends React.Component {
       React.createElement(Chip8, {
         ref: this.chip8Ref,
         chip8: this.chip8,
-        scale,
+        scale: resolutionMode,
       }, null)
     );
   }
@@ -91,12 +95,17 @@ function mapStateToProps(state) {
   return ({
     assemblyLines: selectSubAssemblyLines(state),
     shaderLoading: selectLoadingShaders(state),
+    resolutionMode: selectResolutionValue(state),
+    speedMode: selectSpeedModeValue(state),
   });
 }
 
 const mapDispatchToProps = {
   disassemblyCode,
   loadShaders,
+  runCpuThread,
+  setCpuThreadSpeedMode,
+  setResolutionMode,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -19,12 +19,17 @@ import { byteIndexToFutexBufferIndex, createFutex, lock, unlock, promisifyPostMe
 import { runCpuThread, setCpuThreadSpeedMode, setResolutionMode } from '../../../redux/settings/settings.actions';
 import { findOptinByValue } from '../../../util/index';
 import { RESOLUTIONS_MODS } from '../../../redux/settings/const/index';
+import { APP_STATES } from './const/index';
 
 const syncIndex = byteIndexToFutexBufferIndex(CPU_THREAD_SYNC);
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      appState: APP_STATES.game,
+    };
 
     this.chip8Ref = React.createRef();
     this.chip8 = createSharedChip8(MOCK_GAME);
@@ -70,17 +75,23 @@ class App extends React.Component {
   }
 
   render() {
+    const { appState } = this.state;
     const { shaderLoading, resolutionMode } = this.props;
 
-    return (
-      shaderLoading ?
-      React.createElement('span', null, 'loading') :
-      React.createElement(Chip8, {
-        ref: this.chip8Ref,
-        chip8: this.chip8,
-        scale: resolutionMode,
-      }, null)
-    );
+    switch (appState) {
+      case APP_STATES['games-list']: return null;
+      case APP_STATES.game: return (
+        shaderLoading ?
+        React.createElement('span', null, 'loading') :
+        React.createElement(Chip8, {
+          ref: this.chip8Ref,
+          chip8: this.chip8,
+          scale: resolutionMode,
+        }, null)
+      );
+    }
+
+    return null;
   }
 }
 

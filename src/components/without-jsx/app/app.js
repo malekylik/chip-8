@@ -17,6 +17,7 @@ import { CPU_THREAD_SYNC } from '../../../chip-8/memory/const/index';
 import { getBytesFromMemory } from '../../../chip-8/memory/memory';
 import { byteIndexToFutexBufferIndex, createFutex, lock, unlock, promisifyPostMessage } from '../../../worker/utils/index';
 import { runCpuThread, setCpuThreadSpeedMode, setResolutionMode } from '../../../redux/settings/settings.actions';
+import { setCpuThreadBlobUrl } from '../../../redux/thread/thread.actions';
 import { findOptinByValue } from '../../../util/index';
 import { RESOLUTIONS_MODS } from '../../../redux/settings/const/index';
 import { APP_STATES } from './const/index';
@@ -52,7 +53,9 @@ class App extends React.Component {
     ])
     .then(([shaders, worker]) => worker.blob())
     .then(worker => {
-      this.cpuThread = new Worker(URL.createObjectURL(worker));
+      const workerUrl = URL.createObjectURL(worker);
+      this.props.setCpuThreadBlobUrl(workerUrl);
+      this.cpuThread = new Worker(workerUrl);
 
       return promisifyPostMessage(this.cpuThread, createInitAction(this.chip8));
     })
@@ -117,6 +120,7 @@ const mapDispatchToProps = {
   runCpuThread,
   setCpuThreadSpeedMode,
   setResolutionMode,
+  setCpuThreadBlobUrl,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -14,6 +15,8 @@ import { findOptinByValue } from '../../../util/index';
 import { RESOLUTIONS_MODS } from '../../../redux/settings/const/index';
 import { disassemblyCode } from '../../../redux/assembly/assembly.actions';
 import { getBytesFromMemory } from '../../../chip-8/memory/memory';
+
+import './game.css';
 
 let cpuThread = null;
 let chip8 = null;
@@ -50,8 +53,11 @@ const Game = () => {
   }, [cpuBlob])
 
   return (
-    loaded &&
-      <Chip8 ref={chip8Ref} chip8={chip8} scale={resolution} />
+    loaded ?
+    <Chip8 ref={chip8Ref} chip8={chip8} scale={resolution} /> :
+    <div className='game__loader'>
+      <CircularProgress />
+    </div>
   );
 };
 

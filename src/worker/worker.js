@@ -1,9 +1,9 @@
 import { CPU_THREAD_ACTIONS } from './const/actions';
 import { LOOP_MODS } from './const/mode';
+import { SYNC_INDEX } from './const/worker';
 import { executeNextCycly, getMemory } from '../chip-8/chip-8';
-import { CPU_THREAD_SYNC } from '../chip-8/memory/const/index';
 import { getBytesFromMemory } from '../chip-8/memory/memory';
-import { byteIndexToFutexBufferIndex, createFutex, wait } from './utils/index';
+import { createFutex, wait } from './utils/index';
 import {
   createInitAction,
   createStartLoopAction,
@@ -11,8 +11,6 @@ import {
   createExecuteNextInstructionAction,
   createStopLoopAction,
 } from './actions/actions';
-
-const syncIndex = byteIndexToFutexBufferIndex(CPU_THREAD_SYNC);
 
 let threadChip8 = null;
 let clearInterval = () => {};
@@ -28,7 +26,7 @@ self.addEventListener('message', (event) => {
   switch (eventType) {
     case CPU_THREAD_ACTIONS.INIT: {
       threadChip8 = payload.chip8;
-      futex = createFutex(getBytesFromMemory(getMemory(threadChip8)).buffer, syncIndex);
+      futex = createFutex(getBytesFromMemory(getMemory(threadChip8)).buffer, SYNC_INDEX);
 
       self.postMessage(createInitAction(threadChip8, false));
 

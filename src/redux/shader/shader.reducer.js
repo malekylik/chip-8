@@ -5,10 +5,12 @@ export default function shaderReducer(state = initialState, action) {
     case SET_LOADING_SHADER: return ({
       ...state,
       loading: true,
+      loaded: false,
     });
     case SET_LOADED_SHADER: return ({
       ...state,
       loading: false,
+      loaded: true,
     });
     case SET_SHADERS: return ({
       ...state,
@@ -21,7 +23,8 @@ export default function shaderReducer(state = initialState, action) {
 }
 
 const initialState = {
-  loading: true,
+  loaded: false,
+  loading: false,
   vertSource: '',
   fragSource: '',
 };

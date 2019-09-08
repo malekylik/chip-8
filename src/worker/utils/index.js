@@ -1,9 +1,5 @@
 import { UNLOCK_VALUE, LOCK_CPU_THREAD_VALUE } from '../const/worker';
 
-export function byteIndexToFutexBufferIndex(index) {
-  return index >>> 2;
-}
-
 export function createFutex(buffer, index) {
   return ({
     buffer: new Int32Array(buffer),

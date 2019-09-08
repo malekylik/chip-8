@@ -5,12 +5,14 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import { useSelector, useDispatch } from 'react-redux';
 
-import { selectResolutionValue, selectSpeedModeValue } from '../../../redux/settings/settings.selectors';
+import { selectResolutionValue, selectSpeedModeValue, selectShowDebbugInfo } from '../../../redux/settings/settings.selectors';
 import { RESOLUTIONS_MODS, LOOP_MODS_OPTIONS } from '../../../redux/settings/const/index';
-import { setResolutionMode, setSpeedMode } from '../../../redux/settings/settings.actions';
+import { setResolutionMode, setSpeedMode, setShowDebbugInfo } from '../../../redux/settings/settings.actions';
 import { findOptinByValue } from '../../../util/index';
 
 import './menu-settings.css';
@@ -20,6 +22,7 @@ const MenuSettings = (props) => {
 
   const speedMode = useSelector(selectSpeedModeValue);
   const resolution = useSelector(selectResolutionValue);
+  const showDebbugInfo = useSelector(selectShowDebbugInfo);
 
   const dispatch = useDispatch();
 
@@ -29,6 +32,10 @@ const MenuSettings = (props) => {
 
   function changeSpeedMode(event) {
     dispatch(setSpeedMode(findOptinByValue(LOOP_MODS_OPTIONS, event.target.value)));
+  }
+
+  function handleShowDebbugInfo() {
+    dispatch(setShowDebbugInfo(!showDebbugInfo));
   }
 
   return (
@@ -68,6 +75,17 @@ const MenuSettings = (props) => {
           </Select>
         </FormControl>
 
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={showDebbugInfo}
+            onChange={handleShowDebbugInfo}
+            value='show-debbug-info'
+            color='primary'
+          />
+        }
+        label='Show debbug info'
+      />
       </div>
     </Dialog>
   )

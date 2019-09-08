@@ -6,6 +6,7 @@ import { findOptinByValue } from '../../util/index';
 export const SET_IS_RUNNING = '[Settings] SET_IS_RUNNING';
 export const SET_SPEED_MODE = '[Settings] SET_SPEED_MODE';
 export const SET_RESOLUTION_MODE = '[Settings] SET_RESOLUTION_MODE';
+export const SET_SHOW_DEBBUG_INFO = '[Settings] SET_SHOW_DEBBUG_INFO';
 
 export function setIsRunning(isRunning) {
   return ({
@@ -25,6 +26,13 @@ export function setResolutionMode(resolution) {
   return ({
     type: SET_RESOLUTION_MODE,
     payload: { resolution },
+  });
+}
+
+export function setShowDebbugInfo(show) {
+  return ({
+    type: SET_SHOW_DEBBUG_INFO,
+    payload: { show },
   });
 }
 

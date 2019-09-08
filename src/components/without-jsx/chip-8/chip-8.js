@@ -36,15 +36,32 @@ import {
   decrementKeyPressCount,
   resetKeyPressCount,
 } from '../../../redux/chip-8/chip-8.actions';
+import { selectShowDebbugInfo } from '../../../redux/settings/settings.selectors';
 
 import './chip-8.css';
 
 class Chip8 extends React.Component {
   displayRef = React.createRef();
+  executeNextCycly = this.props.showDebbugInfo ? this.executeNextCyclyWithUpdateState : this.executeNextCyclyWithoutUpdateState;
 
-  executeNextCycly() {
+  componentDidUpdate(prevProps) {
+    const { showDebbugInfo } = this.props;
+    const isShowDebbugInfoChanged = prevProps.showDebbugInfo !== showDebbugInfo;
+
+    if (isShowDebbugInfoChanged) {
+      this.updateState();
+
+      this.executeNextCycly = showDebbugInfo ? this.executeNextCyclyWithUpdateState : this.executeNextCyclyWithoutUpdateState;
+    }
+  }
+
+  executeNextCyclyWithUpdateState() {
     this.updateDisplay();
     this.updateState();
+  }
+
+  executeNextCyclyWithoutUpdateState() {
+    this.updateDisplay();
   }
 
   updateDisplay() {
@@ -91,7 +108,7 @@ class Chip8 extends React.Component {
   }
 
   render () {
-    const { chip8, scale } = this.props;
+    const { chip8, scale, showDebbugInfo } = this.props;
 
     return (
       React.createElement('div', null,
@@ -104,8 +121,8 @@ class Chip8 extends React.Component {
             display: getDisplay(chip8),
             scale,
           }),
-          React.createElement(StateDisplay),
-          React.createElement(Asseambly)
+          showDebbugInfo ? React.createElement(StateDisplay) : null,
+          showDebbugInfo ? React.createElement(Asseambly) : null,
         ),
         React.createElement('div', null,
           React.createElement(KeyboardState, {
@@ -119,8 +136,13 @@ class Chip8 extends React.Component {
 
 Chip8.propTypes = {
   chip8: PropTypes.object.isRequired,
+  showDebbugInfo: PropTypes.bool,
   scale: PropTypes.number,
 };
+
+const mapStateToProps = (state) => ({
+  showDebbugInfo: selectShowDebbugInfo(state),
+});
 
 const mapDispatchToProps = {
   setAssemblyLineNumber,
@@ -136,4 +158,4 @@ const mapDispatchToProps = {
   resetKeyPressCount,
 };
 
-export default connect(null, mapDispatchToProps, null, { forwardRef: true })(Chip8);
+export default connect(mapStateToProps, mapDispatchToProps, null, { forwardRef: true })(Chip8);

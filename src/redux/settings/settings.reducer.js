@@ -26,7 +26,7 @@ export default function settingsReducer(state = initialState, action) {
 
 const initialState = {
   isRunning: false,
-  showDebbugInfo: false,
+  showDebbugInfo: true,
   resolution: RESOLUTIONS_MODS[2],
   speedMode: LOOP_MODS_OPTIONS[0],
 };

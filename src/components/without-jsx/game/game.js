@@ -99,7 +99,7 @@ const Game = () => {
     loaded ?
     (
       <div>
-        <Chip8 ref={chip8Ref} chip8={chip8} scale={resolution} />
+        <Chip8 ref={chip8Ref} chip8={chip8} scale={resolution} switchLoopState={switchLoopState} />
         <MenuSettings open={menuOpen} onCloseModal={onCloseMenu} />
       </div>
     ) :

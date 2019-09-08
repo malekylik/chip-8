@@ -36,13 +36,23 @@ import {
   decrementKeyPressCount,
   resetKeyPressCount,
 } from '../../../redux/chip-8/chip-8.actions';
-import { selectShowDebbugInfo } from '../../../redux/settings/settings.selectors';
+import { selectShowDebbugInfo, selectIsRunning } from '../../../redux/settings/settings.selectors';
 
 import './chip-8.css';
 
 class Chip8 extends React.Component {
   displayRef = React.createRef();
   executeNextCycly = this.props.showDebbugInfo ? this.executeNextCyclyWithUpdateState : this.executeNextCyclyWithoutUpdateState;
+
+  subcription = null;
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      onStateKeyPress: this.onStateKeyPress,
+    };
+  }
 
   componentDidUpdate(prevProps) {
     const { showDebbugInfo } = this.props;
@@ -52,6 +62,12 @@ class Chip8 extends React.Component {
       this.updateState();
 
       this.executeNextCycly = showDebbugInfo ? this.executeNextCyclyWithUpdateState : this.executeNextCyclyWithoutUpdateState;
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.subcription) {
+      this.subcription.unsubscribe();
     }
   }
 
@@ -107,8 +123,23 @@ class Chip8 extends React.Component {
     this.props.resetKeyPressCount();
   }
 
+  onStateKeyPress = (e) => {
+    if (e.keyCode === 0) {
+      const { isRunning } = this.props;
+      this.subcription = this.props.switchLoopState(!isRunning).subscribe(() => this.setState({ onStateKeyPress: this.onStateKeyPress }));
+
+      this.setState({ onStateKeyPress: undefined });
+    }
+  }
+
   render () {
     const { chip8, scale, showDebbugInfo } = this.props;
+    const state = showDebbugInfo ?
+      React.createElement('div', { tabIndex: 0, onKeyPress: this.state.onStateKeyPress },
+        React.createElement(StateDisplay),
+        React.createElement(Asseambly),
+      ) :
+      null;
 
     return (
       React.createElement('div', null,
@@ -121,8 +152,7 @@ class Chip8 extends React.Component {
             display: getDisplay(chip8),
             scale,
           }),
-          showDebbugInfo ? React.createElement(StateDisplay) : null,
-          showDebbugInfo ? React.createElement(Asseambly) : null,
+          state,
         ),
         React.createElement('div', null,
           React.createElement(KeyboardState, {
@@ -142,6 +172,7 @@ Chip8.propTypes = {
 
 const mapStateToProps = (state) => ({
   showDebbugInfo: selectShowDebbugInfo(state),
+  isRunning: selectIsRunning(state),
 });
 
 const mapDispatchToProps = {

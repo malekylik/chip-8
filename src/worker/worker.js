@@ -13,7 +13,7 @@ import {
 } from './actions/actions';
 
 let threadChip8 = null;
-let clearInterval = () => {};
+let clearThreadInterval = () => {};
 let loopMode = LOOP_MODS.DEFAULT_SPEED_MODE;
 let futex = null;
 
@@ -33,7 +33,7 @@ self.addEventListener('message', (event) => {
       break;
     }
     case CPU_THREAD_ACTIONS.RUN_LOOP: {
-      clearInterval();
+      clearThreadInterval();
 
       runLoop(loopMode);
 
@@ -56,7 +56,7 @@ self.addEventListener('message', (event) => {
       break;
     }
     case CPU_THREAD_ACTIONS.STOP_LOOP: {
-      clearInterval();
+      clearThreadInterval();
 
       self.postMessage(createStopLoopAction(false));
 
@@ -66,7 +66,7 @@ self.addEventListener('message', (event) => {
 });
 
 function runLoop(speed) {
-  clearInterval = setInterval(main, speed);
+  clearThreadInterval = createClearInterval(setInterval(main, speed));
 
   main();
 }
@@ -74,4 +74,10 @@ function runLoop(speed) {
 function main() {
   wait(futex);
   executeNextCycly(threadChip8);
+}
+
+function createClearInterval(id) {
+  return function () {
+    clearInterval(id);
+  }
 }

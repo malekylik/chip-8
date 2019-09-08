@@ -14,7 +14,7 @@ import { setResolutionMode } from '../../../redux/settings/settings.actions';
 import { findOptinByValue } from '../../../util/index';
 
 const MenuSettings = (props) => {
-  const { open } = props;
+  const { open, onCloseModal } = props;
 
   const speedMode = useSelector(selectSpeedModeValue);
   const resolution = useSelector(selectResolutionValue);
@@ -26,7 +26,7 @@ const MenuSettings = (props) => {
   }
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onClose={onCloseModal}>
       <FormControl>
         <InputLabel htmlFor='resolution'>Resolution</InputLabel>
         <Select

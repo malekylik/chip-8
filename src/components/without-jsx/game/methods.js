@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { from } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { from, fromEvent } from 'rxjs';
+import { mergeMap, filter } from 'rxjs/operators';
 
 import { loadCpuThread } from '../../../redux/thread/thread.actions';
 import { loadShaders } from '../../../redux/shader/shader.actions';
 import { createFutex, promisifyPostMessage, lock, unlock } from '../../../worker/utils/index';
-import { createInitAction } from '../../../worker/actions/actions';
-import { runCpuThread, setCpuThreadSpeedMode } from '../../../redux/settings/settings.actions';
+import { createInitAction, createStopLoopAction  } from '../../../worker/actions/actions';
+import { runCpuThread, setCpuThreadSpeedMode, terminateCpuThread } from '../../../redux/settings/settings.actions';
 import { selectLoadedShaders, selectLoadingShaders } from '../../../redux/shader/shader.selectors';
 import { selectCpuThreadLoaded, selectCpuThreadLoading } from '../../../redux/thread/thread.selectors';
 import { SYNC_INDEX } from '../../../worker/const/worker';
@@ -18,6 +18,14 @@ export function initCpuThread(dispatch, worker, chip8, speedMode) {
     mergeMap(() => from(dispatch(setCpuThreadSpeedMode(worker, speedMode)))),
     mergeMap(() => from(dispatch(runCpuThread(worker)))),
   );
+}
+
+export function startCpuThread(dispatch, worker) {
+  return from(dispatch(runCpuThread(worker)));
+}
+
+export function stopCpuThread(dispatch, worker) {
+  return from(dispatch(terminateCpuThread(worker)))
 }
 
 export function nextStep(chip8Ref) {
@@ -51,34 +59,40 @@ export function useGameAssetsLoading() {
   );
 }
 
-export function useMenuOpen(defaultValue) {
+export function useMenuOpen(defaultValue, callback, worker) {
   const [menuOpen, changeMenuOpen] = useState(defaultValue);
 
+  function handleMenuClose() {
+    changeMenuOpen(false);
+  }
+
   useEffect(() => {
-    function handleKeyPress(e) {
-      if (e.code === 'Backslash') {
-        changeMenuOpen(!menuOpen);
-      }
-    }
+    const subscription = fromEvent(window, 'keypress')
+    .pipe(
+      filter((e) => e.code === 'Backslash'),
+      mergeMap(() => callback(menuOpen))
+    ).subscribe(() => {
+      changeMenuOpen(!menuOpen);
+    });
 
-    window.addEventListener('keypress', handleKeyPress);
+    return () => subscription.unsubscribe();
+  }, [menuOpen, worker]);
 
-    return () => window.removeEventListener('keypress', handleKeyPress);
-  }, [menuOpen]);
-
-  return menuOpen;
+  return [menuOpen, handleMenuClose];
 }
 
-export function mainLoop (terminate, chip8Buffer, chip8Ref) {
+export function mainLoop(terminate, chip8Buffer, chip8Ref) {
   const futex = createFutex(chip8Buffer, SYNC_INDEX);
 
-  (function innerMainLoop () {
+  (function innerMainLoop() {
     const requestCallback = requestAnimationFrame(innerMainLoop);
 
     lock(futex);
     nextStep(chip8Ref);
     unlock(futex);
 
-    terminate.terminate = requestCallback;
+    terminate.terminate = () => cancelAnimationFrame(requestCallback);
   })();
 }
+
+// export function Stop

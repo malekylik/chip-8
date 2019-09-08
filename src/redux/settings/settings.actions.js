@@ -1,5 +1,5 @@
 import { promisifyPostMessage } from '../../worker/utils/index';
-import { createStartLoopAction, createSetLoopModeAction } from '../../worker/actions/actions';
+import { createStartLoopAction, createStopLoopAction, createSetLoopModeAction } from '../../worker/actions/actions';
 import { LOOP_MODS_OPTIONS } from './const/index';
 import { findOptinByValue } from '../../util/index';
 
@@ -35,6 +35,16 @@ export function runCpuThread(cpuThread) {
     dispatch(setIsRunning(true));
 
     return true;
+  };
+}
+
+export function terminateCpuThread(cpuThread) {
+  return async function (dispatch) {
+    await promisifyPostMessage(cpuThread, createStopLoopAction());
+
+    dispatch(setIsRunning(false));
+
+    return false;
   };
 }
 

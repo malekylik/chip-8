@@ -6,7 +6,7 @@ import { mergeMap, filter } from 'rxjs/operators';
 import { loadCpuThread } from '../../../redux/thread/thread.actions';
 import { loadShaders } from '../../../redux/shader/shader.actions';
 import { createFutex, promisifyPostMessage, lock, unlock } from '../../../worker/utils/index';
-import { createInitAction, createStopLoopAction  } from '../../../worker/actions/actions';
+import { createInitAction, createSetLoopModeAction  } from '../../../worker/actions/actions';
 import { runCpuThread, setCpuThreadSpeedMode, terminateCpuThread } from '../../../redux/settings/settings.actions';
 import { selectLoadedShaders, selectLoadingShaders } from '../../../redux/shader/shader.selectors';
 import { selectCpuThreadLoaded, selectCpuThreadLoading } from '../../../redux/thread/thread.selectors';
@@ -26,6 +26,10 @@ export function startCpuThread(dispatch, worker) {
 
 export function stopCpuThread(dispatch, worker) {
   return from(dispatch(terminateCpuThread(worker)))
+}
+
+export function changeSpeedMode(worker, speedMode) {
+  return from(promisifyPostMessage(worker, createSetLoopModeAction(speedMode)));
 }
 
 export function nextStep(chip8Ref) {

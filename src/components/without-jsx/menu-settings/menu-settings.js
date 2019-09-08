@@ -9,9 +9,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { selectResolutionValue, selectSpeedModeValue } from '../../../redux/settings/settings.selectors';
-import { RESOLUTIONS_MODS } from '../../../redux/settings/const/index';
-import { setResolutionMode } from '../../../redux/settings/settings.actions';
+import { RESOLUTIONS_MODS, LOOP_MODS_OPTIONS } from '../../../redux/settings/const/index';
+import { setResolutionMode, setSpeedMode } from '../../../redux/settings/settings.actions';
 import { findOptinByValue } from '../../../util/index';
+
+import './menu-settings.css';
 
 const MenuSettings = (props) => {
   const { open, onCloseModal } = props;
@@ -25,26 +27,48 @@ const MenuSettings = (props) => {
     dispatch(setResolutionMode(findOptinByValue(RESOLUTIONS_MODS, event.target.value)));
   }
 
+  function changeSpeedMode(event) {
+    dispatch(setSpeedMode(findOptinByValue(LOOP_MODS_OPTIONS, event.target.value)));
+  }
+
   return (
-    <Dialog open={open} onClose={onCloseModal}>
-      <FormControl>
-        <InputLabel htmlFor='resolution'>Resolution</InputLabel>
-        <Select
-          inputProps={{
-            name: 'resolution',
-            id: 'resolution',
-          }}
-          value={resolution}
-          onChange={changeResolution}>
-          {
-            RESOLUTIONS_MODS.map(({ value, label }, i) => (
-              <MenuItem key={i} value={value}>{label}</MenuItem>
-            ))
-          }
-        </Select>
-      </FormControl>
-      <span>speed {speedMode}</span>
-      <span>resolution {resolution}</span>
+    <Dialog fullWidth open={open} onClose={onCloseModal}>
+      <div className='menu-settings'>
+        <FormControl fullWidth>
+          <InputLabel htmlFor='resolution'>Resolution</InputLabel>
+          <Select
+            inputProps={{
+              name: 'resolution',
+              id: 'resolution',
+            }}
+            value={resolution}
+            onChange={changeResolution}>
+            {
+              RESOLUTIONS_MODS.map(({ value, label }, i) => (
+                <MenuItem key={i} value={value}>{label}</MenuItem>
+              ))
+            }
+          </Select>
+        </FormControl>
+
+        <FormControl fullWidth>
+          <InputLabel htmlFor='speed-mode'>Speed Mode</InputLabel>
+          <Select
+            inputProps={{
+              name: 'speed-mode',
+              id: 'speed-mode',
+            }}
+            value={speedMode}
+            onChange={changeSpeedMode}>
+            {
+              LOOP_MODS_OPTIONS.map(({ value, label }, i) => (
+                <MenuItem key={i} value={value}>{label}</MenuItem>
+              ))
+            }
+          </Select>
+        </FormControl>
+
+      </div>
     </Dialog>
   )
 };

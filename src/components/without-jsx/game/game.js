@@ -7,7 +7,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import Chip8 from '../chip-8/chip-8';
 import MenuSettings from '../menu-settings/menu-settings';
 
-import { initCpuThread, useGameAssetsLoading, useMenuOpen, mainLoop, startCpuThread, stopCpuThread } from './methods';
+import {
+  initCpuThread,
+  useGameAssetsLoading,
+  useMenuOpen,
+  mainLoop,
+  startCpuThread,
+  stopCpuThread,
+  changeSpeedMode,
+} from './methods';
 import { MOCK_GAME } from '../../../chip-8/processor/const/index';
 import { createSharedChip8, getMemory } from '../../../chip-8/chip-8';
 import { selectCpuThreadUrlBlob } from '../../../redux/thread/thread.selectors';
@@ -78,6 +86,14 @@ const Game = () => {
       }
     }
   }, [cpuBlob]);
+
+  useEffect(() => {
+    if (cpuThread) {
+      const subcription = changeSpeedMode(cpuThread, speedMode).subscribe();
+
+      return () => subcription.unsubscribe();
+    }
+  }, [speedMode]);
 
   return (
     loaded ?

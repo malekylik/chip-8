@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { from } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
@@ -49,6 +49,24 @@ export function useGameAssetsLoading() {
     (isShaderLoaded && !isShaderLoading) &&
     (isCpuThreadLoaded && !isCpuThreadLoading)
   );
+}
+
+export function useMenuOpen(defaultValue) {
+  const [menuOpen, changeMenuOpen] = useState(defaultValue);
+
+  useEffect(() => {
+    function handleKeyPress(e) {
+      if (e.code === 'Backslash') {
+        changeMenuOpen(!menuOpen);
+      }
+    }
+
+    window.addEventListener('keypress', handleKeyPress);
+
+    return () => window.removeEventListener('keypress', handleKeyPress);
+  }, [menuOpen]);
+
+  return menuOpen;
 }
 
 export function mainLoop (terminate, chip8Buffer, chip8Ref) {

@@ -1,16 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { useSelector, useDispatch } from 'react-redux';
 
 import Chip8 from '../chip-8/chip-8';
+import MenuSettings from '../menu-settings/menu-settings';
 
 import { MOCK_GAME } from '../../../chip-8/processor/const/index';
 import { createSharedChip8, getMemory } from '../../../chip-8/chip-8';
 import { selectCpuThreadUrlBlob } from '../../../redux/thread/thread.selectors';
 import { selectResolutionValue, selectSpeedModeValue } from '../../../redux/settings/settings.selectors';
 import { setResolutionMode } from '../../../redux/settings/settings.actions';
-import { initCpuThread, useGameAssetsLoading, mainLoop } from './methods';
+import { initCpuThread, useGameAssetsLoading, useMenuOpen, mainLoop } from './methods';
 import { findOptinByValue } from '../../../util/index';
 import { RESOLUTIONS_MODS } from '../../../redux/settings/const/index';
 import { disassemblyCode } from '../../../redux/assembly/assembly.actions';
@@ -23,6 +24,8 @@ let chip8 = null;
 let terminateLoop = { terminate: () => {} };
 
 const Game = () => {
+  const menuOpen = useMenuOpen(false);
+
   const cpuBlob = useSelector(selectCpuThreadUrlBlob);
   const speedMode = useSelector(selectSpeedModeValue);
   const resolution = useSelector(selectResolutionValue);
@@ -50,11 +53,18 @@ const Game = () => {
         terminateLoop.terminate();
       }
     }
-  }, [cpuBlob])
+  }, [cpuBlob]);
+
+
 
   return (
     loaded ?
-    <Chip8 ref={chip8Ref} chip8={chip8} scale={resolution} /> :
+    (
+      <div>
+        <Chip8 ref={chip8Ref} chip8={chip8} scale={resolution} />
+        <MenuSettings open={menuOpen} />
+      </div>
+    ) :
     <div className='game__loader'>
       <CircularProgress />
     </div>

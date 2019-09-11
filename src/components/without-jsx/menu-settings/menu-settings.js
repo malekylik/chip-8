@@ -7,6 +7,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import Button from '@material-ui/core/Button';
 
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -46,7 +47,7 @@ const MenuSettings = (props) => {
   return (
     <Dialog fullWidth open={open} onClose={onCloseModal}>
       <div className='menu-settings'>
-        <FormControl fullWidth>
+        <FormControl fullWidth className='menu-settings__controll--bottom-margin'>
           <InputLabel htmlFor='renderer'>Renderer</InputLabel>
           <Select
             inputProps={{
@@ -63,7 +64,7 @@ const MenuSettings = (props) => {
           </Select>
         </FormControl>
 
-        <FormControl fullWidth>
+        <FormControl fullWidth className='menu-settings__controll--bottom-margin'>
           <InputLabel htmlFor='resolution'>Resolution</InputLabel>
           <Select
             inputProps={{
@@ -80,7 +81,7 @@ const MenuSettings = (props) => {
           </Select>
         </FormControl>
 
-        <FormControl fullWidth>
+        <FormControl fullWidth className='menu-settings__controll--bottom-margin'>
           <InputLabel htmlFor='speed-mode'>Speed Mode</InputLabel>
           <Select
             inputProps={{
@@ -98,6 +99,7 @@ const MenuSettings = (props) => {
         </FormControl>
 
       <FormControlLabel
+        className='menu-settings__controll--bottom-margin'
         control={
           <Checkbox
             checked={showDebbugInfo}
@@ -108,6 +110,10 @@ const MenuSettings = (props) => {
         }
         label='Show debbug info'
       />
+
+      <Button fullWidth variant='contained' color='primary' onClick={onCloseModal}>
+        Close
+      </Button>
       </div>
     </Dialog>
   )

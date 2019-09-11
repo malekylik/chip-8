@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 
-import Display2D from '../display/display-gl';
+import Display2D from '../display/display-2d';
 import DisplayGL from '../display/display-gl';
 import StateDisplay from '../state-display/state-display';
 import Asseambly from '../assembly/assembly';
@@ -36,7 +36,8 @@ import {
   decrementKeyPressCount,
   resetKeyPressCount,
 } from '../../../redux/chip-8/chip-8.actions';
-import { selectShowDebbugInfo, selectIsRunning } from '../../../redux/settings/settings.selectors';
+import { selectRendererModeValue, selectShowDebbugInfo, selectIsRunning } from '../../../redux/settings/settings.selectors';
+import { RENDERER_MODS } from '../../../redux/settings/const/index';
 
 import './chip-8.css';
 
@@ -51,11 +52,12 @@ class Chip8 extends React.Component {
 
     this.state = {
       onStateKeyPress: this.onStateKeyPress,
+      Display: this.getRendererDisplay(props.rendererMode)
     };
   }
 
   componentDidUpdate(prevProps) {
-    const { showDebbugInfo } = this.props;
+    const { showDebbugInfo, rendererMode } = this.props;
     const isShowDebbugInfoChanged = prevProps.showDebbugInfo !== showDebbugInfo;
 
     if (isShowDebbugInfoChanged) {
@@ -63,6 +65,19 @@ class Chip8 extends React.Component {
 
       this.executeNextCycly = showDebbugInfo ? this.executeNextCyclyWithUpdateState : this.executeNextCyclyWithoutUpdateState;
     }
+
+    if (rendererMode !== prevProps.rendererMode) {
+      this.setState({ Display: this.getRendererDisplay(rendererMode) });
+    }
+  }
+
+  getRendererDisplay(rendererMode) {
+    switch (rendererMode) {
+      case RENDERER_MODS.canvas: return Display2D;
+      case RENDERER_MODS.webGL: return DisplayGL;
+    }
+
+    return null;
   }
 
   componentWillUnmount() {
@@ -144,7 +159,7 @@ class Chip8 extends React.Component {
     return (
       React.createElement('div', null,
         React.createElement('div', { className: 'chip-8' },
-          React.createElement(DisplayGL, {
+          React.createElement(this.state.Display, {
             ref: this.displayRef,
             onKeyDown: this.onKeyDown,
             onKeyUp: this.onKeyUp,
@@ -166,11 +181,13 @@ class Chip8 extends React.Component {
 
 Chip8.propTypes = {
   chip8: PropTypes.object.isRequired,
+  rendererMode: PropTypes.number.isRequired,
   showDebbugInfo: PropTypes.bool,
   scale: PropTypes.number,
 };
 
 const mapStateToProps = (state) => ({
+  rendererMode: selectRendererModeValue(state),
   showDebbugInfo: selectShowDebbugInfo(state),
   isRunning: selectIsRunning(state),
 });

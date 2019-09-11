@@ -10,9 +10,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 import { useSelector, useDispatch } from 'react-redux';
 
-import { selectResolutionValue, selectSpeedModeValue, selectShowDebbugInfo } from '../../../redux/settings/settings.selectors';
-import { RESOLUTIONS_MODS, LOOP_MODS_OPTIONS } from '../../../redux/settings/const/index';
-import { setResolutionMode, setSpeedMode, setShowDebbugInfo } from '../../../redux/settings/settings.actions';
+import { selectResolutionValue, selectSpeedModeValue, selectRendererModeValue, selectShowDebbugInfo } from '../../../redux/settings/settings.selectors';
+import { RESOLUTIONS_MODS, LOOP_MODS_OPTIONS, RENDERER_MODS_OPTIONS } from '../../../redux/settings/const/index';
+import { setResolutionMode, setSpeedMode, setRendererMode, setShowDebbugInfo } from '../../../redux/settings/settings.actions';
 import { findOptinByValue } from '../../../util/index';
 
 import './menu-settings.css';
@@ -22,6 +22,7 @@ const MenuSettings = (props) => {
 
   const speedMode = useSelector(selectSpeedModeValue);
   const resolution = useSelector(selectResolutionValue);
+  const renderer = useSelector(selectRendererModeValue);
   const showDebbugInfo = useSelector(selectShowDebbugInfo);
 
   const dispatch = useDispatch();
@@ -34,6 +35,10 @@ const MenuSettings = (props) => {
     dispatch(setSpeedMode(findOptinByValue(LOOP_MODS_OPTIONS, event.target.value)));
   }
 
+  function changeRendererMode(event) {
+    dispatch(setRendererMode(findOptinByValue(RENDERER_MODS_OPTIONS, event.target.value)));
+  }
+
   function handleShowDebbugInfo() {
     dispatch(setShowDebbugInfo(!showDebbugInfo));
   }
@@ -41,6 +46,23 @@ const MenuSettings = (props) => {
   return (
     <Dialog fullWidth open={open} onClose={onCloseModal}>
       <div className='menu-settings'>
+        <FormControl fullWidth>
+          <InputLabel htmlFor='renderer'>Renderer</InputLabel>
+          <Select
+            inputProps={{
+              name: 'renderer',
+              id: 'renderer',
+            }}
+            value={renderer}
+            onChange={changeRendererMode}>
+            {
+              RENDERER_MODS_OPTIONS.map(({ value, label }, i) => (
+                <MenuItem key={i} value={value}>{label}</MenuItem>
+              ))
+            }
+          </Select>
+        </FormControl>
+
         <FormControl fullWidth>
           <InputLabel htmlFor='resolution'>Resolution</InputLabel>
           <Select

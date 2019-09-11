@@ -4,6 +4,8 @@ export const selectResolutionValue = state => selectSettingsReducer(state).resol
 
 export const selectSpeedModeValue = state => selectSettingsReducer(state).speedMode.value;
 
+export const selectRendererModeValue = state => selectSettingsReducer(state).rendererMode.value;
+
 export const selectShowDebbugInfo = state => selectSettingsReducer(state).showDebbugInfo;
 
 export const selectIsRunning = state => selectSettingsReducer(state).isRunning;

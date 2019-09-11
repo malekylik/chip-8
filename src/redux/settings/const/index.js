@@ -69,3 +69,19 @@ export const RESOLUTIONS_MODS = [
     label: '3840x1920',
   },
 ];
+
+export const RENDERER_MODS = {
+  canvas: 0,
+  webGL: 1,
+}
+
+export const RENDERER_MODS_OPTIONS = [
+  {
+    value: RENDERER_MODS.canvas,
+    label: 'Canvas',
+  },
+  {
+    value: RENDERER_MODS.webGL,
+    label: 'WebGL',
+  },
+];

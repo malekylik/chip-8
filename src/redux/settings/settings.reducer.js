@@ -1,5 +1,5 @@
-import { LOOP_MODS_OPTIONS, RESOLUTIONS_MODS } from './const/index';
-import { SET_IS_RUNNING, SET_SPEED_MODE, SET_RESOLUTION_MODE, SET_SHOW_DEBBUG_INFO } from './settings.actions';
+import { LOOP_MODS_OPTIONS, RESOLUTIONS_MODS, RENDERER_MODS_OPTIONS } from './const/index';
+import { SET_IS_RUNNING, SET_SPEED_MODE, SET_RESOLUTION_MODE, SET_RENDERER_MODE, SET_SHOW_DEBBUG_INFO } from './settings.actions';
 
 export default function settingsReducer(state = initialState, action) {
   switch (action.type) {
@@ -15,6 +15,10 @@ export default function settingsReducer(state = initialState, action) {
       ...state,
       resolution: action.payload.resolution,
     });
+    case SET_RENDERER_MODE: return ({
+      ...state,
+      rendererMode: action.payload.renderer,
+    });
     case SET_SHOW_DEBBUG_INFO: return ({
       ...state,
       showDebbugInfo: action.payload.show,
@@ -29,4 +33,5 @@ const initialState = {
   showDebbugInfo: true,
   resolution: RESOLUTIONS_MODS[2],
   speedMode: LOOP_MODS_OPTIONS[0],
+  rendererMode: RENDERER_MODS_OPTIONS[1],
 };

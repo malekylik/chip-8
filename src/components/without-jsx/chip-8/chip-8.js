@@ -139,11 +139,27 @@ class Chip8 extends React.Component {
   }
 
   onStateKeyPress = (e) => {
-    if (e.keyCode === 0) {
-      const { isRunning } = this.props;
-      this.subcription = this.props.switchLoopState(!isRunning).subscribe(() => this.setState({ onStateKeyPress: this.onStateKeyPress }));
+    switch (e.charCode) {
+      case 56: {
+        const { isRunning } = this.props;
 
-      this.setState({ onStateKeyPress: undefined });
+        this.subcription = this.props.switchLoopState(!isRunning).subscribe(() => this.setState({ onStateKeyPress: this.onStateKeyPress }));
+        this.setState({ onStateKeyPress: undefined });
+        break;
+      }
+      case 57: {
+        const { isRunning } = this.props;
+
+        if (!isRunning) {
+          this.subcription = this.props.executeNextInstruction().subscribe(() => {
+            this.setState({ onStateKeyPress: this.onStateKeyPress });
+            this.executeNextCycly();
+          });
+          this.setState({ onStateKeyPress: undefined });
+        }
+
+        break;
+      }
     }
   }
 
@@ -182,6 +198,8 @@ class Chip8 extends React.Component {
 Chip8.propTypes = {
   chip8: PropTypes.object.isRequired,
   rendererMode: PropTypes.number.isRequired,
+  switchLoopState: PropTypes.func.isRequired,
+  executeNextInstruction: PropTypes.func.isRequired,
   showDebbugInfo: PropTypes.bool,
   scale: PropTypes.number,
 };

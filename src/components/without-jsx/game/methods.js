@@ -6,7 +6,7 @@ import { mergeMap, filter } from 'rxjs/operators';
 import { loadCpuThread } from '../../../redux/thread/thread.actions';
 import { loadShaders } from '../../../redux/shader/shader.actions';
 import { createFutex, promisifyPostMessage, lock, unlock } from '../../../worker/utils/index';
-import { createInitAction, createSetLoopModeAction  } from '../../../worker/actions/actions';
+import { createInitAction, createSetLoopModeAction, createExecuteNextInstructionAction } from '../../../worker/actions/actions';
 import { runCpuThread, setCpuThreadSpeedMode, terminateCpuThread } from '../../../redux/settings/settings.actions';
 import { selectLoadedShaders, selectLoadingShaders } from '../../../redux/shader/shader.selectors';
 import { selectCpuThreadLoaded, selectCpuThreadLoading } from '../../../redux/thread/thread.selectors';
@@ -99,4 +99,6 @@ export function mainLoop(terminate, chip8Buffer, chip8Ref) {
   })();
 }
 
-// export function Stop
+export function executeNextInst(worker) {
+  return from(promisifyPostMessage(worker, createExecuteNextInstructionAction()));
+}

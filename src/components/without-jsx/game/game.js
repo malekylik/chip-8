@@ -15,6 +15,7 @@ import {
   startCpuThread,
   stopCpuThread,
   changeSpeedMode,
+  executeNextInst,
 } from './methods';
 import { MOCK_GAME } from '../../../chip-8/processor/const/index';
 import { createSharedChip8, getMemory } from '../../../chip-8/chip-8';
@@ -67,6 +68,10 @@ const Game = () => {
     return mainLoop(terminateLoop, getBytesFromMemory(getMemory(chip8)).buffer, chip8Ref);
   }
 
+  function executeNextInstruction() {
+    return executeNextInst(cpuThread);
+  }
+
   useEffect(() => {
     chip8 = createSharedChip8(MOCK_GAME);
     dispatch(setResolutionMode(findOptinByValue(RESOLUTIONS_MODS, 10)));
@@ -99,7 +104,12 @@ const Game = () => {
     loaded ?
     (
       <div>
-        <Chip8 ref={chip8Ref} chip8={chip8} scale={resolution} switchLoopState={switchLoopState} />
+        <Chip8
+          ref={chip8Ref}
+          chip8={chip8}
+          scale={resolution}
+          switchLoopState={switchLoopState}
+          executeNextInstruction={executeNextInstruction} />
         <MenuSettings open={menuOpen} onCloseModal={onCloseMenu} />
       </div>
     ) :

@@ -1,4 +1,4 @@
-import { SET_NEW_ROM } from './roms.actions';
+import { SET_NEW_ROM, SET_NEW_ROM_INDEX } from './roms.actions';
 import { TEST_ROM, BRIX } from '../../chip-8/processor/const/index';
 
 export default function romsReducer(state = initialState, action) {
@@ -10,12 +10,17 @@ export default function romsReducer(state = initialState, action) {
         rom: action.payload.rom,
       })
     });
+    case SET_NEW_ROM_INDEX: return ({
+      ...state,
+      selectedRomIndex: action.payload.index,
+    });
   }
 
   return state;
 }
 
 const initialState = {
+  selectedRomIndex: -1,
   roms: [
     {
       name: 'TEST',

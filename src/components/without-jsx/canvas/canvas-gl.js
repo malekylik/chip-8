@@ -72,7 +72,7 @@ class CanvasGL extends React.Component {
   }
 
   componentDidMount() {
-    this.gl = this.canvasRef.current.getContext('webgl2');
+    this.gl = this.getCanvasContext();
 
     this.initGL();
     this.setImageBinaries(this.props.displayBuffer);
@@ -89,6 +89,19 @@ class CanvasGL extends React.Component {
     ) return false;
 
     return true;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { width, height } = this.props;
+
+    if (prevProps.width !== width || prevProps.height !== height) {
+      this.gl.viewport(0, 0, width, height);
+      this.setImageBinaries(this.props.displayBuffer);
+    }
+  }
+
+  getCanvasContext() {
+    return this.canvasRef.current.getContext('webgl2');
   }
 
   setImageBinaries(displayBuffer) {

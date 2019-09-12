@@ -15,6 +15,26 @@ export default class Display extends React.Component {
     this.imageData = new ImageData(width, height);
   }
 
+  componentDidMount() {
+    const { display } = this.props;
+
+    fillImageDataWithDisplay(this.imageData, display, this.props.scale);
+    this.setImageData(display);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { scale } = this.props;
+
+    if (prevProps.scale !== scale) {
+      const { width, height } = scaleDisplay(scale);
+      const { display } = this.props;
+
+      this.imageData = new ImageData(width, height);
+      fillImageDataWithDisplay(this.imageData, display, scale);
+      this.setImageData(display);
+    }
+  }
+
   shouldComponentUpdate(nextProps) {
     if (this.props.scale === nextProps.scale) return false;
 

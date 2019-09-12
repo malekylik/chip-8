@@ -1,11 +1,13 @@
 import { promisifyPostMessage } from '../../worker/utils/index';
-import { createStartLoopAction, createSetLoopModeAction } from '../../worker/actions/actions';
+import { createStartLoopAction, createStopLoopAction, createSetLoopModeAction } from '../../worker/actions/actions';
 import { LOOP_MODS_OPTIONS } from './const/index';
 import { findOptinByValue } from '../../util/index';
 
 export const SET_IS_RUNNING = '[Settings] SET_IS_RUNNING';
 export const SET_SPEED_MODE = '[Settings] SET_SPEED_MODE';
 export const SET_RESOLUTION_MODE = '[Settings] SET_RESOLUTION_MODE';
+export const SET_RENDERER_MODE = '[Settings] SET_RENDERER_MODE';
+export const SET_SHOW_DEBBUG_INFO = '[Settings] SET_SHOW_DEBBUG_INFO';
 
 export function setIsRunning(isRunning) {
   return ({
@@ -28,6 +30,20 @@ export function setResolutionMode(resolution) {
   });
 }
 
+export function setRendererMode(renderer) {
+  return ({
+    type: SET_RENDERER_MODE,
+    payload: { renderer },
+  });
+}
+
+export function setShowDebbugInfo(show) {
+  return ({
+    type: SET_SHOW_DEBBUG_INFO,
+    payload: { show },
+  });
+}
+
 export function runCpuThread(cpuThread) {
   return async function (dispatch) {
     await promisifyPostMessage(cpuThread, createStartLoopAction());
@@ -35,6 +51,16 @@ export function runCpuThread(cpuThread) {
     dispatch(setIsRunning(true));
 
     return true;
+  };
+}
+
+export function terminateCpuThread(cpuThread) {
+  return async function (dispatch) {
+    await promisifyPostMessage(cpuThread, createStopLoopAction());
+
+    dispatch(setIsRunning(false));
+
+    return false;
   };
 }
 

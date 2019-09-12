@@ -1,9 +1,9 @@
 import { CPU_THREAD_ACTIONS } from './const/actions';
 import { LOOP_MODS } from './const/mode';
+import { SYNC_INDEX } from './const/worker';
 import { executeNextCycly, getMemory } from '../chip-8/chip-8';
-import { CPU_THREAD_SYNC } from '../chip-8/memory/const/index';
 import { getBytesFromMemory } from '../chip-8/memory/memory';
-import { byteIndexToFutexBufferIndex, createFutex, wait } from './utils/index';
+import { createFutex, wait } from './utils/index';
 import {
   createInitAction,
   createStartLoopAction,
@@ -12,10 +12,8 @@ import {
   createStopLoopAction,
 } from './actions/actions';
 
-const syncIndex = byteIndexToFutexBufferIndex(CPU_THREAD_SYNC);
-
 let threadChip8 = null;
-let clearInterval = () => {};
+let clearThreadInterval = () => {};
 let loopMode = LOOP_MODS.DEFAULT_SPEED_MODE;
 let futex = null;
 
@@ -28,14 +26,14 @@ self.addEventListener('message', (event) => {
   switch (eventType) {
     case CPU_THREAD_ACTIONS.INIT: {
       threadChip8 = payload.chip8;
-      futex = createFutex(getBytesFromMemory(getMemory(threadChip8)).buffer, syncIndex);
+      futex = createFutex(getBytesFromMemory(getMemory(threadChip8)).buffer, SYNC_INDEX);
 
       self.postMessage(createInitAction(threadChip8, false));
 
       break;
     }
     case CPU_THREAD_ACTIONS.RUN_LOOP: {
-      clearInterval();
+      clearThreadInterval();
 
       runLoop(loopMode);
 
@@ -58,7 +56,7 @@ self.addEventListener('message', (event) => {
       break;
     }
     case CPU_THREAD_ACTIONS.STOP_LOOP: {
-      clearInterval();
+      clearThreadInterval();
 
       self.postMessage(createStopLoopAction(false));
 
@@ -68,7 +66,7 @@ self.addEventListener('message', (event) => {
 });
 
 function runLoop(speed) {
-  clearInterval = setInterval(main, speed);
+  clearThreadInterval = createClearInterval(setInterval(main, speed));
 
   main();
 }
@@ -76,4 +74,10 @@ function runLoop(speed) {
 function main() {
   wait(futex);
   executeNextCycly(threadChip8);
+}
+
+function createClearInterval(id) {
+  return function () {
+    clearInterval(id);
+  }
 }

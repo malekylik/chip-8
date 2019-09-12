@@ -32,7 +32,7 @@ export function createExecuteNextInstructionAction(error = false) {
   });
 }
 
-export function createStopLoopAction(error) {
+export function createStopLoopAction(error = false) {
   return ({
     eventType: CPU_THREAD_ACTIONS.STOP_LOOP,
     payload: null,

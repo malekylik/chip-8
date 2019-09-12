@@ -6,17 +6,28 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 
+import { useSelector } from 'react-redux';
+
+import { selectAllRoms } from '../../../redux/roms/roms.selectors';
+
 const GamesList = () => {
+  const roms = useSelector(selectAllRoms);
+
   return (
     <List>
-      <ListItem>
-        <ListItemText>Chip-8</ListItemText>
-        <ListItemSecondaryAction>
-          <IconButton edge='end'>
-            <ArrowRightIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
-      </ListItem>
+      {
+        roms.map(({ name }, i) => (
+          <ListItem key={i}>
+            <ListItemText>{name}</ListItemText>
+              <ListItemSecondaryAction>
+                <IconButton edge='end'>
+                  <ArrowRightIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          )
+        )
+      }
     </List>
   );
 }

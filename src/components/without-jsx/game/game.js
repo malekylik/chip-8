@@ -17,7 +17,7 @@ import {
   changeSpeedMode,
   executeNextInst,
 } from './methods';
-import { MOCK_GAME } from '../../../chip-8/processor/const/index';
+import { BRIX } from '../../../chip-8/processor/const/index';
 import { createSharedChip8, getMemory } from '../../../chip-8/chip-8';
 import { selectCpuThreadUrlBlob } from '../../../redux/thread/thread.selectors';
 import { selectResolutionValue, selectSpeedModeValue } from '../../../redux/settings/settings.selectors';
@@ -73,9 +73,9 @@ const Game = () => {
   }
 
   useEffect(() => {
-    chip8 = createSharedChip8(MOCK_GAME);
+    chip8 = createSharedChip8(BRIX);
     dispatch(setResolutionMode(findOptinByValue(RESOLUTIONS_MODS, 10)));
-    dispatch(disassemblyCode(MOCK_GAME));
+    dispatch(disassemblyCode(BRIX));
   }, []);
 
   useEffect(() => {

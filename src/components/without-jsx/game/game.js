@@ -11,13 +11,13 @@ import {
   initCpuThread,
   useGameAssetsLoading,
   useMenuOpen,
+  useRom,
   mainLoop,
   startCpuThread,
   stopCpuThread,
   changeSpeedMode,
   executeNextInst,
 } from './methods';
-import { BRIX } from '../../../chip-8/processor/const/index';
 import { createSharedChip8, getMemory } from '../../../chip-8/chip-8';
 import { selectCpuThreadUrlBlob } from '../../../redux/thread/thread.selectors';
 import { selectResolutionValue, selectSpeedModeValue } from '../../../redux/settings/settings.selectors';
@@ -44,6 +44,7 @@ const Game = () => {
   const speedMode = useSelector(selectSpeedModeValue);
   const resolution = useSelector(selectResolutionValue);
   const loaded = useGameAssetsLoading();
+  const rom = useRom();
 
   const chip8Ref = useRef();
 
@@ -73,9 +74,9 @@ const Game = () => {
   }
 
   useEffect(() => {
-    chip8 = createSharedChip8(BRIX);
+    chip8 = createSharedChip8(rom);
     dispatch(setResolutionMode(findOptinByValue(RESOLUTIONS_MODS, 10)));
-    dispatch(disassemblyCode(BRIX));
+    dispatch(disassemblyCode(rom));
   }, []);
 
   useEffect(() => {

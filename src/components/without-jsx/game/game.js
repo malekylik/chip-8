@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { tap } from 'rxjs/operators';
@@ -29,29 +30,26 @@ import { getBytesFromMemory } from '../../../chip-8/memory/memory';
 
 import './game.css';
 
-let cpuThread = null;
-let chip8 = null;
-let terminateLoop = { terminate: () => {} };
+const Game = ({ goToGameListState }) => {
+  const rom = useRom();
 
-function pause() {
-  terminateLoop.terminate()
-}
+  const cpuThread = useRef(null);
+  const chip8 = useRef(createSharedChip8(rom));
+  const terminateLoop = useRef({ terminate: () => {} });
 
-const Game = () => {
-  const [menuOpen, setMenuClose] = useMenuOpen(false, switchLoopState, cpuThread);
+  const [menuOpen, setMenuClose] = useMenuOpen(false, switchLoopState, cpuThread.current);
 
   const cpuBlob = useSelector(selectCpuThreadUrlBlob);
   const speedMode = useSelector(selectSpeedModeValue);
   const resolution = useSelector(selectResolutionValue);
   const loaded = useGameAssetsLoading();
-  const rom = useRom();
 
   const chip8Ref = useRef();
 
   const dispatch = useDispatch();
 
   function onCloseMenu() {
-    startCpuThread(dispatch, cpuThread).subscribe(() => {
+    startCpuThread(dispatch, cpuThread.current).subscribe(() => {
       start();
       setMenuClose();
     });
@@ -59,43 +57,47 @@ const Game = () => {
 
   function switchLoopState(menuOpen) {
     if (menuOpen) {
-      return startCpuThread(dispatch, cpuThread).pipe(tap(start));
+      return startCpuThread(dispatch, cpuThread.current).pipe(tap(start));
     }
 
-    return stopCpuThread(dispatch, cpuThread).pipe(tap(pause));
+    return stopCpuThread(dispatch, cpuThread.current).pipe(tap(pause));
   }
 
   function start() {
-    return mainLoop(terminateLoop, getBytesFromMemory(getMemory(chip8)).buffer, chip8Ref);
+    return mainLoop(terminateLoop.current, getBytesFromMemory(getMemory(chip8.current)).buffer, chip8Ref);
   }
 
   function executeNextInstruction() {
-    return executeNextInst(cpuThread);
+    return executeNextInst(cpuThread.current);
+  }
+
+  function pause() {
+    terminateLoop.current.terminate()
   }
 
   useEffect(() => {
-    chip8 = createSharedChip8(rom);
     dispatch(setResolutionMode(findOptinByValue(RESOLUTIONS_MODS, 10)));
     dispatch(disassemblyCode(rom));
   }, []);
 
   useEffect(() => {
     if (cpuBlob) {
-      cpuThread = new Worker(cpuBlob);
+      cpuThread.current = new Worker(cpuBlob);
 
-      const subcription = initCpuThread(dispatch, cpuThread, chip8, speedMode)
+      const subcription = initCpuThread(dispatch, cpuThread.current, chip8.current, speedMode)
       .subscribe(start);
   
-      return () => { 
+      return () => {
+        cpuThread.current.terminate();
         subcription.unsubscribe();
-        terminateLoop.terminate();
+        terminateLoop.current.terminate();
       }
     }
   }, [cpuBlob]);
 
   useEffect(() => {
-    if (cpuThread) {
-      const subcription = changeSpeedMode(cpuThread, speedMode).subscribe();
+    if (cpuThread.current) {
+      const subcription = changeSpeedMode(cpuThread.current, speedMode).subscribe();
 
       return () => subcription.unsubscribe();
     }
@@ -107,17 +109,21 @@ const Game = () => {
       <div>
         <Chip8
           ref={chip8Ref}
-          chip8={chip8}
+          chip8={chip8.current}
           scale={resolution}
           switchLoopState={switchLoopState}
           executeNextInstruction={executeNextInstruction} />
-        <MenuSettings open={menuOpen} onCloseModal={onCloseMenu} />
+        <MenuSettings open={menuOpen} goToGameListState={goToGameListState} onCloseModal={onCloseMenu} />
       </div>
     ) :
     <div className='game__loader'>
       <CircularProgress />
     </div>
   );
+};
+
+Game.propTypes = {
+  goToGameListState: PropTypes.func.isRequired,
 };
 
 export default Game;

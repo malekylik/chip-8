@@ -8,6 +8,10 @@ import { APP_STATES } from './const/index';
 const App = () => {
   const [appState, setAppState] = useState(APP_STATES.gamesList);
 
+  function goToGameListState() {
+    setAppState(APP_STATES.gamesList);
+  }
+
   function goToGameState() {
     setAppState(APP_STATES.game);
   }
@@ -15,7 +19,7 @@ const App = () => {
   switch (appState) {
     case APP_STATES.gamesList: return <GamesList goToGameState={goToGameState} />;
     case APP_STATES.game: return (
-      React.createElement(Game)
+      React.createElement(Game, { goToGameListState })
     );
   }
 

@@ -1,22 +1,26 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import Button from '@material-ui/core/Button';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import { useSelector, useDispatch } from 'react-redux';
 
+import GameItem from './components/game-item/game-item';
+
 import { setNewRomIndex } from '../../../redux/roms/roms.actions';
 import { selectAllRoms } from '../../../redux/roms/roms.selectors';
+import { useLoadingState } from './hooks';
+
+import './games-list.css';
+
+const classes = { root: 'list-item-container__progress-indicator' };
 
 const GamesList = ({ goToGameState }) => {
-  const [loading, setLoading] = useState(false);
   const roms = useSelector(selectAllRoms);
   const fileInputRef = useRef();
+  const [state, loadFile] = useLoadingState(fileInputRef);
+  const { loading } = state;
 
   const dispatch = useDispatch();
 
@@ -27,43 +31,27 @@ const GamesList = ({ goToGameState }) => {
     }
   }
 
-  function loadFile() {
-    const files = fileInputRef.current.files;
+  const list = roms.map(({ name }, i) => (
+    <div key={i} className='list-item-container'>
+      <GameItem name={name} disabled={loading} onStart={onItemStartButton(i)} />
+    </div>
+    )
+  );
 
-    if (files.length) {
-      const fileReader = new FileReader();
+  if (loading) {
+    const { progress, name } = state;
 
-      fileReader.addEventListener('load', (bin) => {
-        console.log('bin', bin.target.result);
-        setLoading(false);
-      });
-
-      const file = files[0];
-
-      fileReader.readAsArrayBuffer(file);
-
-      setLoading(true);
-      console.log('loadFile file', file);
-    }
+    list.push(
+      <div key={-1} className='list-item-container'>
+        <LinearProgress classes={classes} variant='determinate' value={progress} />
+        <GameItem name={name} disabled={loading} onStart={onItemStartButton(-1)} />
+      </div>
+    );
   }
 
   return (
     <div>
-      <List>
-        {
-          roms.map(({ name }, i) => (
-            <ListItem key={i}>
-              <ListItemText>{name}</ListItemText>
-                <ListItemSecondaryAction>
-                  <IconButton edge='end' onClick={onItemStartButton(i)}>
-                    <ArrowRightIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            )
-          )
-        }
-      </List>
+      <List>{list}</List>
 
       <input
         id='contained-button-file'

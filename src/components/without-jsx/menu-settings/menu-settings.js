@@ -19,7 +19,7 @@ import { findOptinByValue } from '../../../util/index';
 import './menu-settings.css';
 
 const MenuSettings = (props) => {
-  const { open, onCloseModal } = props;
+  const { open, goToGameListState, onCloseModal } = props;
 
   const speedMode = useSelector(selectSpeedModeValue);
   const resolution = useSelector(selectResolutionValue);
@@ -111,8 +111,17 @@ const MenuSettings = (props) => {
         label='Show debbug info'
       />
 
-      <Button fullWidth variant='contained' color='primary' onClick={onCloseModal}>
+      <Button
+        fullWidth
+        className='menu-settings__controll--bottom-margin'
+        variant='contained'
+        color='primary'
+        onClick={onCloseModal}>
         Close
+      </Button>
+
+      <Button fullWidth variant='contained' color='primary' onClick={goToGameListState}>
+        Go to games list
       </Button>
       </div>
     </Dialog>
@@ -121,6 +130,8 @@ const MenuSettings = (props) => {
 
 MenuSettings.propTypes = {
   open: PropTypes.bool.isRequired,
+  goToGameListState: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
 };
 
 export default MenuSettings;

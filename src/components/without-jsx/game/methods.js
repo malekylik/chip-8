@@ -10,6 +10,7 @@ import { createInitAction, createSetLoopModeAction, createExecuteNextInstruction
 import { runCpuThread, setCpuThreadSpeedMode, terminateCpuThread } from '../../../redux/settings/settings.actions';
 import { selectLoadedShaders, selectLoadingShaders } from '../../../redux/shader/shader.selectors';
 import { selectCpuThreadLoaded, selectCpuThreadLoading } from '../../../redux/thread/thread.selectors';
+import { selectRomIndex, selectAllRoms } from '../../../redux/roms/roms.selectors';
 import { SYNC_INDEX } from '../../../worker/const/worker';
 
 export function initCpuThread(dispatch, worker, chip8, speedMode) {
@@ -83,6 +84,13 @@ export function useMenuOpen(defaultValue, callback, worker) {
   }, [menuOpen, worker]);
 
   return [menuOpen, handleMenuClose];
+}
+
+export function useRom() {
+  const romIndex = useSelector(selectRomIndex);
+  const roms = useSelector(selectAllRoms);
+
+  return romIndex < roms.length ? roms[romIndex].rom : null;
 }
 
 export function mainLoop(terminate, chip8Buffer, chip8Ref) {

@@ -16,7 +16,7 @@ import { RESOLUTIONS_MODS, LOOP_MODS_OPTIONS, RENDERER_MODS_OPTIONS } from '../.
 import { setResolutionMode, setSpeedMode, setRendererMode, setShowDebbugInfo } from '../../../redux/settings/settings.actions';
 import { findOptinByValue } from '../../../util/index';
 
-import './menu-settings.css';
+import './menu-settings.less';
 
 const MenuSettings = (props) => {
   const { open, goToGameListState, onCloseModal } = props;

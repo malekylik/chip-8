@@ -20,7 +20,7 @@ import {
   selectRegisters,
 } from '../../../redux/chip-8/chip-8.selectors';
 
-import './state-display.css';
+import './state-display.less';
 
 class StateDisplay extends React.Component {
   render() {

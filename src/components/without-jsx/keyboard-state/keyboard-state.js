@@ -28,7 +28,7 @@ import {
 } from '../../../chip-8/keyboard/const/index.js';
 import { keyPressCount } from '../../../redux/chip-8/chip-8.selectors';
 
-import './keyboard-state.css';
+import './keyboard-state.less';
 
 const KeyboardState = ({ keyboard }) => {
   const key1ClassName = classNames({ 'keyboard_key--press': isKeyPress(keyboard, KEY_1) });

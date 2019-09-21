@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { selectSubAssemblyLines } from '../../../redux/assembly/assembly.selectors';
 
-import './assembly.css';
+import './assembly.less';
 
 const Assembly = ({ assemblyLines }) => {
   const lines = assemblyLines.map(({ address, opcode, assembly}) => (

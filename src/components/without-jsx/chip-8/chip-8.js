@@ -39,7 +39,7 @@ import {
 import { selectRendererModeValue, selectShowDebbugInfo, selectIsRunning } from '../../../redux/settings/settings.selectors';
 import { RENDERER_MODS } from '../../../redux/settings/const/index';
 
-import './chip-8.css';
+import './chip-8.less';
 
 class Chip8 extends React.Component {
   displayRef = React.createRef();

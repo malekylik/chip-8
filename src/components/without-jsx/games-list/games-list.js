@@ -50,7 +50,7 @@ const GamesList = ({ goToGameState }) => {
   }
 
   return (
-    <div>
+    <div className='list-page'>
       <List>{list}</List>
 
       <input

@@ -50,6 +50,18 @@ export function isKeyUnpress(keyboard, keyCode) {
   return getKeyValue(keyboard, keyCode) === KEY_UNPRESS_VALUE;
 }
 
+export function isAnyKeyPress(keyboard) {
+  const keyboardValues = keyboard.keyboard;
+
+  for (let i = 0; i < keyboardValues.length; i++) {
+    if (keyboardValues[i] === KEY_PRESS_VALUE) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
 function mapFromRealKeyboardToChip8Keyboard(keyboard, key) {
   return keyboard.keyboardMap[key];
 }

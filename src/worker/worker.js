@@ -20,9 +20,6 @@ let futex = null;
 self.addEventListener('message', (event) => {
   const { data: { eventType, payload } } = event;
 
-  console.log('eventType', eventType);
-  console.log('data', payload);
-
   switch (eventType) {
     case CPU_THREAD_ACTIONS.INIT: {
       threadChip8 = payload.chip8;

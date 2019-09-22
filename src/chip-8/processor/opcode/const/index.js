@@ -1,2 +1,0 @@
-export const LEAST_SIGNIFICANT_BYTES = 1;
-export const MOST_SIGNIFICANT_BYTES = 0;

@@ -10,6 +10,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 
 import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/styles';
 
 import { selectResolutionValue, selectSpeedModeValue, selectRendererModeValue, selectShowDebbugInfo } from '../../../redux/settings/settings.selectors';
 import { RESOLUTIONS_MODS, LOOP_MODS_OPTIONS, RENDERER_MODS_OPTIONS } from '../../../redux/settings/const/index';
@@ -18,6 +19,8 @@ import { findOptinByValue } from '../../../util/index';
 
 import './menu-settings.less';
 
+const useStyles = makeStyles({ root: { marginBottom: '8px' } });
+
 const MenuSettings = (props) => {
   const { open, goToGameListState, onCloseModal } = props;
 
@@ -25,6 +28,8 @@ const MenuSettings = (props) => {
   const resolution = useSelector(selectResolutionValue);
   const renderer = useSelector(selectRendererModeValue);
   const showDebbugInfo = useSelector(selectShowDebbugInfo);
+
+  const classes = useStyles();
 
   const dispatch = useDispatch();
 
@@ -47,7 +52,7 @@ const MenuSettings = (props) => {
   return (
     <Dialog fullWidth open={open} onClose={onCloseModal}>
       <div className='menu-settings'>
-        <FormControl fullWidth className='menu-settings__controll--bottom-margin'>
+        <FormControl fullWidth className={classes.root}>
           <InputLabel htmlFor='renderer'>Renderer</InputLabel>
           <Select
             inputProps={{
@@ -64,7 +69,7 @@ const MenuSettings = (props) => {
           </Select>
         </FormControl>
 
-        <FormControl fullWidth className='menu-settings__controll--bottom-margin'>
+        <FormControl fullWidth className={classes.root}>
           <InputLabel htmlFor='resolution'>Resolution</InputLabel>
           <Select
             inputProps={{
@@ -81,7 +86,7 @@ const MenuSettings = (props) => {
           </Select>
         </FormControl>
 
-        <FormControl fullWidth className='menu-settings__controll--bottom-margin'>
+        <FormControl fullWidth className={classes.root}>
           <InputLabel htmlFor='speed-mode'>Speed Mode</InputLabel>
           <Select
             inputProps={{
@@ -99,7 +104,7 @@ const MenuSettings = (props) => {
         </FormControl>
 
       <FormControlLabel
-        className='menu-settings__controll--bottom-margin'
+        className={classes.root}
         control={
           <Checkbox
             checked={showDebbugInfo}
@@ -113,7 +118,7 @@ const MenuSettings = (props) => {
 
       <Button
         fullWidth
-        className='menu-settings__controll--bottom-margin'
+        className={classes.root}
         variant='contained'
         color='primary'
         onClick={onCloseModal}>

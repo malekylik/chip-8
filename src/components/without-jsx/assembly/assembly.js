@@ -11,20 +11,24 @@ const Assembly = ({ assemblyLines }) => {
   const lines = assemblyLines.map(({ address, opcode, assembly}) => (
     React.createElement(React.Fragment, { key: address },
       React.createElement(
-        'span',
+        'div',
         null,
-        `${address}: `
-      ),
-      React.createElement(
-        'span',
-        null,
-        `${opcode} - `
-      ),
-      React.createElement(
-        'span',
-        null,
-        assembly
-      ),
+        React.createElement(
+          'span',
+          null,
+          address
+        ),
+        React.createElement(
+          'span',
+          { className: 'assembly__opcode' } ,
+          `: ${opcode} - `
+        ),
+        React.createElement(
+          'span',
+          null,
+          assembly
+        ),
+      )
     )
   ));
 

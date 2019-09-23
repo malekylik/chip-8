@@ -18,5 +18,4 @@ const store = createStore(
 ReactDOM.render(
   React.createElement(Provider, { store },
     React.createElement(App, null, null)
-  )
-, document.getElementById('app'));
+  ), document.getElementById('app'));

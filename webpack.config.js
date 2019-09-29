@@ -22,7 +22,7 @@ const options = {
     }),
     new CleanWebpackPlugin({
       verbose: false,
-      cleanOnceBeforeBuildPatterns: ['**/*', '!assets'],
+      cleanOnceBeforeBuildPatterns: ['**/*', '!assets/**'],
     }),
   ],
   module: {

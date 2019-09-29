@@ -8,8 +8,6 @@ import { Provider } from 'react-redux';
 import App from './components/without-jsx/app/app';
 import appReducer from './redux/redux';
 
-import './main.css';
-
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
@@ -20,5 +18,4 @@ const store = createStore(
 ReactDOM.render(
   React.createElement(Provider, { store },
     React.createElement(App, null, null)
-  )
-, document.getElementById('app'));
+  ), document.getElementById('app'));

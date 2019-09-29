@@ -92,7 +92,7 @@ export function getAssemblerForOpcode(opcode) {
       switch (postFix) {
         case 0x07: return `LD R${getLeftRegisterNumber(opcode)}, DT`;
 
-        case 0x0A: break; // TODO: keyboard
+        case 0x0A: return `LD R${getLeftRegisterNumber(opcode)}, K`;
 
         case 0x15: return `LD DT, R${getLeftRegisterNumber(opcode)}`;
 

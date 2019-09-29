@@ -12,7 +12,7 @@ import { setNewRomIndex } from '../../../redux/roms/roms.actions';
 import { selectAllRoms } from '../../../redux/roms/roms.selectors';
 import { useLoadingState } from './hooks';
 
-import './games-list.css';
+import './games-list.less';
 
 const classes = { root: 'list-item-container__progress-indicator' };
 
@@ -50,7 +50,7 @@ const GamesList = ({ goToGameState }) => {
   }
 
   return (
-    <div>
+    <div className='list-page'>
       <List>{list}</List>
 
       <input

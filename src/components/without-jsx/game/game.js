@@ -28,7 +28,7 @@ import { RESOLUTIONS_MODS } from '../../../redux/settings/const/index';
 import { disassemblyCode } from '../../../redux/assembly/assembly.actions';
 import { getBytesFromMemory } from '../../../chip-8/memory/memory';
 
-import './game.css';
+import './game.less';
 
 const Game = ({ goToGameListState }) => {
   const rom = useRom();

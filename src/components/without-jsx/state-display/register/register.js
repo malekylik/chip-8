@@ -1,12 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Register = ({ number, value }) => (
-  React.createElement(React.Fragment, null,
-    React.createElement('span', null, `R${number}:`),
-    React.createElement('span', null, String(value)),
-  )
-);
+const Register = ({ number, value }) => React.createElement('p', null, `R${number.toString(16).toUpperCase()}: ${String(value).padStart(3, '0')}`);
 
 Register.propTypes = {
   number: PropTypes.number.isRequired,

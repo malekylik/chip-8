@@ -48,13 +48,13 @@ export function useGameAssetsLoading() {
   useEffect(() => {
     if (!isShaderLoaded && !isShaderLoading) {
       dispatch(loadShaders(
-        './src/assets/shaders/main.vert',
-        './src/assets/shaders/main.frag',
+        './assets/shaders/main.vert',
+        './assets/shaders/main.frag',
       ));
     }
 
     if (!isCpuThreadLoaded && !isCpuThreadLoading) {
-      dispatch(loadCpuThread('./dist/cpu-thread.js'));
+      dispatch(loadCpuThread('./cpu-thread.js'));
     }
   }, []);
 

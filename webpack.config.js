@@ -10,6 +10,9 @@ const options = {
     chunkFilename: '[name].[hash].js',
     path: path.resolve(__dirname, 'dist')
   },
+  devServer: {
+    contentBase: path.join(__dirname, 'dist')
+  },
   plugins: [
     new HtmlWebpackPlugin({
       inject: false,
@@ -19,6 +22,7 @@ const options = {
     }),
     new CleanWebpackPlugin({
       verbose: false,
+      cleanOnceBeforeBuildPatterns: ['**/*', '!assets'],
     }),
   ],
   module: {

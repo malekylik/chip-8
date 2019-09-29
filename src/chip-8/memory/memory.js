@@ -9,6 +9,14 @@ export function createMemory() {
   };
 }
 
+export function createSharedMemory() {
+  const bytes = new SharedArrayBuffer(MEMORY_BYTES);
+
+  return {
+    bytes: new Uint8Array(bytes)
+  };
+}
+
 export function loadFonts(memory, fonts) {
   setMemoryBytes(memory, FONTS_START_ADDRESS, fonts);
 }
@@ -37,4 +45,16 @@ export function setMemoryBytes(memory, position, bytes) {
 
 export function readOpcode(memory, start) {
   return readMemory(memory, start, OPCODE_BYTES);
+}
+
+export function fromMemoryToRomAddresses(memoryAddress) {
+  return memoryAddress - PROGRAM_START_ADDRESS;
+}
+
+export function fromRomToRomAddresses(memoryAddress) {
+  return memoryAddress + PROGRAM_START_ADDRESS;
+}
+
+export function getBytesFromMemory(memory) {
+  return memory.bytes;
 }

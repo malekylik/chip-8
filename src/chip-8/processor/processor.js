@@ -51,18 +51,18 @@ import { readMemoreByte, setMemoryByte } from '../memory/memory';
 import { getDigit } from '../../util/index';
 import { getFontAddress } from '../display/display';
 import { setDelayTimerValue, setSoundTimerValue, getDelayTimerValue } from '../timer/timer';
+import { isAnyKeyPress } from '../keyboard/keyboard';
 
 export function creatProcessor() {
   const registerBytes =  new ArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES + I_REGISTER_BYTES);
-  const proccesor = {
-    registers: new Uint8Array(registerBytes).subarray(0, REGISTERS_COUNT),
-    programCounter: new Uint16Array(registerBytes).subarray(PROGRAM_COUNTER, I_REGISTER),
-    I: new Uint16Array(registerBytes).subarray(I_REGISTER),
-  };
 
-  JP(proccesor, PROGRAM_START_ADDRESS);
+  return createProccessorFromMemory(registerBytes);
+}
 
-  return proccesor;
+export function creatSharedProcessor() {
+  const registerBytes =  new SharedArrayBuffer(REGISTERS_COUNT + PROGRAM_COUNTER_BYTES + I_REGISTER_BYTES);
+
+  return createProccessorFromMemory(registerBytes);
 }
 
 export function executeOpcode(proccesor, opcode, stack, memory, display, keyboard) {
@@ -124,7 +124,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, keyboar
               CARRY_FLAG_SET : CARRY_FLAG_CLEAR
             ); break;
 
-        case 0x6: SHR(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode)));  break;
+        case 0x6: SHR(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getLeftRegisterNumber(opcode)));  break;
 
         case 0x7:
             setRegisterVF(
@@ -133,7 +133,7 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, keyboar
               CARRY_FLAG_SET : CARRY_FLAG_CLEAR
             ); break;
 
-        case 0xE: SHL(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getRightRegisterNumber(opcode))); break;
+        case 0xE: SHL(proccesor, getLeftRegisterNumber(opcode), getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
       }
 
       break;
@@ -178,7 +178,17 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, keyboar
       switch (postFix) {
         case 0x07: LD(proccesor, getLeftRegisterNumber(opcode), getDelayTimerValue(memory)); break;
 
-        case 0x0A: break; // TODO: keyboard
+        case 0x0A: {
+            const pressKeyNumber = isAnyKeyPress(keyboard);
+
+            if (pressKeyNumber !== -1) {
+              LD(proccesor, getLeftRegisterNumber(opcode), pressKeyNumber);
+            } else {
+              JP(proccesor, PC);
+            }
+
+           break;
+        }
 
         case 0x15: setDelayTimerValue(memory, getRegisterVX(proccesor, getLeftRegisterNumber(opcode))); break;
 
@@ -227,4 +237,16 @@ export function executeOpcode(proccesor, opcode, stack, memory, display, keyboar
   }
 
   return getProgramCounter(proccesor);
+}
+
+function createProccessorFromMemory(memory) {
+  const proccesor = {
+    registers: new Uint8Array(memory).subarray(0, REGISTERS_COUNT),
+    programCounter: new Uint16Array(memory).subarray(PROGRAM_COUNTER, I_REGISTER),
+    I: new Uint16Array(memory).subarray(I_REGISTER),
+  };
+
+  JP(proccesor, PROGRAM_START_ADDRESS);
+
+  return proccesor;
 }

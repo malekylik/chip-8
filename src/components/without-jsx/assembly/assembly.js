@@ -1,34 +1,33 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import { connect } from 'react-redux';
 
-import { selectSubAssemblyLines } from '../../../redux/assembly/assembly.selectors';
+import { selectSubAssemblyLines, selectCurrentAddress } from '../../../redux/assembly/assembly.selectors';
 
 import './assembly.less';
 
-const Assembly = ({ assemblyLines }) => {
+const Assembly = ({ currentAddress, assemblyLines }) => {
   const lines = assemblyLines.map(({ address, opcode, assembly}) => (
-    React.createElement(React.Fragment, { key: address },
+    React.createElement(
+      'div',
+      { key: address, className: classNames({ 'assembly__line--current': currentAddress === address }) },
       React.createElement(
-        'div',
+        'span',
         null,
-        React.createElement(
-          'span',
-          null,
-          address
-        ),
-        React.createElement(
-          'span',
-          { className: 'assembly__opcode' } ,
-          `: ${opcode} - `
-        ),
-        React.createElement(
-          'span',
-          null,
-          assembly
-        ),
-      )
+        address
+      ),
+      React.createElement(
+        'span',
+        { className: 'assembly__opcode' } ,
+        `: ${opcode} - `
+      ),
+      React.createElement(
+        'span',
+        null,
+        assembly
+      ),
     )
   ));
 
@@ -41,10 +40,12 @@ const Assembly = ({ assemblyLines }) => {
 
 Assembly.propTypes = {
   assemblyLines: PropTypes.arrayOf(PropTypes.object).isRequired,
+  currentAddress: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   assemblyLines: selectSubAssemblyLines(state),
+  currentAddress: selectCurrentAddress(state),
 });
 
 export default connect(mapStateToProps)(Assembly);

@@ -164,33 +164,33 @@ class Chip8 extends React.Component {
   }
 
   render () {
+    const { Display } = this.state;
     const { chip8, scale, showDebbugInfo } = this.props;
     const state = showDebbugInfo ?
-      React.createElement('div', { tabIndex: 0, onKeyPress: this.state.onStateKeyPress },
-        React.createElement(StateDisplay),
+      React.createElement('div', { tabIndex: 0, className: 'debug-info__state-display', onKeyPress: this.state.onStateKeyPress },
+        React.createElement('div', { className: 'state-display__display' }, React.createElement(StateDisplay)),
         React.createElement(Asseambly),
       ) :
       null;
 
     return (
-      React.createElement('div', null,
-        React.createElement('div', { className: 'chip-8' },
-          React.createElement(this.state.Display, {
-            ref: this.displayRef,
-            onKeyDown: this.onKeyDown,
-            onKeyUp: this.onKeyUp,
-            onBlur: this.onBlur,
-            display: getDisplay(chip8),
-            scale,
-          }),
-          state,
-        ),
-        React.createElement('div', null,
-          React.createElement(KeyboardState, {
-            keyboard: getKeyboard(chip8),
-          })
-        )
-      )
+      <div className='chip-8'>
+        <div className='chip-8__display'>
+          <Display
+          ref={this.displayRef}
+          display={getDisplay(chip8)}
+          scale={scale}
+          onKeyDown={this.onKeyDown}
+          onKeyUp={this.onKeyUp}
+          onBlur={this.onBlur} />
+        </div>
+        <div className='chip-8__debug-info'>
+          {state}
+          <div className='display-row__keyboard-wrapper'>
+            <KeyboardState keyboard={getKeyboard(chip8)} />
+          </div>
+        </div>
+      </div>
     );
   }
 }

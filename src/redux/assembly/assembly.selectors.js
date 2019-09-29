@@ -10,6 +10,8 @@ export const selectLineNumber = state => selectAssemblerReducer(state).lineNumbe
 
 export const selectAssemblyCount = state => selectAssemblerReducer(state).count;
 
+export const selectCurrentAddress = state => selectAssembyLines(state)[selectLineNumber(state)].address;
+
 export const selectSubAssemblyLines = createSelector(
   selectAssembyLines,
   selectLineNumber,

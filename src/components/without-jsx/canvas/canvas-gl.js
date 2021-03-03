@@ -63,6 +63,8 @@ class CanvasGL extends React.Component {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, gl.RED, gl.UNSIGNED_BYTE, null);
+
     gl.activeTexture(gl.TEXTURE0);
 
     gl.uniform1i(texUniformLocation, 0);
@@ -109,7 +111,7 @@ class CanvasGL extends React.Component {
 
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, gl.RED, gl.UNSIGNED_BYTE, displayBuffer);
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT, gl.RED, gl.UNSIGNED_BYTE, displayBuffer);
     gl.drawElements(gl.TRIANGLES, indecies.length, gl.UNSIGNED_SHORT, 0);
   }
 

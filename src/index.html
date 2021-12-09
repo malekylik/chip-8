@@ -15,11 +15,12 @@
 <body>
     <div id="app"></div>
 
-    <% if (htmlWebpackPlugin.files.chunks.vendor) { %>
-        <script src="<%= htmlWebpackPlugin.files.chunks.vendor.entry %>"></script>
+    <% if (htmlWebpackPlugin.files.js.length > 0) { %>
+        <script src="<%= htmlWebpackPlugin.files.js[0] %>"></script>
     <% } %>
-    <% if (htmlWebpackPlugin.files.chunks.main.entry) { %>
-        <script src="<%= htmlWebpackPlugin.files.chunks.main.entry %>"></script>
+    <%
+    if (htmlWebpackPlugin.files.js.length > 1) { %>
+        <script src="<%= htmlWebpackPlugin.files.js[1] %>"></script>
     <% } %>
 </body>
 </html>

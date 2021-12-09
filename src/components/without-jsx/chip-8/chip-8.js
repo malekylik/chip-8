@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { connect } from 'react-redux';
+import { connect, batch } from 'react-redux';
 
 import Display2D from '../display/display-2d';
 import DisplayGL from '../display/display-gl';
@@ -102,14 +102,16 @@ class Chip8 extends React.Component {
   updateState() {
     const { chip8 } = this.props;
 
-    this.props.setAssemblyLineNumber(getProgramCounter(chip8));
-    this.props.setProgramCounter(getProgramCounter(chip8));
-    this.props.setRegisterI(getIRegister(chip8));
-    this.props.setDelayTimer(getDelayTimerValue(chip8));
-    this.props.setSoundTimer(getSoundTimerValue(chip8));
-    this.props.setStackPointer(getStackPointer(chip8));
-    this.props.setStackValues(getStackValues(chip8));
-    this.props.setRegisters(getRegisters(chip8));
+    batch(() => {
+      this.props.setAssemblyLineNumber(getProgramCounter(chip8));
+      this.props.setProgramCounter(getProgramCounter(chip8));
+      this.props.setRegisterI(getIRegister(chip8));
+      this.props.setDelayTimer(getDelayTimerValue(chip8));
+      this.props.setSoundTimer(getSoundTimerValue(chip8));
+      this.props.setStackPointer(getStackPointer(chip8));
+      this.props.setStackValues(getStackValues(chip8));
+      this.props.setRegisters(getRegisters(chip8));
+    });
   }
 
   onKeyDown = (e) => {
